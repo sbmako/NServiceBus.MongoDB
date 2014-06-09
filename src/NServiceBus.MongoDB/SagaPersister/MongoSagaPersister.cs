@@ -38,6 +38,15 @@ namespace NServiceBus.MongoDB.SagaPersister
         /// <summary>
         /// Gets a saga entity from the persistence store by its Id.
         /// </summary>
+        /// <typeparam name="T">
+        /// The return type.
+        /// </typeparam>
+        /// <param name="sagaId">
+        /// The saga Id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="T"/>.
+        /// </returns>
         public T Get<T>(Guid sagaId) where T : IContainSagaData
         {
             throw new NotImplementedException();
@@ -46,6 +55,18 @@ namespace NServiceBus.MongoDB.SagaPersister
         /// <summary>
         /// Looks up a saga entity by a given property.
         /// </summary>
+        /// <typeparam name="T">
+        /// The return type.
+        /// </typeparam>
+        /// <param name="property">
+        /// The property.
+        /// </param>
+        /// <param name="value">
+        /// The value.
+        /// </param>
+        /// <returns>
+        /// The <see cref="T"/>.
+        /// </returns>
         public T Get<T>(string property, object value) where T : IContainSagaData
         {
             throw new NotImplementedException();

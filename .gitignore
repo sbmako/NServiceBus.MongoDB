@@ -17,6 +17,7 @@ build/
 
 # Enable "build/" folder in the NuGet Packages folder since NuGet packages use it for MSBuild targets
 src/packages/NServiceBus.*
+src/packages/mongocsharpdriver.*
 
 # MSTest test Results
 [Tt]est[Rr]esult*/
