@@ -9,6 +9,9 @@
 
 namespace NServiceBus.MongoDB
 {
+    using System;
+    using System.Diagnostics.Contracts;
+
     /// <summary>
     /// The configure mongo persistence.
     /// </summary>
@@ -25,6 +28,7 @@ namespace NServiceBus.MongoDB
         /// </returns>
         public static Configure MongoPersistence(this Configure config)
         {
+            Contract.Requires<ArgumentNullException>(config != null);
             return config;
         }
     }

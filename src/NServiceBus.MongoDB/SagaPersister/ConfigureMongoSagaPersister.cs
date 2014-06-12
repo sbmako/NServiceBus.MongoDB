@@ -9,6 +9,9 @@
 
 namespace NServiceBus.MongoDB.SagaPersister
 {
+    using System;
+    using System.Diagnostics.Contracts;
+
     /// <summary>
     /// The configure mongo saga persister.
     /// </summary>
@@ -25,6 +28,7 @@ namespace NServiceBus.MongoDB.SagaPersister
         /// </returns>
         public static Configure MongoSagaPersister(this Configure config)
         {
+            Contract.Requires<ArgumentNullException>(config != null);
             return config;
         }
     }

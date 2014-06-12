@@ -9,6 +9,9 @@
 
 namespace NServiceBus.MongoDB.SubscriptionStorage
 {
+    using System;
+    using System.Diagnostics.Contracts;
+
     /// <summary>
     /// The configure mongo subscription storage.
     /// </summary>
@@ -25,6 +28,7 @@ namespace NServiceBus.MongoDB.SubscriptionStorage
         /// </returns>
         public static Configure MongoSubscriptionStorage(this Configure config)
         {
+            Contract.Requires<ArgumentNullException>(config != null);
             return config;
         }
     }
