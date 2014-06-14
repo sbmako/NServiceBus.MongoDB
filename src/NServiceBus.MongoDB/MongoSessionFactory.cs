@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="MongoSessionFactory.cs" company="SharkByte Software Inc.">
-//   Copyright (c) 2014 SharkByte Software Inc. All rights reserved.
+//   Copyright (c) 2014 Carlos Sandoval. All rights reserved.
 //   
 //   This program is free software: you can redistribute it and/or modify
 //   it under the terms of the GNU Affero General Public License as published by
@@ -34,12 +34,8 @@ namespace NServiceBus.MongoDB
         ////[ThreadStatic]
         ////static MongoClient session;
 
-        ////public IDocumentStore Store { get; private set; }
-
-        ////public IDocumentSession Session
-        ////{
-        ////    get { return session ?? (session = OpenSession()); }
-        ////}
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields", Justification = "TBD")]
+        private static Func<IMessageContext, string> getDatabaseName = context => string.Empty;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MongoSessionFactory"/> class.
@@ -47,6 +43,7 @@ namespace NServiceBus.MongoDB
         /// <param name="serverAccessor">
         /// The server accessor.
         /// </param>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "serverAccessor", Justification = "TBD")]
         public MongoSessionFactory(ServerAccessor serverAccessor)
         {
             ////Store = storeAccessor.Store;
@@ -60,53 +57,17 @@ namespace NServiceBus.MongoDB
         /// <summary>
         /// The release session.
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "TBD")]
         public void ReleaseSession()
         {
-            ////if (session == null)
-            ////{
-            ////    return;
-            ////}
-
-            ////session.Dispose();
-            ////session = null;
         }
 
-        ////IDocumentSession OpenSession()
-        ////{
-        ////    IMessageContext context = null;
-
-        ////    if (Bus != null)
-        ////        context = Bus.CurrentMessageContext;
-
-        ////    var databaseName = GetDatabaseName(context);
-
-        ////    IDocumentSession documentSession;
-
-        ////    if (string.IsNullOrEmpty(databaseName))
-        ////        documentSession = Store.OpenSession();
-        ////    else
-        ////        documentSession = Store.OpenSession(databaseName);
-
-        ////    documentSession.Advanced.AllowNonAuthoritativeInformation = false;
-        ////    documentSession.Advanced.UseOptimisticConcurrency = true;
-
-        ////    return documentSession;
-        ////}
-
+        /// <summary>
+        /// The save changes.
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "TBD")]
         public void SaveChanges()
         {
-            ////if (session == null)
-            ////    return;
-            ////try
-            ////{
-            ////    session.SaveChanges();
-            ////}
-            ////catch (global::Raven.Abstractions.Exceptions.ConcurrencyException ex)
-            ////{                
-            ////    throw new ConcurrencyException("A saga with the same Unique property already existed in the storage. See the inner exception for further details", ex);
-            ////}
         }
-
-        public static Func<IMessageContext, string> GetDatabaseName = context => String.Empty;
     }
 }
