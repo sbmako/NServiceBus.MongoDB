@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="UnitTest1.cs" company="SharkByte Software Inc.">
+// <copyright file="ServerAccessor.cs" company="SharkByte Software Inc.">
 //   Copyright (c) 2014 SharkByte Software Inc. All rights reserved.
 //   
 //   This program is free software: you can redistribute it and/or modify
@@ -16,21 +16,25 @@
 //   along with this program.  If not, see http://www.gnu.org/licenses/.
 // </copyright>
 // <summary>
-//   Defines the UnitTest1 type.
+//   The server accessor.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace NServiceBus.MongoDB.Tests
+namespace NServiceBus.MongoDB
 {
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using System;
 
-    [TestClass]
-    public class UnitTest1
+    /// <summary>
+    /// The server accessor.
+    /// </summary>
+    public class ServerAccessor : IDisposable
     {
-        [TestMethod]
-        public void TestMethod1()
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
+        /// <filterpriority>2</filterpriority>
+        public void Dispose()
         {
-            Assert.IsTrue(true, "Placeholder so that tests are executed in AppVeyor until real tests are added");
         }
     }
 }
