@@ -23,20 +23,39 @@
 namespace NServiceBus.MongoDB.SagaPersister
 {
     using System;
+    using System.Diagnostics.Contracts;
+
     using NServiceBus.Saga;
+
+    using global::MongoDB.Driver;
 
     /// <summary>
     /// The Mongo saga persister.
     /// </summary>
     public class MongoSagaPersister : ISagaPersister
     {
+        private readonly MongoDatabase mongoDatabase;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MongoSagaPersister"/> class.
+        /// </summary>
+        /// <param name="mongoFactory">
+        /// The mongo factory.
+        /// </param>
+        public MongoSagaPersister(MongoDatabaseFactory mongoFactory)
+        {
+            Contract.Requires<ArgumentNullException>(mongoFactory != null);
+            this.mongoDatabase = mongoFactory.GetDatabase();
+        }
+
         /// <summary>
         /// Saves the saga entity to the persistence store.
         /// </summary>
         /// <param name="saga">The saga entity to save.</param>
         public void Save(IContainSagaData saga)
         {
-            throw new NotImplementedException();
+            var collection = this.mongoDatabase.GetCollection(saga.GetType().Name);
+            collection.Insert(saga);
         }
 
         /// <summary>
