@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="Program.cs" company="SharkByte Software Inc.">
+// <copyright file="MyTimeout.cs" company="SharkByte Software Inc.">
 //   Copyright (c) 2014 Carlos Sandoval. All rights reserved.
 //   
 //   This program is free software: you can redistribute it and/or modify
@@ -16,33 +16,22 @@
 //   along with this program.  If not, see http://www.gnu.org/licenses/.
 // </copyright>
 // <summary>
-//   Defines the Program type.
+//   The my timeout.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-using System;
-
-using NServiceBus;
-using NServiceBus.MongoDB;
-
-class Program
+namespace Sample
 {
-    static void Main()
+    using NServiceBus;
+
+    /// <summary>
+    /// The my timeout.
+    /// </summary>
+    public class MyTimeout : IMessage
     {
-        Configure.Serialization.Json();
-
-        var bus = Configure.With()
-            .DefaultBuilder()
-            .MongoPersistence()
-            .CreateBus();
-
-        bus.Start();
-
-        bus.SendLocal(new MyMessage
-        {
-            SomeId = Guid.NewGuid()
-        });
-
-        Console.ReadLine();
+        /// <summary>
+        /// Gets or sets the how long.
+        /// </summary>
+        public int HowLong { get; set; }
     }
 }

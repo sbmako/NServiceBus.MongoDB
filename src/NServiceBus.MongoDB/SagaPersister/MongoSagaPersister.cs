@@ -23,11 +23,10 @@
 namespace NServiceBus.MongoDB.SagaPersister
 {
     using System;
+    using System.Collections.Generic;
     using System.Diagnostics.Contracts;
-
-    using NServiceBus.Saga;
-
     using global::MongoDB.Driver;
+    using NServiceBus.Saga;
 
     /// <summary>
     /// The Mongo saga persister.
@@ -64,7 +63,35 @@ namespace NServiceBus.MongoDB.SagaPersister
         /// <param name="saga">The saga entity to updated.</param>
         public void Update(IContainSagaData saga)
         {
-            throw new NotImplementedException();
+            var p = UniqueAttribute.GetUniqueProperty(saga);
+
+            if (!p.HasValue)
+            {
+                return;
+            }
+
+            ////var uniqueProperty = p.Value;
+
+            ////var metadata = Session.Advanced.GetMetadataFor(saga);
+
+            ////if the user just added the unique property to a saga with existing data we need to set it
+            ////if (!metadata.ContainsKey(UniqueValueMetadataKey))
+            ////{
+            ////    StoreUniqueProperty(saga);
+            ////    return;
+            ////}
+
+            ////var storedValue = metadata[UniqueValueMetadataKey].ToString();
+
+            ////var currentValue = uniqueProperty.Value.ToString();
+
+            ////if (currentValue == storedValue)
+            ////{
+            ////    return;
+            ////}
+
+            ////this.DeleteUniqueProperty(saga, new KeyValuePair<string, object>(uniqueProperty.Key, storedValue));
+            this.StoreUniqueProperty(saga);
         }
 
         /// <summary>
@@ -112,6 +139,46 @@ namespace NServiceBus.MongoDB.SagaPersister
         public void Complete(IContainSagaData saga)
         {
             throw new NotImplementedException();
+        }
+
+        ////private void DeleteUniqueProperty(IContainSagaData saga, KeyValuePair<string, object> uniqueProperty)
+        ////{
+        ////    var id = SagaUniqueIdentity.FormatId(saga.GetType(), uniqueProperty);
+
+        ////    ////Session.Advanced.Defer(new DeleteCommandData { Key = id });
+        ////}
+
+        private void StoreUniqueProperty(IContainSagaData saga)
+        {
+            Contract.Requires(saga != null);
+
+            var uniqueProperty = UniqueAttribute.GetUniqueProperty(saga);
+
+            if (!uniqueProperty.HasValue)
+            {
+                return;
+            }
+
+            ////var id = SagaUniqueIdentity.FormatId(saga.GetType(), uniqueProperty.Value);
+            ////var sagaDocId = sessionFactory.Store.Conventions.FindFullDocumentKeyFromNonStringIdentifier(saga.Id, saga.GetType(), false);
+
+            ////Session.Store(new SagaUniqueIdentity
+            ////{
+            ////    Id = id,
+            ////    SagaId = saga.Id,
+            ////    UniqueValue = uniqueProperty.Value.Value,
+            ////    SagaDocId = sagaDocId
+            ////});
+
+            this.SetUniqueValueMetadata(saga, uniqueProperty.Value);
+        }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "TBD")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "saga", Justification = "TBD")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "uniqueProperty", Justification = "TBD")]
+        private void SetUniqueValueMetadata(IContainSagaData saga, KeyValuePair<string, object> uniqueProperty)
+        {
+            ////Session.Advanced.GetMetadataFor(saga)[UniqueValueMetadataKey] = uniqueProperty.Value.ToString();
         }
     }
 }

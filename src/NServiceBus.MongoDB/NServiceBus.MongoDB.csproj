@@ -169,6 +169,7 @@
       <HintPath>..\packages\NServiceBus.4.6.1\lib\net40\NServiceBus.Core.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -180,11 +181,14 @@
     <Compile Include="ConfigureMongoPersistence.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="MongoDatabaseFactory.cs" />
+    <Compile Include="MongoPersistenceConstants.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SagaPersister\ConfigureMongoSagaPersister.cs" />
     <Compile Include="SagaPersister\MongoSagaPersister.cs" />
+    <Compile Include="SagaPersister\SagaUniqueIdentity.cs" />
     <Compile Include="SubscriptionStorage\ConfigureMongoSubscriptionStorage.cs" />
     <Compile Include="SubscriptionStorage\MongoSubscriptionStorage.cs" />
+    <Compile Include="Utils\DeterministicGuid.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

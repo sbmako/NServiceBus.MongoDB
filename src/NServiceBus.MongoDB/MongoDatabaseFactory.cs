@@ -28,7 +28,7 @@ namespace NServiceBus.MongoDB
     using global::MongoDB.Driver;
 
     /// <summary>
-    /// The mongo session factory.
+    /// The mongo database factory.
     /// </summary>
     public class MongoDatabaseFactory
     {

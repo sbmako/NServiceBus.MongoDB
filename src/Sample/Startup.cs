@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="MySaga.cs" company="SharkByte Software Inc.">
+// <copyright file="Startup.cs" company="SharkByte Software Inc.">
 //   Copyright (c) 2014 Carlos Sandoval. All rights reserved.
 //   
 //   This program is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 //   along with this program.  If not, see http://www.gnu.org/licenses/.
 // </copyright>
 // <summary>
-//   Defines the MySaga type.
+//   Defines the Startup type.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -24,50 +24,41 @@ namespace Sample
 {
     using System;
 
+    using NServiceBus;
+    using NServiceBus.Config;
     using NServiceBus.Logging;
-    using NServiceBus.Saga;
 
     /// <summary>
-    /// The my saga.
+    /// The startup.
     /// </summary>
-    public class MySaga : Saga<MySagaData>,
-        IAmStartedByMessages<MyMessage>,
-        IHandleTimeouts<MyTimeout>
+    public class Startup : IWantToRunWhenConfigurationIsComplete
     {
-        private static readonly ILog Logger = LogManager.GetLogger(typeof(MySaga));
+        private static readonly ILog Logger = LogManager.GetLogger(typeof(Startup));
+
+        private readonly IBus bus;
 
         /// <summary>
-        /// The configure how to find saga.
+        /// Initializes a new instance of the <see cref="Startup"/> class.
         /// </summary>
-        public override void ConfigureHowToFindSaga()
+        /// <param name="bus">
+        /// The bus.
+        /// </param>
+        public Startup(IBus bus)
         {
-            Logger.Info("Configuring now to find saga");
-            this.ConfigureMapping<MyMessage>(message => message.SomeId).ToSaga(saga => saga.SomeId);
+            this.bus = bus;
         }
 
         /// <summary>
-        /// The handle.
+        /// The run method
         /// </summary>
-        /// <param name="message">
-        /// The message.
-        /// </param>
-        public void Handle(MyMessage message)
+        public void Run()
         {
-            Logger.Info("Hello from MySaga");
+            Logger.Info("Statup.Run()");
 
-            this.RequestTimeout(TimeSpan.FromSeconds(3), new MyTimeout() { HowLong = 3 });
-        }
-
-        /// <summary>
-        /// The timeout.
-        /// </summary>
-        /// <param name="state">
-        /// The state.
-        /// </param>
-        public void Timeout(MyTimeout state)
-        {
-            Logger.Info("Timeout reached");
-            this.MarkAsComplete();
+            bus.SendLocal(new MyMessage
+            {
+                SomeId = Guid.NewGuid()
+            });
         }
     }
 }
