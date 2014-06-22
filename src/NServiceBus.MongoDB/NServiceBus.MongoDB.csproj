@@ -117,7 +117,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <RunCodeAnalysis>false</RunCodeAnalysis>
     <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>..\NServiceBus.MongoDB.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
     <CodeContractsEnableRuntimeChecking>True</CodeContractsEnableRuntimeChecking>
     <CodeContractsRuntimeOnlyPublicSurface>False</CodeContractsRuntimeOnlyPublicSurface>
     <CodeContractsRuntimeThrowOnFailure>True</CodeContractsRuntimeThrowOnFailure>
