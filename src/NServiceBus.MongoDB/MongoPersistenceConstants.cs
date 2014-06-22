@@ -30,12 +30,15 @@ namespace NServiceBus.MongoDB
 
         private const string DefaultHost = "localhost";
 
-        public static string DefaultUrl
+        public static string DefaultConnectionString
         {
             get
             {
                 Contract.Ensures(!string.IsNullOrWhiteSpace(Contract.Result<string>()));
-                return string.Format("mongodb://{0}:{1}", DefaultHost, DefaultPort);
+                var connectionString = string.Format("mongodb://{0}:{1}", DefaultHost, DefaultPort);
+                Contract.Assume(!string.IsNullOrWhiteSpace(connectionString));
+
+                return connectionString;
             }
         }
     }

@@ -26,6 +26,8 @@ namespace NServiceBus.MongoDB.SagaPersister
     using System.Collections.Generic;
     using System.Diagnostics.Contracts;
     using global::MongoDB.Driver;
+    using global::MongoDB.Driver.Builders;
+    using NServiceBus.Logging;
     using NServiceBus.Saga;
 
     /// <summary>
@@ -33,6 +35,8 @@ namespace NServiceBus.MongoDB.SagaPersister
     /// </summary>
     public class MongoSagaPersister : ISagaPersister
     {
+        private static readonly ILog Logger = LogManager.GetLogger(typeof(MongoSagaPersister));
+
         private readonly MongoDatabase mongoDatabase;
 
         /// <summary>
@@ -108,7 +112,10 @@ namespace NServiceBus.MongoDB.SagaPersister
         /// </returns>
         public T Get<T>(Guid sagaId) where T : IContainSagaData
         {
-            throw new NotImplementedException();
+            var query = Query<T>.EQ(e => e.Id, sagaId);
+            var entity = this.mongoDatabase.GetCollection<T>(typeof(T).Name).FindOne(query);
+
+            return entity;
         }
 
         /// <summary>
@@ -128,7 +135,7 @@ namespace NServiceBus.MongoDB.SagaPersister
         /// </returns>
         public T Get<T>(string property, object value) where T : IContainSagaData
         {
-            throw new NotImplementedException();
+            return default(T);
         }
 
         /// <summary>
@@ -138,7 +145,15 @@ namespace NServiceBus.MongoDB.SagaPersister
         /// <param name="saga">The saga to complete.</param>
         public void Complete(IContainSagaData saga)
         {
-            throw new NotImplementedException();
+            var query = Query.EQ("_id", saga.Id);
+            var result = this.mongoDatabase.GetCollection(saga.GetType().Name).Remove(query);
+
+            if (result.DocumentsAffected == 0)
+            {
+                Logger.Error("Unable to find and remove saga");
+                throw new InvalidOperationException(
+                    string.Format("Unable to find and remove saga for with id {0}", saga.Id));
+            }
         }
 
         ////private void DeleteUniqueProperty(IContainSagaData saga, KeyValuePair<string, object> uniqueProperty)

@@ -24,7 +24,6 @@ namespace NServiceBus.MongoDB
 {
     using System;
     using System.Diagnostics.Contracts;
-
     using global::MongoDB.Driver;
 
     /// <summary>
@@ -33,24 +32,19 @@ namespace NServiceBus.MongoDB
     public class MongoDatabaseFactory
     {
         [ThreadStatic]
-        private static MongoClient mongoClient;
+        private static MongoClientAccessor mongoClientAccessor;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MongoDatabaseFactory"/> class.
         /// </summary>
-        /// <param name="client">
-        /// The client.
+        /// <param name="clientAccessor">
+        /// The clientAccessor.
         /// </param>
-        public MongoDatabaseFactory(MongoClient client)
+        public MongoDatabaseFactory(MongoClientAccessor clientAccessor)
         {
-            mongoClient = client;
-            GetDatabaseName = context => string.Empty;
+            Contract.Requires<ArgumentNullException>(clientAccessor != null, "clientAccessor");
+            mongoClientAccessor = clientAccessor;
         }
-
-        /// <summary>
-        /// Gets or sets the get database name.
-        /// </summary>
-        public static Func<IMessageContext, string> GetDatabaseName { get; set; }
 
         /// <summary>
         /// Gets or sets the bus.
@@ -63,43 +57,18 @@ namespace NServiceBus.MongoDB
         /// <returns>
         /// The <see cref="MongoDatabase"/>.
         /// </returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Reviewed")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate", Justification = "Ok here")]
         public MongoDatabase GetDatabase()
         {
             Contract.Ensures(Contract.Result<MongoDatabase>() != null);
 
-            IMessageContext context = null;
+            var databaseName = mongoClientAccessor.DatabaseName;
+            var server = mongoClientAccessor.MongoClient.GetServer();
+            var database = server.GetDatabase(databaseName);
 
-            if (this.Bus != null)
-            {
-                context = this.Bus.CurrentMessageContext;
-            }
-
-            var databaseName = GetDatabaseName(context);
-
-            var server = mongoClient.GetServer();
-
-            var database = string.IsNullOrEmpty(databaseName)
-                               ? server.GetDatabase(databaseName)
-                               : server.GetDatabase(databaseName);
-
+            Contract.Assume(database != null);
             return database;
-        }
-
-        /// <summary>
-        /// The release session.
-        /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "TBD")]
-        public void ReleaseServer()
-        {
-        }
-
-        /// <summary>
-        /// The save changes.
-        /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "TBD")]
-        public void SaveChanges()
-        {
         }
     }
 }

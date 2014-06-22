@@ -55,7 +55,7 @@ namespace Sample
         {
             Logger.Info("Hello from MySaga");
 
-            this.RequestTimeout(TimeSpan.FromSeconds(3), new MyTimeout() { HowLong = 3 });
+            this.RequestTimeout(TimeSpan.FromSeconds(10), new MyTimeout() { HowLong = 5 });
         }
 
         /// <summary>

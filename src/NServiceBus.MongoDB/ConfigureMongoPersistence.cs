@@ -48,7 +48,8 @@ namespace NServiceBus.MongoDB
         /// </returns>
         public static Configure MongoPersistence(this Configure config)
         {
-            Contract.Requires<ArgumentNullException>(config != null);
+            Contract.Requires<ArgumentNullException>(config != null, "config");
+            Contract.Ensures(Contract.Result<Configure>() != null);
 
             if (Configure.Instance.Configurer.HasComponent<MongoDatabaseFactory>())
             {
@@ -59,9 +60,9 @@ namespace NServiceBus.MongoDB
 
             var connectionString = connectionStringSettings != null
                                        ? connectionStringSettings.ConnectionString
-                                       : MongoPersistenceConstants.DefaultUrl;
+                                       : MongoPersistenceConstants.DefaultConnectionString;
 
-            return config.InternalMongoPersistence(new MongoClient(connectionString));
+            return config.InternalMongoPersistence(new MongoClientAccessor(new MongoClient(connectionString), Configure.EndpointName));
         }
 
         /// <summary>
@@ -78,10 +79,11 @@ namespace NServiceBus.MongoDB
         /// </returns>
         public static Configure MongoPersistence(this Configure config, string connectionString)
         {
-            Contract.Requires<ArgumentNullException>(config != null);
-            Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(connectionString));
+            Contract.Requires<ArgumentNullException>(config != null, "config");
+            Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(connectionString), "connectionString");
+            Contract.Ensures(Contract.Result<Configure>() != null);
 
-            return config.InternalMongoPersistence(new MongoClient(connectionString));
+            return config.InternalMongoPersistence(new MongoClientAccessor(new MongoClient(connectionString), Configure.EndpointName));
         }
 
         /// <summary>
@@ -90,32 +92,87 @@ namespace NServiceBus.MongoDB
         /// <param name="config">
         /// The config.
         /// </param>
-        /// <param name="mongoUrl">
-        /// The mongo url.
+        /// <param name="connectionString">
+        /// The connection string.
+        /// </param>
+        /// <param name="databaseName">
+        /// The database name.
         /// </param>
         /// <returns>
         /// The <see cref="Configure"/>.
         /// </returns>
-        public static Configure MongoPersistence(this Configure config, MongoUrl mongoUrl)
+        public static Configure MongoPersistence(this Configure config, string connectionString, string databaseName)
         {
-            Contract.Requires<ArgumentNullException>(config != null);
-            Contract.Requires<ArgumentNullException>(mongoUrl != null);
+            Contract.Requires<ArgumentNullException>(config != null, "config");
+            Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(connectionString), "connectionString");
+            Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(databaseName), "databaseName");
+            Contract.Ensures(Contract.Result<Configure>() != null);
 
-            return config.InternalMongoPersistence(new MongoClient(mongoUrl));
+            return config.InternalMongoPersistence(new MongoClientAccessor(new MongoClient(connectionString), databaseName));
         }
 
-        internal static Configure InternalMongoPersistence(this Configure config, MongoClient mongoClient)
+        /// <summary>
+        /// The mongo persistence.
+        /// </summary>
+        /// <param name="config">
+        /// The config.
+        /// </param>
+        /// <param name="getConnectionString">
+        /// The get connection string.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Configure"/>.
+        /// </returns>
+        public static Configure MongoPersistence(this Configure config, Func<string> getConnectionString)
+        {
+            Contract.Requires<ArgumentNullException>(config != null, "config");
+            Contract.Requires<ArgumentException>(getConnectionString != null, "getConnectionString");
+            Contract.Ensures(Contract.Result<Configure>() != null);
+
+            return
+                config.InternalMongoPersistence(
+                    new MongoClientAccessor(new MongoClient(getConnectionString()), Configure.EndpointName));
+        }
+
+        /// <summary>
+        /// The mongo persistence.
+        /// </summary>
+        /// <param name="config">
+        /// The config.
+        /// </param>
+        /// <param name="getConnectionString">
+        /// The get connection string.
+        /// </param>
+        /// <param name="databaseName">
+        /// The database name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Configure"/>.
+        /// </returns>
+        public static Configure MongoPersistence(this Configure config, Func<string> getConnectionString, string databaseName)
+        {
+            Contract.Requires<ArgumentNullException>(config != null, "config");
+            Contract.Requires<ArgumentException>(getConnectionString != null, "getConnectionString");
+            Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(databaseName), "databaseName");
+            Contract.Ensures(Contract.Result<Configure>() != null);
+
+            return
+                config.InternalMongoPersistence(
+                    new MongoClientAccessor(new MongoClient(getConnectionString()), databaseName));
+        }
+
+        internal static Configure InternalMongoPersistence(this Configure config, MongoClientAccessor clientAccessor)
         {
             return config.InternalMongoPersistence(() =>
             {
-                VerifyConnectionToMongoServer(mongoClient);
-                return mongoClient;
+                VerifyConnectionToMongoServer(clientAccessor);
+                return clientAccessor;
             });
         }
 
-        internal static Configure InternalMongoPersistence(this Configure config, Func<MongoClient> clientFactory)
+        internal static Configure InternalMongoPersistence(this Configure config, Func<MongoClientAccessor> clientAccessorFactory)
         {
-            config.Configurer.ConfigureComponent(clientFactory, DependencyLifecycle.SingleInstance);
+            config.Configurer.ConfigureComponent(clientAccessorFactory, DependencyLifecycle.SingleInstance);
             config.Configurer.ConfigureComponent<MongoDatabaseFactory>(DependencyLifecycle.SingleInstance);
 
             //// TODO: probably won't be necessary
@@ -128,11 +185,11 @@ namespace NServiceBus.MongoDB
             return config;
         }
 
-        internal static void VerifyConnectionToMongoServer(MongoClient mongoClient)
+        internal static void VerifyConnectionToMongoServer(MongoClientAccessor mongoClientAccessor)
         {
-            Contract.Requires(mongoClient != null);
+            Contract.Requires(mongoClientAccessor != null);
 
-            var server = mongoClient.GetServer();
+            var server = mongoClientAccessor.MongoClient.GetServer();
 
             try
             {
@@ -140,14 +197,14 @@ namespace NServiceBus.MongoDB
             }
             catch (Exception ex)
             {
-                ShowUncontactableMongoWarning(mongoClient, ex);
+                ShowUncontactableMongoWarning(mongoClientAccessor.MongoClient, ex);
                 return;
             }
 
             //// TODO: check to see if database is valid on this server using
             //// server.DatabaseExists(name);
 
-            Logger.InfoFormat("Connection to MongoDB at {0} verified.", mongoClient.Settings.Server);
+            Logger.InfoFormat("Connection to MongoDB at {0} verified.", mongoClientAccessor.MongoClient.Settings.Server);
         }
 
         internal static void ShowUncontactableMongoWarning(MongoClient mongoClient, Exception exception)

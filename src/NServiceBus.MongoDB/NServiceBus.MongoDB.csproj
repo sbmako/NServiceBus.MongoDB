@@ -153,7 +153,7 @@
     <CodeContractsBeingOptimisticOnExternal>True</CodeContractsBeingOptimisticOnExternal>
     <CodeContractsRuntimeCheckingLevel>Full</CodeContractsRuntimeCheckingLevel>
     <CodeContractsReferenceAssembly>DoNotBuild</CodeContractsReferenceAssembly>
-    <CodeContractsAnalysisWarningLevel>3</CodeContractsAnalysisWarningLevel>
+    <CodeContractsAnalysisWarningLevel>2</CodeContractsAnalysisWarningLevel>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="MongoDB.Bson">
@@ -180,6 +180,7 @@
   <ItemGroup>
     <Compile Include="ConfigureMongoPersistence.cs" />
     <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="MongoClientAccessor.cs" />
     <Compile Include="MongoDatabaseFactory.cs" />
     <Compile Include="MongoPersistenceConstants.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
