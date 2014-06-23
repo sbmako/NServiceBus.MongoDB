@@ -59,6 +59,8 @@ namespace NServiceBus.MongoDB.SagaPersister
         {
             var collection = this.mongoDatabase.GetCollection(saga.GetType().Name);
             collection.Insert(saga);
+
+            this.StoreUniqueProperty(saga);
         }
 
         /// <summary>
@@ -96,6 +98,9 @@ namespace NServiceBus.MongoDB.SagaPersister
 
             ////this.DeleteUniqueProperty(saga, new KeyValuePair<string, object>(uniqueProperty.Key, storedValue));
             this.StoreUniqueProperty(saga);
+
+            var collection = this.mongoDatabase.GetCollection(saga.GetType().Name);
+            collection.Save(saga);
         }
 
         /// <summary>
@@ -135,6 +140,10 @@ namespace NServiceBus.MongoDB.SagaPersister
         /// </returns>
         public T Get<T>(string property, object value) where T : IContainSagaData
         {
+            ////if (IsUniqueProperty<T>(property))
+            ////    return GetByUniqueProperty<T>(property, value);
+
+            ////return GetByQuery<T>(property, value).FirstOrDefault();
             return default(T);
         }
 
@@ -174,16 +183,16 @@ namespace NServiceBus.MongoDB.SagaPersister
                 return;
             }
 
-            ////var id = SagaUniqueIdentity.FormatId(saga.GetType(), uniqueProperty.Value);
-            ////var sagaDocId = sessionFactory.Store.Conventions.FindFullDocumentKeyFromNonStringIdentifier(saga.Id, saga.GetType(), false);
+            var id = SagaUniqueIdentity.FormatId(saga.GetType(), uniqueProperty.Value);
+            var sagaUniqueIdentity = new SagaUniqueIdentity
+                                         {
+                                             Id = id,
+                                             SagaId = saga.Id,
+                                             UniqueValue = uniqueProperty.Value.Value,
+                                         };
 
-            ////Session.Store(new SagaUniqueIdentity
-            ////{
-            ////    Id = id,
-            ////    SagaId = saga.Id,
-            ////    UniqueValue = uniqueProperty.Value.Value,
-            ////    SagaDocId = sagaDocId
-            ////});
+            var collection = this.mongoDatabase.GetCollection<SagaUniqueIdentity>(sagaUniqueIdentity.GetType().Name);
+            collection.Insert(sagaUniqueIdentity);
 
             this.SetUniqueValueMetadata(saga, uniqueProperty.Value);
         }

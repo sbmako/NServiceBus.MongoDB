@@ -46,11 +46,6 @@ namespace NServiceBus.MongoDB.SagaPersister
         public object UniqueValue { get; set; }
 
         /// <summary>
-        /// Gets or sets the saga doc id.
-        /// </summary>
-        public string SagaDocId { get; set; }
-
-        /// <summary>
         /// The format id.
         /// </summary>
         /// <param name="sagaType">

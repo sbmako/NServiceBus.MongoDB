@@ -24,6 +24,7 @@ namespace Sample
 {
     using System;
 
+    using NServiceBus;
     using NServiceBus.Logging;
     using NServiceBus.Saga;
 
@@ -32,6 +33,7 @@ namespace Sample
     /// </summary>
     public class MySaga : Saga<MySagaData>,
         IAmStartedByMessages<MyMessage>,
+        IHandleMessages<AnotherSagaCommand>,
         IHandleTimeouts<MyTimeout>
     {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(MySaga));
@@ -43,6 +45,7 @@ namespace Sample
         {
             Logger.Info("Configuring now to find saga");
             this.ConfigureMapping<MyMessage>(message => message.SomeId).ToSaga(saga => saga.SomeId);
+            this.ConfigureMapping<AnotherSagaCommand>(message => message.SomeId).ToSaga(saga => saga.SomeId);
         }
 
         /// <summary>
@@ -56,6 +59,17 @@ namespace Sample
             Logger.Info("Hello from MySaga");
 
             this.RequestTimeout(TimeSpan.FromSeconds(10), new MyTimeout() { HowLong = 5 });
+        }
+
+        /// <summary>
+        /// The handle.
+        /// </summary>
+        /// <param name="message">
+        /// The message.
+        /// </param>
+        public void Handle(AnotherSagaCommand message)
+        {
+            Logger.Info("Hello from AnotherSagaCommand");
         }
 
         /// <summary>

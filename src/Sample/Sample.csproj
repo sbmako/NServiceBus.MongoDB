@@ -76,6 +76,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AnotherSagaCommand.cs" />
     <Compile Include="ConfigErrorQueue.cs" />
     <Compile Include="EndpointConfig.cs" />
     <Compile Include="MyMessage.cs" />

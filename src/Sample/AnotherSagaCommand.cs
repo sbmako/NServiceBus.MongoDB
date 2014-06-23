@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="MySagaData.cs" company="SharkByte Software Inc.">
+// <copyright file="AnotherSagaCommand.cs" company="SharkByte Software Inc.">
 //   Copyright (c) 2014 Carlos Sandoval. All rights reserved.
 //   
 //   This program is free software: you can redistribute it and/or modify
@@ -16,19 +16,18 @@
 //   along with this program.  If not, see http://www.gnu.org/licenses/.
 // </copyright>
 // <summary>
-//   Defines the MySagaData type.
+//   Defines the AnotherSagaCommand type.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-using System;
-using NServiceBus.Saga;
-
-public class MySagaData : IContainSagaData
+namespace Sample
 {
-    public Guid Id { get; set; }
-    public string Originator { get; set; }
-    public string OriginalMessageId { get; set; }
+    using System;
 
-    [Unique]
-    public Guid SomeId { get; set; }
+    using NServiceBus;
+
+    public class AnotherSagaCommand : IMessage
+    {
+        public Guid SomeId { get; set; }
+    }
 }

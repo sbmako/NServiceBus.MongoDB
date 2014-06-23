@@ -23,6 +23,7 @@
 namespace Sample
 {
     using System;
+    using System.Threading;
 
     using NServiceBus;
     using NServiceBus.Config;
@@ -55,10 +56,12 @@ namespace Sample
         {
             Logger.Info("Statup.Run()");
 
-            bus.SendLocal(new MyMessage
-            {
-                SomeId = Guid.NewGuid()
-            });
+            var initMessage = new MyMessage { SomeId = Guid.NewGuid() };
+            var anotherMessage = new AnotherSagaCommand { SomeId = initMessage.SomeId };
+
+            this.bus.SendLocal(initMessage);
+            Thread.Sleep(2000);
+            this.bus.SendLocal(anotherMessage);
         }
     }
 }
