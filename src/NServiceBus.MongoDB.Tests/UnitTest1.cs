@@ -22,15 +22,14 @@
 
 namespace NServiceBus.MongoDB.Tests
 {
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Xunit;
 
-    [TestClass]
     public class UnitTest1
     {
-        [TestMethod]
+        [Fact]
         public void TestMethod1()
         {
-            Assert.IsTrue(true, "Placeholder so that tests are executed in AppVeyor until real tests are added");
+            Assert.True(true, "Placeholder so that tests are executed in AppVeyor until real tests are added");
         }
     }
 }
