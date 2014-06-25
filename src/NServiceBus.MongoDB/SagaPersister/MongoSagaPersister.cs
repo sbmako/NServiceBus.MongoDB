@@ -37,6 +37,8 @@ namespace NServiceBus.MongoDB.SagaPersister
     {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(MongoSagaPersister));
 
+        private static readonly string SagaUniqueIdentityName = typeof(SagaUniqueIdentity).Name;
+
         private readonly MongoDatabase mongoDatabase;
 
         /// <summary>
@@ -156,7 +158,7 @@ namespace NServiceBus.MongoDB.SagaPersister
             var lookupId = SagaUniqueIdentity.FormatId(typeof(T), new KeyValuePair<string, object>(property, value));
 
             var query = Query.EQ("_id", lookupId);
-            var result = this.mongoDatabase.GetCollection<SagaUniqueIdentity>(typeof(SagaUniqueIdentity).Name).FindOne(query);
+            var result = this.mongoDatabase.GetCollection<SagaUniqueIdentity>(SagaUniqueIdentityName).FindOne(query);
 
             if (result == null)
             {
@@ -171,7 +173,7 @@ namespace NServiceBus.MongoDB.SagaPersister
             var uniqueId = SagaUniqueIdentity.FormatId(saga.GetType(), uniqueProperty);
 
             var query = Query.EQ("_id", uniqueId);
-            var result = this.mongoDatabase.GetCollection(typeof(SagaUniqueIdentity).Name).Remove(query);
+            var result = this.mongoDatabase.GetCollection(SagaUniqueIdentityName).Remove(query);
 
             if (result.DocumentsAffected == 0)
             {
