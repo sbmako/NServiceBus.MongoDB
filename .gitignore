@@ -19,6 +19,7 @@ build/
 src/packages/NServiceBus.*
 src/packages/mongocsharpdriver.*
 src/packages/xunit.*
+src/packages/AutoFixture.*
 
 # MSTest test Results
 [Tt]est[Rr]esult*/
