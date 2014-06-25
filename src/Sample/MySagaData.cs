@@ -30,5 +30,7 @@ public class MySagaData : IContainSagaData
     public string OriginalMessageId { get; set; }
 
     [Unique]
-    public Guid SomeId { get; set; }
+    public string SomeId { get; set; }
+
+    public int Count { get; set; }
 }

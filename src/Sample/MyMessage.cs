@@ -25,5 +25,5 @@ using NServiceBus;
 
 public class MyMessage : IMessage
 {
-    public Guid SomeId { get; set; }
+    public string SomeId { get; set; }
 }

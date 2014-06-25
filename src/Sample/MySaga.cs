@@ -58,7 +58,10 @@ namespace Sample
         {
             Logger.Info("Hello from MySaga");
 
-            this.RequestTimeout(TimeSpan.FromSeconds(10), new MyTimeout() { HowLong = 5 });
+            this.Data.SomeId = message.SomeId;
+            this.Data.Count = 0;
+
+            this.RequestTimeout(TimeSpan.FromSeconds(30), new MyTimeout() { HowLong = 5 });
         }
 
         /// <summary>
@@ -69,7 +72,8 @@ namespace Sample
         /// </param>
         public void Handle(AnotherSagaCommand message)
         {
-            Logger.Info("Hello from AnotherSagaCommand");
+            this.Data.Count += 1;
+            Logger.InfoFormat("Hello from AnotherSagaCommand: {0}", this.Data.Count);
         }
 
         /// <summary>
@@ -80,7 +84,7 @@ namespace Sample
         /// </param>
         public void Timeout(MyTimeout state)
         {
-            Logger.Info("Timeout reached");
+            Logger.InfoFormat("Timeout reached with a count of: {0}", this.Data.Count);
             this.MarkAsComplete();
         }
     }

@@ -28,6 +28,6 @@ namespace Sample
 
     public class AnotherSagaCommand : IMessage
     {
-        public Guid SomeId { get; set; }
+        public string SomeId { get; set; }
     }
 }

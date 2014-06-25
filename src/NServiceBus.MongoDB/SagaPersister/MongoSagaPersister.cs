@@ -73,31 +73,9 @@ namespace NServiceBus.MongoDB.SagaPersister
 
             if (!p.HasValue)
             {
-                return;
+                //// TODO: check if unique property has changed 
+                Logger.Debug("Update unique property stuff goes here");
             }
-
-            ////var uniqueProperty = p.Value;
-
-            ////var metadata = Session.Advanced.GetMetadataFor(saga);
-
-            ////if the user just added the unique property to a saga with existing data we need to set it
-            ////if (!metadata.ContainsKey(UniqueValueMetadataKey))
-            ////{
-            ////    StoreUniqueProperty(saga);
-            ////    return;
-            ////}
-
-            ////var storedValue = metadata[UniqueValueMetadataKey].ToString();
-
-            ////var currentValue = uniqueProperty.Value.ToString();
-
-            ////if (currentValue == storedValue)
-            ////{
-            ////    return;
-            ////}
-
-            ////this.DeleteUniqueProperty(saga, new KeyValuePair<string, object>(uniqueProperty.Key, storedValue));
-            this.StoreUniqueProperty(saga);
 
             var collection = this.mongoDatabase.GetCollection(saga.GetType().Name);
             collection.Save(saga);
@@ -140,11 +118,7 @@ namespace NServiceBus.MongoDB.SagaPersister
         /// </returns>
         public T Get<T>(string property, object value) where T : IContainSagaData
         {
-            ////if (IsUniqueProperty<T>(property))
-            ////    return GetByUniqueProperty<T>(property, value);
-
-            ////return GetByQuery<T>(property, value).FirstOrDefault();
-            return default(T);
+            return this.GetByUniqueProperty<T>(property, value);
         }
 
         /// <summary>
@@ -163,14 +137,49 @@ namespace NServiceBus.MongoDB.SagaPersister
                 throw new InvalidOperationException(
                     string.Format("Unable to find and remove saga for with id {0}", saga.Id));
             }
+
+            var uniqueProperty = UniqueAttribute.GetUniqueProperty(saga);
+
+            if (!uniqueProperty.HasValue)
+            {
+                return;
+            }
+
+            this.DeleteUniqueProperty(saga, uniqueProperty.Value);
         }
 
-        ////private void DeleteUniqueProperty(IContainSagaData saga, KeyValuePair<string, object> uniqueProperty)
-        ////{
-        ////    var id = SagaUniqueIdentity.FormatId(saga.GetType(), uniqueProperty);
+        private T GetByUniqueProperty<T>(string property, object value) where T : IContainSagaData
+        {
+            Contract.Requires(!string.IsNullOrWhiteSpace(property));
+            Contract.Requires(value != null);
 
-        ////    ////Session.Advanced.Defer(new DeleteCommandData { Key = id });
-        ////}
+            var lookupId = SagaUniqueIdentity.FormatId(typeof(T), new KeyValuePair<string, object>(property, value));
+
+            var query = Query.EQ("_id", lookupId);
+            var result = this.mongoDatabase.GetCollection<SagaUniqueIdentity>(typeof(SagaUniqueIdentity).Name).FindOne(query);
+
+            if (result == null)
+            {
+                return default(T);
+            }
+
+            return this.Get<T>(result.SagaId);
+        }
+
+        private void DeleteUniqueProperty(IContainSagaData saga, KeyValuePair<string, object> uniqueProperty)
+        {
+            var uniqueId = SagaUniqueIdentity.FormatId(saga.GetType(), uniqueProperty);
+
+            var query = Query.EQ("_id", uniqueId);
+            var result = this.mongoDatabase.GetCollection(typeof(SagaUniqueIdentity).Name).Remove(query);
+
+            if (result.DocumentsAffected == 0)
+            {
+                Logger.Error("Unable to find and remove saga unique identity");
+                throw new InvalidOperationException(
+                    string.Format("Unable to find and remove saga unique identity with id {0}", uniqueId));
+            }
+        }
 
         private void StoreUniqueProperty(IContainSagaData saga)
         {

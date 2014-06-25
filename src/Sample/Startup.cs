@@ -56,11 +56,14 @@ namespace Sample
         {
             Logger.Info("Statup.Run()");
 
-            var initMessage = new MyMessage { SomeId = Guid.NewGuid() };
+            var initMessage = new MyMessage { SomeId = "carlos" };
             var anotherMessage = new AnotherSagaCommand { SomeId = initMessage.SomeId };
 
             this.bus.SendLocal(initMessage);
             Thread.Sleep(2000);
+            this.bus.SendLocal(anotherMessage);
+            this.bus.SendLocal(anotherMessage);
+            this.bus.SendLocal(anotherMessage);
             this.bus.SendLocal(anotherMessage);
         }
     }
