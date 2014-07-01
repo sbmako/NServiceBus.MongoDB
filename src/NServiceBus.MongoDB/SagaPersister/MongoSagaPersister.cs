@@ -60,7 +60,13 @@ namespace NServiceBus.MongoDB.SagaPersister
         public void Save(IContainSagaData saga)
         {
             var collection = this.mongoDatabase.GetCollection(saga.GetType().Name);
-            collection.Insert(saga);
+            var result = collection.Insert(saga);
+
+            if (!result.Ok)
+            {
+                throw new InvalidOperationException(
+                    string.Format("Unable to save with id {0}", saga.Id));
+            }
 
             this.StoreUniqueProperty(saga);
         }
@@ -80,7 +86,13 @@ namespace NServiceBus.MongoDB.SagaPersister
             }
 
             var collection = this.mongoDatabase.GetCollection(saga.GetType().Name);
-            collection.Save(saga);
+
+            var result = collection.Save(saga);
+            if (!result.Ok)
+            {
+                throw new InvalidOperationException(
+                    string.Format("Unable to update saga with id {0}", saga.Id));
+            }
         }
 
         /// <summary>
@@ -133,11 +145,10 @@ namespace NServiceBus.MongoDB.SagaPersister
             var query = Query.EQ("_id", saga.Id);
             var result = this.mongoDatabase.GetCollection(saga.GetType().Name).Remove(query);
 
-            if (result.DocumentsAffected == 0)
+            if (!result.Ok)
             {
-                Logger.Error("Unable to find and remove saga");
                 throw new InvalidOperationException(
-                    string.Format("Unable to find and remove saga for with id {0}", saga.Id));
+                    string.Format("Unable to find and remove saga with id {0}", saga.Id));
             }
 
             var uniqueProperty = UniqueAttribute.GetUniqueProperty(saga);
@@ -170,14 +181,15 @@ namespace NServiceBus.MongoDB.SagaPersister
 
         private void DeleteUniqueProperty(IContainSagaData saga, KeyValuePair<string, object> uniqueProperty)
         {
+            Contract.Requires(saga != null);
+
             var uniqueId = SagaUniqueIdentity.FormatId(saga.GetType(), uniqueProperty);
 
             var query = Query.EQ("_id", uniqueId);
             var result = this.mongoDatabase.GetCollection(SagaUniqueIdentityName).Remove(query);
 
-            if (result.DocumentsAffected == 0)
+            if (!result.Ok)
             {
-                Logger.Error("Unable to find and remove saga unique identity");
                 throw new InvalidOperationException(
                     string.Format("Unable to find and remove saga unique identity with id {0}", uniqueId));
             }

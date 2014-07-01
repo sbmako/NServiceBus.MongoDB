@@ -23,7 +23,6 @@
 namespace Sample
 {
     using System;
-
     using NServiceBus;
     using NServiceBus.Logging;
     using NServiceBus.Saga;
@@ -61,7 +60,7 @@ namespace Sample
             this.Data.SomeId = message.SomeId;
             this.Data.Count = 0;
 
-            this.RequestTimeout(TimeSpan.FromSeconds(30), new MyTimeout() { HowLong = 5 });
+            this.RequestTimeout(TimeSpan.FromMinutes(1), new MyTimeout() { HowLong = 5 });
         }
 
         /// <summary>

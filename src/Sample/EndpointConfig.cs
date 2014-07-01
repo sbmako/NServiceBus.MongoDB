@@ -24,7 +24,7 @@ namespace Sample
 {
     using NServiceBus;
     using NServiceBus.Features;
-    using NServiceBus.MongoDB;
+    using NServiceBus.MongoDB.SagaPersister;
 
     /// <summary>
     /// The endpoint config.
@@ -43,7 +43,7 @@ namespace Sample
             Configure.With()
                      .DefaultBuilder()
                      .UnicastBus()
-                     .MongoPersistence()
+                     .MongoSagaPersister()
                      .InMemorySubscriptionStorage()
                      .UseInMemoryTimeoutPersister();
         }

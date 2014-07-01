@@ -57,14 +57,22 @@ namespace Sample
             Logger.Info("Statup.Run()");
 
             var initMessage = new MyMessage { SomeId = "carlos" };
-            var anotherMessage = new AnotherSagaCommand { SomeId = initMessage.SomeId };
+            var anotherMessage = new AnotherSagaCommand { SomeId = initMessage.SomeId, SleepHowLong = 2000 };
 
             this.bus.SendLocal(initMessage);
-            Thread.Sleep(2000);
-            this.bus.SendLocal(anotherMessage);
-            this.bus.SendLocal(anotherMessage);
-            this.bus.SendLocal(anotherMessage);
-            this.bus.SendLocal(anotherMessage);
+
+            Thread.Sleep(1000);
+
+            for (int i = 0; i < 2000; i++)
+            {
+                anotherMessage.SleepHowLong = i;
+                this.bus.SendLocal(anotherMessage);
+            }
+
+            ////anotherMessage.SleepHowLong = 0;
+            ////this.bus.SendLocal(anotherMessage);
+            ////this.bus.SendLocal(anotherMessage);
+            ////this.bus.SendLocal(anotherMessage);
         }
     }
 }

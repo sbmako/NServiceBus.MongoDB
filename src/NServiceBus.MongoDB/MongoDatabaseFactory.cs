@@ -47,11 +47,6 @@ namespace NServiceBus.MongoDB
         }
 
         /// <summary>
-        /// Gets or sets the bus.
-        /// </summary>
-        public IBus Bus { get; set; }
-
-        /// <summary>
         /// The get database.
         /// </summary>
         /// <returns>

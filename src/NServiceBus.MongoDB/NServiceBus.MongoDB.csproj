@@ -191,6 +191,7 @@
     <Compile Include="SagaPersister\SagaUniqueIdentity.cs" />
     <Compile Include="SubscriptionStorage\ConfigureMongoSubscriptionStorage.cs" />
     <Compile Include="SubscriptionStorage\MongoSubscriptionStorage.cs" />
+    <Compile Include="SubscriptionStorage\Subscription.cs" />
     <Compile Include="Utils\DeterministicGuid.cs" />
   </ItemGroup>
   <ItemGroup>

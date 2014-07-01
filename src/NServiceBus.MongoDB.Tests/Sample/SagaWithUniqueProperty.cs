@@ -1,5 +1,5 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="UnitTest1.cs" company="SharkByte Software Inc.">
+// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="SagaWithUniqueProperty.cs" company="SharkByte Software Inc.">
 //   Copyright (c) 2014 Carlos Sandoval. All rights reserved.
 //   
 //   This program is free software: you can redistribute it and/or modify
@@ -16,20 +16,27 @@
 //   along with this program.  If not, see http://www.gnu.org/licenses/.
 // </copyright>
 // <summary>
-//   Defines the UnitTest1 type.
+//   Defines the SagaWithUniqueProperty type.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace NServiceBus.MongoDB.Tests
+namespace NServiceBus.MongoDB.Tests.Sample
 {
-    using Xunit;
+    using System;
 
-    public class UnitTest1
+    using NServiceBus.Saga;
+
+    public class SagaWithUniqueProperty : IContainSagaData
     {
-        [Fact]
-        public void TestMethod1()
-        {
-            Assert.True(true, "Placeholder so that tests are executed in AppVeyor until real tests are added");
-        }
+        public virtual Guid Id { get; set; }
+
+        public virtual string Originator { get; set; }
+
+        public virtual string OriginalMessageId { get; set; }
+
+        [Unique]
+        public virtual string UniqueProperty { get; set; }
+
+        public string NonUniqueProperty { get; set; }
     }
 }

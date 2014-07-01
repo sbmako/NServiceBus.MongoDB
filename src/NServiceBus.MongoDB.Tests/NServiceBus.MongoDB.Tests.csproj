@@ -47,6 +47,12 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="FluentAssertions">
+      <HintPath>..\packages\FluentAssertions.3.0.107\lib\net45\FluentAssertions.dll</HintPath>
+    </Reference>
+    <Reference Include="FluentAssertions.Core">
+      <HintPath>..\packages\FluentAssertions.3.0.107\lib\net45\FluentAssertions.Core.dll</HintPath>
+    </Reference>
     <Reference Include="MongoDB.Bson, Version=1.9.1.221, Culture=neutral, PublicKeyToken=f686731cfb9cc103, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\mongocsharpdriver.1.9.1\lib\net35\MongoDB.Bson.dll</HintPath>
@@ -68,6 +74,9 @@
       <HintPath>..\packages\AutoFixture.Xunit.3.19.1\lib\net40\Ploeh.AutoFixture.Xunit.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
     <Reference Include="xunit">
       <HintPath>..\packages\xunit.1.9.2\lib\net20\xunit.dll</HintPath>
     </Reference>
@@ -88,9 +97,17 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="ConfigureMongoPersistenceTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SagaPersister\MongoClientAccessorTests.cs" />
-    <Compile Include="UnitTest1.cs" />
+    <Compile Include="MongoClientAccessorTests.cs" />
+    <Compile Include="SagaPersister\ConfigureMongoSagaPersisterTests.cs" />
+    <Compile Include="SagaPersister\MongoSagaPersisterTests.cs" />
+    <Compile Include="SagaPersister\SagaUniqueIdentityTests.cs" />
+    <Compile Include="Sample\SagaWithoutUniqueProperties.cs" />
+    <Compile Include="Sample\SagaWithUniqueProperty.cs" />
+    <Compile Include="TestingUtilities\AutoConfigureData.cs" />
+    <Compile Include="TestingUtilities\ConfigureCustomization.cs" />
+    <Compile Include="Utils\DeterministicGuidTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

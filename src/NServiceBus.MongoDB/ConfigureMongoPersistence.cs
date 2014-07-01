@@ -28,7 +28,6 @@ namespace NServiceBus.MongoDB
     using System.Text;
     using global::MongoDB.Driver;
     using NServiceBus.Logging;
-    using NServiceBus.MongoDB.SagaPersister;
 
     /// <summary>
     /// The configure mongo persistence.
@@ -71,18 +70,19 @@ namespace NServiceBus.MongoDB
         /// <param name="config">
         /// The config.
         /// </param>
-        /// <param name="connectionString">
+        /// <param name="connectionStringName">
         /// The connection string.
         /// </param>
         /// <returns>
         /// The <see cref="Configure"/>.
         /// </returns>
-        public static Configure MongoPersistence(this Configure config, string connectionString)
+        public static Configure MongoPersistence(this Configure config, string connectionStringName)
         {
             Contract.Requires<ArgumentNullException>(config != null, "config");
-            Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(connectionString), "connectionString");
+            Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(connectionStringName), "connectionStringName");
             Contract.Ensures(Contract.Result<Configure>() != null);
 
+            var connectionString = GetConnectionString(connectionStringName);
             return config.InternalMongoPersistence(new MongoClientAccessor(new MongoClient(connectionString), Configure.EndpointName));
         }
 
@@ -92,7 +92,7 @@ namespace NServiceBus.MongoDB
         /// <param name="config">
         /// The config.
         /// </param>
-        /// <param name="connectionString">
+        /// <param name="connectionStringName">
         /// The connection string.
         /// </param>
         /// <param name="databaseName">
@@ -101,13 +101,14 @@ namespace NServiceBus.MongoDB
         /// <returns>
         /// The <see cref="Configure"/>.
         /// </returns>
-        public static Configure MongoPersistence(this Configure config, string connectionString, string databaseName)
+        public static Configure MongoPersistence(this Configure config, string connectionStringName, string databaseName)
         {
             Contract.Requires<ArgumentNullException>(config != null, "config");
-            Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(connectionString), "connectionString");
+            Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(connectionStringName), "connectionStringName");
             Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(databaseName), "databaseName");
             Contract.Ensures(Contract.Result<Configure>() != null);
 
+            var connectionString = GetConnectionString(connectionStringName);
             return config.InternalMongoPersistence(new MongoClientAccessor(new MongoClient(connectionString), databaseName));
         }
 
@@ -128,6 +129,13 @@ namespace NServiceBus.MongoDB
             Contract.Requires<ArgumentNullException>(config != null, "config");
             Contract.Requires<ArgumentException>(getConnectionString != null, "getConnectionString");
             Contract.Ensures(Contract.Result<Configure>() != null);
+
+            var connectionString = getConnectionString();
+            if (string.IsNullOrEmpty(connectionString))
+            {
+                throw new ConfigurationErrorsException(
+                    "Cannot configure Mongo Persister. Connection string can not be null or empty.");
+            }
 
             return
                 config.InternalMongoPersistence(
@@ -156,9 +164,16 @@ namespace NServiceBus.MongoDB
             Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(databaseName), "databaseName");
             Contract.Ensures(Contract.Result<Configure>() != null);
 
+            var connectionString = getConnectionString();
+            if (string.IsNullOrEmpty(connectionString))
+            {
+                throw new ConfigurationErrorsException(
+                    "Cannot configure Mongo Persister. Connection string can not be null or empty.");
+            }
+
             return
                 config.InternalMongoPersistence(
-                    new MongoClientAccessor(new MongoClient(getConnectionString()), databaseName));
+                    new MongoClientAccessor(new MongoClient(connectionString), databaseName));
         }
 
         internal static Configure InternalMongoPersistence(this Configure config, MongoClientAccessor clientAccessor)
@@ -174,13 +189,6 @@ namespace NServiceBus.MongoDB
         {
             config.Configurer.ConfigureComponent(clientAccessorFactory, DependencyLifecycle.SingleInstance);
             config.Configurer.ConfigureComponent<MongoDatabaseFactory>(DependencyLifecycle.SingleInstance);
-
-            //// TODO: probably won't be necessary
-            ////config.Configurer.ConfigureComponent<MongoUnitOfWork>(DependencyLifecycle.InstancePerUnitOfWork);
-
-            config.Configurer.ConfigureComponent<MongoSagaPersister>(DependencyLifecycle.SingleInstance);
-            ////InfrastructureServices.SetDefaultFor<IPersistTimeouts>(() => Configure.Instance.UseRavenTimeoutPersister());
-            ////InfrastructureServices.SetDefaultFor<ISubscriptionStorage>(() => Configure.Instance.RavenSubscriptionStorage());
 
             return config;
         }
@@ -229,7 +237,25 @@ namespace NServiceBus.MongoDB
         private static ConnectionStringSettings GetConnectionString()
         {
             return ConfigurationManager.ConnectionStrings["NServiceBus.Persistence"]
-                                        ?? ConfigurationManager.ConnectionStrings["NServiceBus/Persistence"];
+                   ?? ConfigurationManager.ConnectionStrings["NServiceBus/Persistence"];
+        }
+
+        private static string GetConnectionString(string connectionStringName)
+        {
+            Contract.Requires(!string.IsNullOrWhiteSpace(connectionStringName));
+            var connectionStringSettings = ConfigurationManager.ConnectionStrings[connectionStringName];
+
+            if (connectionStringSettings == null)
+            {
+                throw new ConfigurationErrorsException(
+                    string.Format(
+                        "Cannot configure Mongo Persister. No connection string named {0} was found",
+                        connectionStringName));
+            }
+
+            return !string.IsNullOrWhiteSpace(connectionStringSettings.ConnectionString)
+                       ? connectionStringSettings.ConnectionString
+                       : string.Empty;
         }
     }
 }

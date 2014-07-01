@@ -42,6 +42,14 @@ namespace NServiceBus.MongoDB.SagaPersister
         public static Configure MongoSagaPersister(this Configure config)
         {
             Contract.Requires<ArgumentNullException>(config != null);
+
+            if (!config.Configurer.HasComponent<MongoClientAccessor>())
+            {
+                config.MongoPersistence();
+            }
+
+            config.Configurer.ConfigureComponent<MongoSagaPersister>(DependencyLifecycle.SingleInstance);
+
             return config;
         }
     }

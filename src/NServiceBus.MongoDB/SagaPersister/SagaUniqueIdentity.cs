@@ -68,13 +68,12 @@ namespace NServiceBus.MongoDB.SagaPersister
 
             var id = string.Format("{0}/{1}/{2}", sagaType.FullName.Replace('+', '-'), uniqueProperty.Key, value);
 
-            // raven has a size limit of 255 bytes == 127 unicode chars
-            if (id.Length > 127)
+            if (id.Length > 1024)
             {
                 // generate a guid from the hash:
                 var key = Utils.DeterministicGuid.Create(sagaType.FullName, uniqueProperty.Key);
 
-                id = string.Format("MoreThan127/{0}/{1}", key, value);
+                id = string.Format("MoreThan1024/{0}/{1}", key, value);
             }
 
             return id;

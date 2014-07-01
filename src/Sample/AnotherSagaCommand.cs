@@ -29,5 +29,7 @@ namespace Sample
     public class AnotherSagaCommand : IMessage
     {
         public string SomeId { get; set; }
+
+        public int SleepHowLong { get; set; }
     }
 }

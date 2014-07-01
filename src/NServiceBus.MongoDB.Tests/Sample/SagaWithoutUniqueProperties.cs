@@ -1,5 +1,5 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="MongoClientAccessorTests.cs" company="SharkByte Software Inc.">
+// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="SagaWithoutUniqueProperties.cs" company="SharkByte Software Inc.">
 //   Copyright (c) 2014 Carlos Sandoval. All rights reserved.
 //   
 //   This program is free software: you can redistribute it and/or modify
@@ -16,22 +16,26 @@
 //   along with this program.  If not, see http://www.gnu.org/licenses/.
 // </copyright>
 // <summary>
-//   Defines the MongoClientAccessorTests type.
+//   Defines the SagaWithoutUniqueProperties type.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace NServiceBus.MongoDB.Tests.SagaPersister
+namespace NServiceBus.MongoDB.Tests.Sample
 {
-    using Ploeh.AutoFixture.Xunit;
+    using System;
 
-    using Xunit;
-    using Xunit.Extensions;
+    using NServiceBus.Saga;
 
-    public class MongoClientAccessorTests
+    public class SagaWithoutUniqueProperties : IContainSagaData
     {
-        [Theory, AutoData]
-        public void MongoClientAccessorConstror(string databaseName)
-        {
-        }
+        public virtual Guid Id { get; set; }
+
+        public virtual string Originator { get; set; }
+
+        public virtual string OriginalMessageId { get; set; }
+
+        public virtual string UniqueProperty { get; set; }
+
+        public string NonUniqueProperty { get; set; }
     }
 }

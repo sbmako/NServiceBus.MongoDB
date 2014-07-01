@@ -42,6 +42,14 @@ namespace NServiceBus.MongoDB.SubscriptionStorage
         public static Configure MongoSubscriptionStorage(this Configure config)
         {
             Contract.Requires<ArgumentNullException>(config != null);
+
+            if (!config.Configurer.HasComponent<MongoClientAccessor>())
+            {
+                config.MongoPersistence();
+            }
+
+            config.Configurer.ConfigureComponent<MongoSubscriptionStorage>(DependencyLifecycle.SingleInstance);
+
             return config;
         }
     }
