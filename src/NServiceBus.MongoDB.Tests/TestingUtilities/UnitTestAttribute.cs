@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="MongoSagaPersisterTests.cs" company="SharkByte Software Inc.">
+// <copyright file="UnitTestAttribute.cs" company="SharkByte Software Inc.">
 //   Copyright (c) 2014 Carlos Sandoval. All rights reserved.
 //   
 //   This program is free software: you can redistribute it and/or modify
@@ -16,23 +16,18 @@
 //   along with this program.  If not, see http://www.gnu.org/licenses/.
 // </copyright>
 // <summary>
-//   Defines the MongoSagaPersisterTests type.
+//   Defines the UnitTestAttribute type.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace NServiceBus.MongoDB.Tests.SagaPersister
+namespace NServiceBus.MongoDB.Tests.TestingUtilities
 {
-    using Xunit.Extensions;
-
-    using global::MongoDB.Driver;
-    using NServiceBus.MongoDB.Tests.TestingUtilities;
     using Xunit;
 
-    public class MongoSagaPersisterTests
+    public class UnitTestAttribute : TraitAttribute
     {
-        [Theory, IntegrationTest]
-        [AutoDatabase]
-        public void PlaceHolderTest(MongoDatabase database)
+        public UnitTestAttribute()
+            : base("Category", "Unit")
         {
         }
     }

@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="DeterministicGuidTests.cs" company="SharkByte Software Inc.">
+// <copyright file="AutoDatabaseAttribute.cs" company="SharkByte Software Inc.">
 //   Copyright (c) 2014 Carlos Sandoval. All rights reserved.
 //   
 //   This program is free software: you can redistribute it and/or modify
@@ -16,40 +16,20 @@
 //   along with this program.  If not, see http://www.gnu.org/licenses/.
 // </copyright>
 // <summary>
-//   Defines the DeterministicGuidTests type.
+//   Defines the AutoDatabaseAttribute type.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace NServiceBus.MongoDB.Tests.Utils
+namespace NServiceBus.MongoDB.Tests.TestingUtilities
 {
-    using System.Collections.Generic;
-    using FluentAssertions;
-
-    using NServiceBus.MongoDB.Tests.TestingUtilities;
-    using NServiceBus.MongoDB.Utils;
+    using Ploeh.AutoFixture;
     using Ploeh.AutoFixture.Xunit;
-    using Xunit.Extensions;
 
-    public class DeterministicGuidTests
+    public class AutoDatabaseAttribute : AutoDataAttribute
     {
-        [Theory, UnitTest]
-        [AutoData]
-        public void SameProducesSameGuid(KeyValuePair<string, int> testObject)
+        public AutoDatabaseAttribute()
+            : base(new Fixture().Customize(new LocalMongoDatabaseCustomization()))
         {
-            var first = DeterministicGuid.Create(testObject);
-            var second = DeterministicGuid.Create(testObject);
-
-            first.Should().Be(second);
-        }
-
-        [Theory, UnitTest]
-        [AutoData]
-        public void DifferntProduceDifferentGuids(KeyValuePair<string, int> firstObject, KeyValuePair<string, int> secondObject)
-        {
-            var first = DeterministicGuid.Create(firstObject);
-            var second = DeterministicGuid.Create(secondObject);
-
-            first.Should().NotBe(second);
         }
     }
 }

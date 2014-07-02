@@ -30,21 +30,23 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
 
     public class ConfigureMongoSagaPersisterTests
     {
-        [Theory]
+        [Theory, UnitTest]
         [AutoConfigureData]
         public void MongoSagaPersistence(Configure config)
         {
             config.MongoSagaPersister();
 
+            Configure.Instance.Configurer.HasComponent<MongoClientAccessor>().Should().BeTrue();
             Configure.Instance.Configurer.HasComponent<MongoDatabaseFactory>().Should().BeTrue();
             Configure.Instance.Configurer.HasComponent<MongoSagaPersister>().Should().BeTrue();
         }
 
-        [Theory]
+        [Theory, UnitTest]
         [AutoConfigureData]
         public void MongoSagaPersistenceAfterPersistenceConfigure(Configure config)
         {
             config.MongoPersistence();
+            Configure.Instance.Configurer.HasComponent<MongoClientAccessor>().Should().BeTrue();
             Configure.Instance.Configurer.HasComponent<MongoDatabaseFactory>().Should().BeTrue();
 
             config.MongoSagaPersister();

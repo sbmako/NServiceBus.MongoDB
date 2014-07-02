@@ -107,7 +107,11 @@
     <Compile Include="Sample\SagaWithoutUniqueProperties.cs" />
     <Compile Include="Sample\SagaWithUniqueProperty.cs" />
     <Compile Include="TestingUtilities\AutoConfigureData.cs" />
+    <Compile Include="TestingUtilities\AutoDatabaseAttribute.cs" />
     <Compile Include="TestingUtilities\ConfigureCustomization.cs" />
+    <Compile Include="TestingUtilities\IntegrationTestAttribute.cs" />
+    <Compile Include="TestingUtilities\LocalMongoDatabaseCustomization.cs" />
+    <Compile Include="TestingUtilities\UnitTestAttribute.cs" />
     <Compile Include="Utils\DeterministicGuidTests.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -25,6 +25,7 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
     using System.Collections.Generic;
     using FluentAssertions;
     using NServiceBus.MongoDB.SagaPersister;
+    using NServiceBus.MongoDB.Tests.TestingUtilities;
     using NServiceBus.MongoDB.Utils;
     using Ploeh.AutoFixture.Xunit;
     using Xunit;
@@ -32,7 +33,7 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
 
     public class SagaUniqueIdentityTests
     {
-        [Theory]
+        [Theory, UnitTest]
         [AutoData]
         public void SagaUniqueIdentityFormatIdTest(KeyValuePair<string, object> keyValuePair)
         {
@@ -47,7 +48,7 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
                     DeterministicGuid.Create(keyValuePair.Value.ToString())));
         }
 
-        [Theory]
+        [Theory, UnitTest]
         [AutoData]
         public void SagaUniqueIdentityFormatIdTheSame(KeyValuePair<string, object> keyValuePair)
         {
@@ -57,7 +58,7 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
             id1.Should().Be(id2);
         }
 
-        [Theory]
+        [Theory, UnitTest]
         [AutoData]
         public void SagaUniqueIdentityFormatIdDifferently(
             KeyValuePair<string, object> keyValuePair1, 

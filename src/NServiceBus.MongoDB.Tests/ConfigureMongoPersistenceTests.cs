@@ -29,40 +29,44 @@ namespace NServiceBus.MongoDB.Tests
 
     public class ConfigureMongoPersistenceTests
     {
-        [Theory]
+        [Theory, UnitTest]
         [AutoConfigureData]
         public void MongoPersistenceWithNoParameters(Configure config)
         {
             config.MongoPersistence();
 
+            Configure.Instance.Configurer.HasComponent<MongoClientAccessor>().Should().BeTrue();
             Configure.Instance.Configurer.HasComponent<MongoDatabaseFactory>().Should().BeTrue();
             var clientAccessor = Configure.Instance.Builder.Build<MongoClientAccessor>();
             clientAccessor.DatabaseName.Should().Be(Configure.EndpointName);
         }
 
-        [Theory]
+        [Theory, UnitTest]
         [AutoConfigureData]
         public void DefaultMongoPersistenceWithNoParametersCalledTwice(Configure config)
         {
             config.MongoPersistence();
+            Configure.Instance.Configurer.HasComponent<MongoClientAccessor>().Should().BeTrue();
             Configure.Instance.Configurer.HasComponent<MongoDatabaseFactory>().Should().BeTrue();
 
             config.MongoPersistence();
+            Configure.Instance.Configurer.HasComponent<MongoClientAccessor>().Should().BeTrue();
             Configure.Instance.Configurer.HasComponent<MongoDatabaseFactory>().Should().BeTrue();
         }
 
-        [Theory]
+        [Theory, UnitTest]
         [AutoConfigureData]
         public void MongoPersistenceWithConnectionStringName(Configure config)
         {
             config.MongoPersistence("My.Persistence");
+            Configure.Instance.Configurer.HasComponent<MongoClientAccessor>().Should().BeTrue();
             Configure.Instance.Configurer.HasComponent<MongoDatabaseFactory>().Should().BeTrue();
 
             var clientAccessor = Configure.Instance.Builder.Build<MongoClientAccessor>();
             clientAccessor.DatabaseName.Should().Be(Configure.EndpointName);
         }
 
-        [Theory]
+        [Theory, UnitTest]
         [AutoConfigureData]
         public void MongoPersistenceWithWrongConnectionStringName(Configure config)
         {
@@ -70,43 +74,47 @@ namespace NServiceBus.MongoDB.Tests
                   .ShouldThrow<ConfigurationErrorsException>()
                   .WithMessage("Cannot configure Mongo Persister. No connection string named Missing.Persistence was found");
 
+            Configure.Instance.Configurer.HasComponent<MongoClientAccessor>().Should().BeFalse();
             Configure.Instance.Configurer.HasComponent<MongoDatabaseFactory>().Should().BeFalse();
         }
 
-        [Theory]
+        [Theory, UnitTest]
         [AutoConfigureData]
         public void MongoPersistenceWithConnectionStringNameAndDatabaseName(Configure config)
         {
             config.MongoPersistence("My.Persistence", "test");
+            Configure.Instance.Configurer.HasComponent<MongoClientAccessor>().Should().BeTrue();
             Configure.Instance.Configurer.HasComponent<MongoDatabaseFactory>().Should().BeTrue();
 
             var clientAccessor = Configure.Instance.Builder.Build<MongoClientAccessor>();
             clientAccessor.DatabaseName.Should().Be("test");
         }
 
-        [Theory]
+        [Theory, UnitTest]
         [AutoConfigureData]
         public void MongoPersistenceWithConnectionStringLambda(Configure config)
         {
             config.MongoPersistence(() => "mongodb://localhost:27017");
+            Configure.Instance.Configurer.HasComponent<MongoClientAccessor>().Should().BeTrue();
             Configure.Instance.Configurer.HasComponent<MongoDatabaseFactory>().Should().BeTrue();
 
             var clientAccessor = Configure.Instance.Builder.Build<MongoClientAccessor>();
             clientAccessor.DatabaseName.Should().Be(Configure.EndpointName);
         }
 
-        [Theory]
+        [Theory, UnitTest]
         [AutoConfigureData]
         public void MongoPersistenceWithConnectionStringLambdaAndDatabaseName(Configure config)
         {
             config.MongoPersistence(() => "mongodb://localhost:27017", "test");
+            Configure.Instance.Configurer.HasComponent<MongoClientAccessor>().Should().BeTrue();
             Configure.Instance.Configurer.HasComponent<MongoDatabaseFactory>().Should().BeTrue();
 
             var clientAccessor = Configure.Instance.Builder.Build<MongoClientAccessor>();
             clientAccessor.DatabaseName.Should().Be("test");
         }
 
-        [Theory]
+        [Theory, UnitTest]
         [AutoConfigureData]
         public void MongoPersistenceWithConnectionStringLambdaReturningNull(Configure config)
         {
@@ -114,10 +122,11 @@ namespace NServiceBus.MongoDB.Tests
                   .ShouldThrow<ConfigurationErrorsException>()
                   .WithMessage("Cannot configure Mongo Persister. Connection string can not be null or empty.");
 
+            Configure.Instance.Configurer.HasComponent<MongoClientAccessor>().Should().BeFalse();
             Configure.Instance.Configurer.HasComponent<MongoDatabaseFactory>().Should().BeFalse();
         }
 
-        [Theory]
+        [Theory, UnitTest]
         [AutoConfigureData]
         public void MongoPersistenceWithConnectionStringLambdaReturningEmpty(Configure config)
         {
@@ -125,6 +134,7 @@ namespace NServiceBus.MongoDB.Tests
                   .ShouldThrow<ConfigurationErrorsException>()
                   .WithMessage("Cannot configure Mongo Persister. Connection string can not be null or empty.");
 
+            Configure.Instance.Configurer.HasComponent<MongoClientAccessor>().Should().BeFalse();
             Configure.Instance.Configurer.HasComponent<MongoDatabaseFactory>().Should().BeFalse();
         }
     }

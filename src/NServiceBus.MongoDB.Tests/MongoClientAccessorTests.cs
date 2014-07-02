@@ -24,12 +24,14 @@ namespace NServiceBus.MongoDB.Tests
 {
     using FluentAssertions;
     using global::MongoDB.Driver;
+    using NServiceBus.MongoDB.Tests.TestingUtilities;
     using Ploeh.AutoFixture.Xunit;
     using Xunit.Extensions;
 
     public class MongoClientAccessorTests
     {
-        [Theory, AutoData]
+        [Theory, UnitTest]
+        [AutoData]
         public void MongoClientAccessorConstror(MongoClient mongoClient, string databaseName)
         {
             var clientAccessor = new MongoClientAccessor(mongoClient, databaseName);
