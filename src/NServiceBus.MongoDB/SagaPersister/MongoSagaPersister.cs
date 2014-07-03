@@ -87,8 +87,10 @@ namespace NServiceBus.MongoDB.SagaPersister
 
             var collection = this.mongoDatabase.GetCollection(saga.GetType().Name);
 
-            var result = collection.Save(saga);
-            if (!result.Ok)
+            var query = Query.EQ("_id", saga.Id);
+            var update = global::MongoDB.Driver.Builders.Update.Replace(saga);
+            var result = collection.Update(query, update, UpdateFlags.None);
+            if (!result.UpdatedExisting)
             {
                 throw new InvalidOperationException(
                     string.Format("Unable to update saga with id {0}", saga.Id));

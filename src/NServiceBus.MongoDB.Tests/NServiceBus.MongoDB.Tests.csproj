@@ -111,6 +111,7 @@
     <Compile Include="TestingUtilities\ConfigureCustomization.cs" />
     <Compile Include="TestingUtilities\IntegrationTestAttribute.cs" />
     <Compile Include="TestingUtilities\LocalMongoDatabaseCustomization.cs" />
+    <Compile Include="TestingUtilities\MongoDatabaseFactoryExtensions.cs" />
     <Compile Include="TestingUtilities\UnitTestAttribute.cs" />
     <Compile Include="Utils\DeterministicGuidTests.cs" />
   </ItemGroup>

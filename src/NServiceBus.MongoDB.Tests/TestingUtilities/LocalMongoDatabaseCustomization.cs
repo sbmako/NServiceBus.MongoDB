@@ -30,9 +30,12 @@ namespace NServiceBus.MongoDB.Tests.TestingUtilities
         public void Customize(IFixture fixture)
         {
             var client = new MongoClient(MongoPersistenceConstants.DefaultConnectionString);
-            var database = client.GetServer().GetDatabase("UnitTest");
+            var clientAccessor = new MongoClientAccessor(client, "UnitTest");
+            var databaseFactory = new MongoDatabaseFactory(clientAccessor);
 
-            fixture.Register(() => database);
+            fixture.Register(() => client);
+            fixture.Register(() => clientAccessor);
+            fixture.Register(() => databaseFactory);
         }
     }
 }

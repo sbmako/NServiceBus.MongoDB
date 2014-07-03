@@ -22,18 +22,124 @@
 
 namespace NServiceBus.MongoDB.Tests.SagaPersister
 {
-    using Xunit.Extensions;
+    using System;
 
-    using global::MongoDB.Driver;
+    using FluentAssertions;
+    using NServiceBus.MongoDB.SagaPersister;
+    using NServiceBus.MongoDB.Tests.Sample;
     using NServiceBus.MongoDB.Tests.TestingUtilities;
-    using Xunit;
+    using Xunit.Extensions;
 
     public class MongoSagaPersisterTests
     {
         [Theory, IntegrationTest]
         [AutoDatabase]
-        public void PlaceHolderTest(MongoDatabase database)
+        public void BasicMongoSagaPersisterConstruction(MongoDatabaseFactory factory)
         {
+            var sut = new MongoSagaPersister(factory);
+        }
+
+        [Theory, IntegrationTest]
+        [AutoDatabase]
+        public void SavingSagaWithoutUniqueProperty(
+            MongoSagaPersister sut,
+            MongoDatabaseFactory factory,
+            SagaWithoutUniqueProperties sagaData)
+        {
+            sut.Save(sagaData);
+
+            var entity = factory.RetrieveSagaData(sagaData);
+
+            entity.Id.Should().Be(sagaData.Id);
+            entity.NonUniqueProperty.Should().Be(sagaData.NonUniqueProperty);
+
+            factory.RetrieveSagaUniqueIdentity(entity).Should().BeNull();
+        }
+
+        [Theory, IntegrationTest]
+        [AutoDatabase]
+        public void SavingSagaWithUniqueProperty(
+            MongoSagaPersister sut,
+            MongoDatabaseFactory factory,
+            SagaWithUniqueProperty sagaData)
+        {
+            sut.Save(sagaData);
+
+            var entity = factory.RetrieveSagaData(sagaData);
+
+            entity.Id.Should().Be(sagaData.Id);
+            entity.UniqueProperty.Should().Be(sagaData.UniqueProperty);
+            entity.NonUniqueProperty.Should().Be(sagaData.NonUniqueProperty);
+
+            var uniqueIdentity = factory.RetrieveSagaUniqueIdentity(entity);
+            uniqueIdentity.Should().NotBeNull();
+            uniqueIdentity.SagaId.Should().Be(sagaData.Id);
+        }
+
+        [Theory, IntegrationTest]
+        [AutoDatabase]
+        public void UpdatingSagaWithoutUniqueProperty(
+            MongoSagaPersister sut,
+            MongoDatabaseFactory factory,
+            SagaWithoutUniqueProperties sagaData,
+            string newValue)
+        {
+            sut.Save(sagaData);
+
+            sagaData.NonUniqueProperty = newValue;
+            sut.Update(sagaData);
+
+            var entity = factory.RetrieveSagaData(sagaData);
+            entity.NonUniqueProperty.Should().Be(newValue);
+
+            factory.RetrieveSagaUniqueIdentity(entity).Should().BeNull();
+        }
+
+        [Theory, IntegrationTest]
+        [AutoDatabase]
+        public void UpdatingSagaWithUniqueProperty(
+            MongoSagaPersister sut,
+            MongoDatabaseFactory factory,
+            SagaWithUniqueProperty sagaData,
+            string newValue)
+        {
+            sut.Save(sagaData);
+
+            sagaData.NonUniqueProperty = newValue;
+            sut.Update(sagaData);
+
+            var entity = factory.RetrieveSagaData(sagaData);
+            entity.NonUniqueProperty.Should().Be(newValue);
+
+            var uniqueIdentity = factory.RetrieveSagaUniqueIdentity(entity);
+            uniqueIdentity.Should().NotBeNull();
+            uniqueIdentity.SagaId.Should().Be(sagaData.Id);
+        }
+
+        [Theory, IntegrationTest]
+        [AutoDatabase]
+        public void UpdatingNonExistantSagaWithoutUniqueProperty(
+            MongoSagaPersister sut,
+            MongoDatabaseFactory factory,
+            SagaWithoutUniqueProperties sagaData)
+        {
+            sut.Invoking(s => s.Update(sagaData)).ShouldThrow<InvalidOperationException>();
+
+            factory.RetrieveSagaData(sagaData).Should().BeNull();
+            factory.RetrieveSagaUniqueIdentity(sagaData).Should().BeNull();
+        }
+
+        [Theory, IntegrationTest]
+        [AutoDatabase]
+        public void UpdatingNonExistantSagaWithUniqueProperty(
+            MongoSagaPersister sut,
+            MongoDatabaseFactory factory,
+            SagaWithUniqueProperty sagaData)
+        {
+            sut.Invoking(s => s.Update(sagaData)).ShouldThrow<InvalidOperationException>();
+
+            factory.RetrieveSagaData(sagaData).Should().BeNull();
+            factory.RetrieveSagaUniqueIdentity(sagaData).Should().BeNull();
         }
     }
 }
