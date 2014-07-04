@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+    <id>NServiceBus.MongoDB</id>
+    <title>NServiceBus MongoDB</title>
+    <version>0.1.0.0</version>
+    <authors>Carlos Sandoval</authors>
+    <owners>SharkByte Software Inc.</owners>
+    <licenseUrl>https://github.com/sbmako/NServiceBus.MongoDB/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/sbmako/NServiceBus.MongoDB</projectUrl>
+    <iconUrl>http://s3.amazonaws.com/nuget.images/NServiceBus_32.png</iconUrl>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <description>MongoDB integration for the NServicebus</description>
+    <releaseNotes></releaseNotes>
+    <copyright>Copyright 2014 SharkByte Software Inc.. All rights reserved</copyright>
+    <tags>nservicebus servicebus msmq cqrs publish subscribe mongodb</tags>
+    <dependencies>
+		<dependency id="mongocsharpdriver" version="1.9.2" />	
+	</dependencies>
+  </metadata>
+  <files>
+    <file src="..\..\src\NServiceBus.MongoDB\bin\Release\NServiceBus.MongoDB.???" target="lib\net45" />
+    <file src="..\..\src\NserviceBus.MongoDB\bin\Release\CodeContracts\*" target="lib\net45" />
+  </files>
+</package>
