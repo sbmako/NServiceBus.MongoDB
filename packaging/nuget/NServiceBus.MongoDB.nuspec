@@ -20,6 +20,6 @@
   </metadata>
   <files>
     <file src="..\..\src\NServiceBus.MongoDB\bin\Release\NServiceBus.MongoDB.???" target="lib\net45" />
-    <file src="..\..\src\NserviceBus.MongoDB\bin\Release\CodeContracts\*" target="lib\net45" />
+    <!-- <file src="..\..\src\NserviceBus.MongoDB\bin\Release\CodeContracts\*" target="lib\net45" /> -->
   </files>
 </package>
