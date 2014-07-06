@@ -183,7 +183,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConfigureMongoPersistence.cs" />
+    <Compile Include="Extensions\DocumentVersionExtensions.cs" />
     <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="IHaveDocumentVersion.cs" />
     <Compile Include="MongoClientAccessor.cs" />
     <Compile Include="MongoDatabaseFactory.cs" />
     <Compile Include="MongoPersistenceConstants.cs" />

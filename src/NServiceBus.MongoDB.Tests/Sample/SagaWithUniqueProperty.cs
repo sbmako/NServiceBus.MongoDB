@@ -26,13 +26,9 @@ namespace NServiceBus.MongoDB.Tests.Sample
 
     using NServiceBus.Saga;
 
-    public class SagaWithUniqueProperty : IContainSagaData
+    public class SagaWithUniqueProperty : ContainSagaData, IHaveDocumentVersion
     {
-        public virtual Guid Id { get; set; }
-
-        public virtual string Originator { get; set; }
-
-        public virtual string OriginalMessageId { get; set; }
+        public int DocumentVersion { get; set; }
 
         [Unique]
         public virtual string UniqueProperty { get; set; }

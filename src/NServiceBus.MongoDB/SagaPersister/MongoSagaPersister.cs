@@ -28,6 +28,7 @@ namespace NServiceBus.MongoDB.SagaPersister
     using global::MongoDB.Driver;
     using global::MongoDB.Driver.Builders;
     using NServiceBus.Logging;
+    using NServiceBus.MongoDB.Extensions;
     using NServiceBus.Saga;
 
     /// <summary>
@@ -87,8 +88,8 @@ namespace NServiceBus.MongoDB.SagaPersister
 
             var collection = this.mongoDatabase.GetCollection(saga.GetType().Name);
 
-            var query = Query.EQ("_id", saga.Id);
-            var update = global::MongoDB.Driver.Builders.Update.Replace(saga);
+            var query = saga.SagaMongoUpdateQuery();
+            var update = saga.SagaMongoUpdate();
             var result = collection.Update(query, update, UpdateFlags.None);
             if (!result.UpdatedExisting)
             {

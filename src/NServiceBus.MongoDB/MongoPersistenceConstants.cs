@@ -26,6 +26,8 @@ namespace NServiceBus.MongoDB
 
     internal static class MongoPersistenceConstants
     {
+        public const string VersionPropertyName = "DocumentVersion";
+
         private const int DefaultPort = 27017;
 
         private const string DefaultHost = "localhost";

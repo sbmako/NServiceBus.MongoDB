@@ -29,7 +29,7 @@ namespace NServiceBus.MongoDB.SubscriptionStorage
     /// <summary>
     /// The subscription.
     /// </summary>
-    public class Subscription
+    public class Subscription : IHaveDocumentVersion
     {
         /// <summary>
         /// Gets or sets the id.

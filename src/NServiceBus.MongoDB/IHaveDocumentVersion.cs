@@ -1,5 +1,5 @@
-// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SagaWithoutUniqueProperties.cs" company="SharkByte Software Inc.">
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="IHaveDocumentVersion.cs" company="SharkByte Software Inc.">
 //   Copyright (c) 2014 Carlos Sandoval. All rights reserved.
 //   
 //   This program is free software: you can redistribute it and/or modify
@@ -16,20 +16,20 @@
 //   along with this program.  If not, see http://www.gnu.org/licenses/.
 // </copyright>
 // <summary>
-//   Defines the SagaWithoutUniqueProperties type.
+//   Defines the IHaveDocumentVersion type.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace NServiceBus.MongoDB.Tests.Sample
+namespace NServiceBus.MongoDB
 {
-    using NServiceBus.Saga;
-
-    public class SagaWithoutUniqueProperties : ContainSagaData, IHaveDocumentVersion
+    /// <summary>
+    /// The HaveDocumentVersion interface.
+    /// </summary>
+    public interface IHaveDocumentVersion
     {
-        public int DocumentVersion { get; set; }
-
-        public virtual string UniqueProperty { get; set; }
-
-        public string NonUniqueProperty { get; set; }
+        /// <summary>
+        /// Gets or sets the document version.
+        /// </summary>
+        int DocumentVersion { get; set; }
     }
 }

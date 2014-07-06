@@ -23,8 +23,8 @@
 namespace NServiceBus.MongoDB.Tests.SagaPersister
 {
     using System;
-
     using FluentAssertions;
+    using global::MongoDB.Driver;
     using NServiceBus.MongoDB.SagaPersister;
     using NServiceBus.MongoDB.Tests.Sample;
     using NServiceBus.MongoDB.Tests.TestingUtilities;
@@ -74,6 +74,17 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
             var uniqueIdentity = factory.RetrieveSagaUniqueIdentity(entity);
             uniqueIdentity.Should().NotBeNull();
             uniqueIdentity.SagaId.Should().Be(sagaData.Id);
+        }
+
+        [Theory, IntegrationTest]
+        [AutoDatabase]
+        public void SavingSagaTwiceThrowsException(
+            MongoSagaPersister sut,
+            MongoDatabaseFactory factory,
+            SagaWithUniqueProperty sagaData)
+        {
+            sut.Save(sagaData);
+            sut.Invoking(s => s.Save(sagaData)).ShouldThrow<MongoDuplicateKeyException>();
         }
 
         [Theory, IntegrationTest]
@@ -140,6 +151,24 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
 
             factory.RetrieveSagaData(sagaData).Should().BeNull();
             factory.RetrieveSagaUniqueIdentity(sagaData).Should().BeNull();
+        }
+
+        [Theory, IntegrationTest]
+        [AutoDatabase]
+        public void UpdateCollisionShouldFail(
+            MongoSagaPersister sut,
+            MongoDatabaseFactory factory,
+            SagaWithUniqueProperty sagaData)
+        {
+            sut.Save(sagaData);
+            var saga1 = factory.RetrieveSagaData(sagaData);
+            var saga2 = factory.RetrieveSagaData(sagaData);
+
+            saga1.UniqueProperty = Guid.NewGuid().ToString();
+            sut.Update(saga1);
+
+            saga2.UniqueProperty = Guid.NewGuid().ToString();
+            sut.Invoking(s => s.Update(saga2)).ShouldThrow<InvalidOperationException>();
         }
     }
 }
