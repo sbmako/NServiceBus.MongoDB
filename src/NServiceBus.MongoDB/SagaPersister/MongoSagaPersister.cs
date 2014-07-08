@@ -88,8 +88,8 @@ namespace NServiceBus.MongoDB.SagaPersister
 
             var collection = this.mongoDatabase.GetCollection(saga.GetType().Name);
 
-            var query = saga.SagaMongoUpdateQuery();
-            var update = saga.SagaMongoUpdate();
+            var query = saga.MongoUpdateQuery();
+            var update = saga.MongoUpdate();
             var result = collection.Update(query, update, UpdateFlags.None);
             if (!result.UpdatedExisting)
             {

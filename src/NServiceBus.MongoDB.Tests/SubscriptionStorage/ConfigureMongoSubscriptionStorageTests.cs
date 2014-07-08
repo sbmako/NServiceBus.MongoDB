@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ConfigureMongoSagaPersisterTests.cs" company="SharkByte Software Inc.">
+// <copyright file="ConfigureMongoSubscriptionStorageTests.cs" company="SharkByte Software Inc.">
 //   Copyright (c) 2014 Carlos Sandoval. All rights reserved.
 //   
 //   This program is free software: you can redistribute it and/or modify
@@ -16,42 +16,41 @@
 //   along with this program.  If not, see http://www.gnu.org/licenses/.
 // </copyright>
 // <summary>
-//   Defines the ConfigureMongoSagaPersisterTests type.
+//   Defines the ConfigureMongoSubscriptionStorageTests type.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace NServiceBus.MongoDB.Tests.SagaPersister
+namespace NServiceBus.MongoDB.Tests.SubscriptionStorage
 {
     using FluentAssertions;
-
-    using NServiceBus.MongoDB.SagaPersister;
+    using NServiceBus.MongoDB.SubscriptionStorage;
     using NServiceBus.MongoDB.Tests.TestingUtilities;
     using Xunit.Extensions;
 
-    public class ConfigureMongoSagaPersisterTests
+    public class ConfigureMongoSubscriptionStorageTests
     {
         [Theory, UnitTest]
         [AutoConfigureData]
-        public void MongoSagaPersistence(Configure config)
+        public void MongoSubscriptionStorage(Configure config)
         {
-            config.MongoSagaPersister();
+            config.MongoSubscriptionStorage();
 
             Configure.Instance.Configurer.HasComponent<MongoClientAccessor>().Should().BeTrue();
             Configure.Instance.Configurer.HasComponent<MongoDatabaseFactory>().Should().BeTrue();
-            Configure.Instance.Configurer.HasComponent<MongoSagaPersister>().Should().BeTrue();
+            Configure.Instance.Configurer.HasComponent<MongoSubscriptionStorage>().Should().BeTrue();
         }
 
         [Theory, UnitTest]
         [AutoConfigureData]
-        public void MongoSagaPersistenceAfterPersistenceConfigure(Configure config)
+        public void MongoSubscriptionStorageAfterPersistenceConfigure(Configure config)
         {
             config.MongoPersistence();
             Configure.Instance.Configurer.HasComponent<MongoClientAccessor>().Should().BeTrue();
             Configure.Instance.Configurer.HasComponent<MongoDatabaseFactory>().Should().BeTrue();
-            Configure.Instance.Configurer.HasComponent<MongoSagaPersister>().Should().BeFalse();
+            Configure.Instance.Configurer.HasComponent<MongoSubscriptionStorage>().Should().BeFalse();
 
-            config.MongoSagaPersister();
-            Configure.Instance.Configurer.HasComponent<MongoSagaPersister>().Should().BeTrue();
+            config.MongoSubscriptionStorage();
+            Configure.Instance.Configurer.HasComponent<MongoSubscriptionStorage>().Should().BeTrue();
         }
     }
 }

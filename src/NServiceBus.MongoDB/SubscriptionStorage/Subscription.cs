@@ -22,15 +22,49 @@
 
 namespace NServiceBus.MongoDB.SubscriptionStorage
 {
+    using System;
     using System.Collections.Generic;
+    using System.Diagnostics.Contracts;
+    using System.Linq;
+
     using NServiceBus.MongoDB.Utils;
     using NServiceBus.Unicast.Subscriptions;
 
     /// <summary>
     /// The subscription.
     /// </summary>
-    public class Subscription : IHaveDocumentVersion
+    public sealed class Subscription : IHaveDocumentVersion
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Subscription"/> class.
+        /// </summary>
+        public Subscription()
+        {
+            this.Id = string.Empty;
+            this.DocumentVersion = 0;
+            this.MessageType = new MessageType(typeof(object));
+            this.Clients = new List<Address>();
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Subscription"/> class.
+        /// </summary>
+        /// <param name="messageType">
+        /// The message type.
+        /// </param>
+        /// <param name="clients">
+        /// The clients.
+        /// </param>
+        public Subscription(MessageType messageType, IEnumerable<Address> clients)
+        {
+            Contract.Requires<ArgumentNullException>(messageType != null);
+            Contract.Requires<ArgumentNullException>(clients != null);
+
+            this.Id = FormatId(messageType);
+            this.MessageType = messageType;
+            this.Clients = clients.ToList();
+        }
+
         /// <summary>
         /// Gets or sets the id.
         /// </summary>
@@ -64,6 +98,14 @@ namespace NServiceBus.MongoDB.SubscriptionStorage
         {
             var id = DeterministicGuid.Create(messageType.TypeName, "/", messageType.Version.Major);
             return string.Format("Subscriptions/{0}", id);
+        }
+
+        [ContractInvariantMethod]
+        private void ObjectInvariants()
+        {
+            Contract.Invariant(this.Id != null);
+            Contract.Invariant(this.MessageType != null);
+            Contract.Invariant(this.Clients != null);
         }
     }
 }

@@ -22,18 +22,17 @@
 
 namespace NServiceBus.MongoDB.Extensions
 {
-    using System.Collections.Generic;
     using System.Diagnostics.Contracts;
     using System.Linq;
-
     using global::MongoDB.Bson;
     using global::MongoDB.Driver;
     using global::MongoDB.Driver.Builders;
+    using NServiceBus.MongoDB.SubscriptionStorage;
     using NServiceBus.Saga;
 
     internal static class DocumentVersionExtensions
     {
-        public static IMongoQuery SagaMongoUpdateQuery(this IContainSagaData saga)
+        public static IMongoQuery MongoUpdateQuery(this IContainSagaData saga)
         {
             Contract.Requires(saga != null);
             Contract.Ensures(Contract.Result<IMongoQuery>() != null);
@@ -48,7 +47,7 @@ namespace NServiceBus.MongoDB.Extensions
                            Query.EQ(MongoPersistenceConstants.VersionPropertyName, versionedDocument.DocumentVersion));
         }
 
-        public static IMongoUpdate SagaMongoUpdate<T>(this T saga)
+        public static IMongoUpdate MongoUpdate<T>(this T saga)
             where T : IContainSagaData
         {
             Contract.Requires(saga != null);
@@ -69,6 +68,24 @@ namespace NServiceBus.MongoDB.Extensions
             classMap.ToList().ForEach(f => updateBuilder.Set(f.Name, f.Value));
 
             return updateBuilder;
+        }
+
+        public static IMongoQuery MongoUpdateQuery(this Subscription subscription)
+        {
+            Contract.Requires(subscription != null);
+            Contract.Ensures(Contract.Result<IMongoQuery>() != null);
+
+            return Query.And(
+                Query<Subscription>.EQ(s => s.Id, subscription.Id),
+                Query<Subscription>.EQ(s => s.DocumentVersion, subscription.DocumentVersion));
+        }
+
+        public static IMongoUpdate MongoUpdate(this Subscription subscription)
+        {
+            Contract.Requires(subscription != null);
+            Contract.Ensures(Contract.Result<IMongoUpdate>() != null);
+
+            return Update.Replace(subscription);
         }
     }
 }

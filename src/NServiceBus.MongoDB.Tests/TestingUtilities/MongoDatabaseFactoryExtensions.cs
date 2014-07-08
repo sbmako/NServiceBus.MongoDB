@@ -22,6 +22,11 @@
 
 namespace NServiceBus.MongoDB.Tests.TestingUtilities
 {
+    using System.Collections.Generic;
+
+    using NServiceBus.MongoDB.SubscriptionStorage;
+    using NServiceBus.Unicast.Subscriptions;
+
     using global::MongoDB.Driver.Builders;
     using NServiceBus.MongoDB.SagaPersister;
     using NServiceBus.Saga;

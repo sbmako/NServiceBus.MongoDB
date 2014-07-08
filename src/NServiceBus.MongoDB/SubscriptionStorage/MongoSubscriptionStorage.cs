@@ -25,16 +25,21 @@ namespace NServiceBus.MongoDB.SubscriptionStorage
     using System;
     using System.Collections.Generic;
     using System.Diagnostics.Contracts;
+    using System.Linq;
     using global::MongoDB.Driver;
+    using global::MongoDB.Driver.Builders;
+    using NServiceBus.MongoDB.Extensions;
     using NServiceBus.Unicast.Subscriptions;
     using NServiceBus.Unicast.Subscriptions.MessageDrivenSubscriptions;
 
     /// <summary>
     /// The mongo subscription storage.
     /// </summary>
-    public class MongoSubscriptionStorage : ISubscriptionStorage
+    public sealed class MongoSubscriptionStorage : ISubscriptionStorage
     {
-        ////private readonly MongoDatabase mongoDatabase;
+        private static readonly string SubscriptionName = typeof(Subscription).Name;
+
+        private readonly MongoDatabase mongoDatabase;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MongoSubscriptionStorage"/> class.
@@ -45,7 +50,7 @@ namespace NServiceBus.MongoDB.SubscriptionStorage
         public MongoSubscriptionStorage(MongoDatabaseFactory mongoFactory)
         {
             Contract.Requires<ArgumentNullException>(mongoFactory != null);
-            ////this.mongoDatabase = mongoFactory.GetDatabase();
+            this.mongoDatabase = mongoFactory.GetDatabase();
         }
 
         /// <summary>
@@ -64,29 +69,56 @@ namespace NServiceBus.MongoDB.SubscriptionStorage
         /// <param name="messageTypes">
         /// The message types.
         /// </param>
-        public void Subscribe(Address client, IEnumerable<MessageType> messageTypes)
+        void ISubscriptionStorage.Subscribe(Address client, IEnumerable<MessageType> messageTypes)
         {
-            ////var messageTypeLookup = messageTypes.ToDictionary(Subscription.FormatId);
+            var messageTypeLookup = messageTypes.ToDictionary(Subscription.FormatId);
 
-            ////var query = Query<Subscription>.EQ(e => e.Id, sagaId);
-            ////var entity = this.mongoDatabase.GetCollection<T>(typeof(T).Name).FindOne(query);
+            var existingSubscriptions = this.GetSubscriptions(messageTypeLookup.Values).ToDictionary(m => m.Id);
+            var newSubscriptions = new List<Subscription>();
 
-            ////using (var session = OpenSession())
-            ////{
-            ////var existingSubscriptions =
-            ////    GetSubscriptions(messageTypeLookup.Values, this.mongoDatabase).ToLookup(m => m.Id);
+            messageTypeLookup.ToList().ForEach(
+                mt =>
+                    {
+                        if (!existingSubscriptions.ContainsKey(mt.Key))
+                        {
+                            newSubscriptions.Add(new Subscription(mt.Value, new List<Address>() { client }));
+                            return;
+                        }
 
-            ////var newAndExistingSubscriptions = messageTypeLookup
-            ////        .Select(id => existingSubscriptions[id.Key].SingleOrDefault() ?? StoreNewSubscription(session, id.Key, id.Value))
-            ////        .Where(subscription => subscription.Clients.All(c => c != client)).ToArray();
+                        var existing = existingSubscriptions[mt.Key];
 
-            ////    foreach (var subscription in newAndExistingSubscriptions)
-            ////    {
-            ////        subscription.Clients.Add(client);
-            ////    }
+                        if (existing.Clients.All(c => c != client))
+                        {
+                            existing.Clients.Add(client);
+                        }
+                    });
 
-            ////    session.SaveChanges();
-            ////}
+            var collection = this.mongoDatabase.GetCollection(SubscriptionName);
+
+            existingSubscriptions.Values.ToList().ForEach(
+                s =>
+                    {
+                        var query = s.MongoUpdateQuery();
+                        var update = s.MongoUpdate();
+                        var result = collection.Update(query, update, UpdateFlags.None);
+                        if (!result.UpdatedExisting)
+                        {
+                            throw new InvalidOperationException(
+                                string.Format("Unable to update subscription with id {0}", s.Id));
+                        }
+                    });
+
+            newSubscriptions.ForEach(
+                s =>
+                    {
+                        var result = collection.Insert(s);
+
+                        if (!result.Ok)
+                        {
+                            throw new InvalidOperationException(
+                                string.Format("Unable to save subscription with id {0}", s.Id));
+                        }
+                    });
         }
 
         /// <summary>
@@ -98,7 +130,7 @@ namespace NServiceBus.MongoDB.SubscriptionStorage
         /// <param name="messageTypes">
         /// The message types.
         /// </param>
-        public void Unsubscribe(Address client, IEnumerable<MessageType> messageTypes)
+        void ISubscriptionStorage.Unsubscribe(Address client, IEnumerable<MessageType> messageTypes)
         {
         }
 
@@ -111,25 +143,20 @@ namespace NServiceBus.MongoDB.SubscriptionStorage
         /// <returns>
         /// The <see cref="IEnumerable"/>.
         /// </returns>
-        public IEnumerable<Address> GetSubscriberAddressesForMessage(IEnumerable<MessageType> messageTypes)
+        IEnumerable<Address> ISubscriptionStorage.GetSubscriberAddressesForMessage(IEnumerable<MessageType> messageTypes)
         {
-            throw new NotImplementedException();
+            var subscriptions = this.GetSubscriptions(messageTypes);
+            return subscriptions.SelectMany(s => s.Clients).Distinct().ToArray();
         }
 
-        ////private static IEnumerable<Subscription> GetSubscriptions(IEnumerable<MessageType> messageTypes, MongoDatabase database)
-        ////{
-        ////    var ids = messageTypes
-        ////        .Select(Subscription.FormatId);
+        internal IEnumerable<Subscription> GetSubscriptions(IEnumerable<MessageType> messageTypes)
+        {
+            Contract.Requires(messageTypes != null);
+            Contract.Ensures(Contract.Result<IEnumerable<Subscription>>() != null);
 
-        ////    return database.Load<Subscription>(ids).Where(s => s != null);
-        ////}
-
-        ////private static Subscription StoreNewSubscription(IDocumentSession session, string id, MessageType messageType)
-        ////{
-        ////    var subscription = new Subscription { Clients = new List<Address>(), Id = id, MessageType = messageType };
-        ////    session.Store(subscription);
-
-        ////    return subscription;
-        ////}
+            var ids = messageTypes.Select(Subscription.FormatId);
+            var query = Query<Subscription>.In(p => p.Id, ids);
+            return this.mongoDatabase.GetCollection<Subscription>(SubscriptionName).Find(query);
+        }
     }
 }
