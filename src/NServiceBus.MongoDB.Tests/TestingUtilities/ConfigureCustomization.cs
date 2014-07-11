@@ -23,6 +23,7 @@
 namespace NServiceBus.MongoDB.Tests.TestingUtilities
 {
     using Ploeh.AutoFixture;
+    using Ploeh.AutoFixture.Kernel;
 
     public class ConfigureCustomization : ICustomization
     {
@@ -33,6 +34,8 @@ namespace NServiceBus.MongoDB.Tests.TestingUtilities
                                   .DefaultBuilder();
 
             fixture.Register(() => config);
+
+            fixture.Customize<Address>(c => c.FromFactory(new MethodInvoker(new GreedyConstructorQuery())));
         }
     }
 }

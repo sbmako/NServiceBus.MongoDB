@@ -33,6 +33,11 @@ namespace NServiceBus.MongoDB.Tests.SubscriptionStorage
 
     public class MongoSubscriptionStorageTests
     {
+        public MongoSubscriptionStorageTests()
+        {
+            ConfigureMongoSubscriptionStorage.ConfigureClassMaps();
+        }
+
         [Theory, IntegrationTest]
         [AutoDatabase]
         public void BasicMongoSubscriptionStorageConstruction(MongoDatabaseFactory factory)
@@ -61,8 +66,7 @@ namespace NServiceBus.MongoDB.Tests.SubscriptionStorage
             subscription.MessageType.Should().Be(messageTypes.First());
             subscription.DocumentVersion.Should().Be(0);
             subscription.Clients.Count.Should().Be(1);
-            subscription.Clients.First().Machine.Should().Be(client.Machine);
-            subscription.Clients.First().Queue.Should().Be(client.Queue);
+            subscription.Clients.First().Should().Be(client);
         }
 
         [Theory, IntegrationTest]
@@ -70,9 +74,9 @@ namespace NServiceBus.MongoDB.Tests.SubscriptionStorage
         public void BasicMessageSubscriptionTwice(
             MongoSubscriptionStorage storage,
             MongoDatabaseFactory factory,
-            Address client,
             string messageTypeString)
         {
+            var client = new Address("testqueue.publisher", "localhost");
             var sut = storage as ISubscriptionStorage;
             var messageTypes = new List<MessageType>() { new MessageType(messageTypeString, "1.0.0.0") };
 
@@ -87,13 +91,12 @@ namespace NServiceBus.MongoDB.Tests.SubscriptionStorage
             subscription.MessageType.Should().Be(messageTypes.First());
             subscription.DocumentVersion.Should().Be(0);
             subscription.Clients.Count.Should().Be(1);
-            subscription.Clients.First().Machine.Should().Be(client.Machine);
-            subscription.Clients.First().Queue.Should().Be(client.Queue);
+            subscription.Clients.First().Should().Be(client);
         }
 
         [Theory, IntegrationTest]
         [AutoDatabase]
-        public void MessageSubscriptionToMessageTypes(
+        public void MessageSubscriptionTwoMessageTypes(
             MongoSubscriptionStorage storage,
             MongoDatabaseFactory factory,
             Address client,
@@ -119,9 +122,49 @@ namespace NServiceBus.MongoDB.Tests.SubscriptionStorage
                     s.Id.Should().BeOneOf(ids);
                     s.DocumentVersion.Should().Be(0);
                     s.Clients.Count.Should().Be(1);
-                    s.Clients.First().Machine.Should().Be(client.Machine);
-                    s.Clients.First().Queue.Should().Be(client.Queue);
+                    s.Clients.First().Should().Be(client);
                 });
+        }
+
+        [Theory, IntegrationTest]
+        [AutoDatabase]
+        public void MessageSubscriptionTwoClientsOneMessageTypes(
+            MongoSubscriptionStorage storage,
+            MongoDatabaseFactory factory,
+            Address client1,
+            Address client2,
+            string messageTypeString1)
+        {
+            var sut = storage as ISubscriptionStorage;
+            var messageTypes = new List<MessageType>()
+                                   {
+                                       new MessageType(messageTypeString1, "1.0.0.0"),
+                                   };
+
+            sut.Subscribe(client1, messageTypes);
+            sut.Subscribe(client2, messageTypes);
+
+            var clients = sut.GetSubscriberAddressesForMessage(messageTypes).ToList();
+            clients.Should().ContainSingle(a => client1 == a);
+            clients.Should().ContainSingle(a => client2 == a);
+        }
+
+        [Theory, IntegrationTest]
+        [AutoDatabase]
+        public void UnsubscribeWhenThereIsNoSubscription(
+            MongoSubscriptionStorage storage,
+            MongoDatabaseFactory factory,
+            Address client,
+            string messageTypeString1)
+        {
+            var sut = storage as ISubscriptionStorage;
+            var messageTypes = new List<MessageType>()
+                                   {
+                                       new MessageType(messageTypeString1, "1.0.0.0"),
+                                   };
+
+            sut.Unsubscribe(client, messageTypes);
+            storage.GetSubscriptions(messageTypes).Should().BeEmpty();
         }
     }
 }

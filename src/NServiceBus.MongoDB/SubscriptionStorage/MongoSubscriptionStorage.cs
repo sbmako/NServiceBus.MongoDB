@@ -76,6 +76,7 @@ namespace NServiceBus.MongoDB.SubscriptionStorage
             var existingSubscriptions = this.GetSubscriptions(messageTypeLookup.Values).ToDictionary(m => m.Id);
             var newSubscriptions = new List<Subscription>();
 
+            //// TODO: section needs to be refactored/simplified
             messageTypeLookup.ToList().ForEach(
                 mt =>
                     {
@@ -100,25 +101,25 @@ namespace NServiceBus.MongoDB.SubscriptionStorage
                     {
                         var query = s.MongoUpdateQuery();
                         var update = s.MongoUpdate();
-                        var result = collection.Update(query, update, UpdateFlags.None);
-                        if (!result.UpdatedExisting)
+                        var updateResult = collection.Update(query, update, UpdateFlags.None);
+                        if (!updateResult.UpdatedExisting)
                         {
                             throw new InvalidOperationException(
                                 string.Format("Unable to update subscription with id {0}", s.Id));
                         }
                     });
+            
+            if (!newSubscriptions.Any())
+            {
+                return;
+            }
 
-            newSubscriptions.ForEach(
-                s =>
-                    {
-                        var result = collection.Insert(s);
-
-                        if (!result.Ok)
-                        {
-                            throw new InvalidOperationException(
-                                string.Format("Unable to save subscription with id {0}", s.Id));
-                        }
-                    });
+            var insertResult = collection.InsertBatch(newSubscriptions);
+            if (!insertResult.Any(r => r.Ok))
+            {
+                throw new InvalidOperationException(
+                    string.Format("Unable to save subscription"));
+            }
         }
 
         /// <summary>

@@ -3,23 +3,26 @@
   <metadata xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <id>NServiceBus.MongoDB</id>
     <title>NServiceBus MongoDB</title>
-    <version>0.1.0.0</version>
+    <version>0.1.1-preview-4</version>
     <authors>Carlos Sandoval</authors>
     <owners>SharkByte Software Inc.</owners>
     <licenseUrl>https://github.com/sbmako/NServiceBus.MongoDB/blob/master/LICENSE</licenseUrl>
     <projectUrl>https://github.com/sbmako/NServiceBus.MongoDB</projectUrl>
     <iconUrl>http://s3.amazonaws.com/nuget.images/NServiceBus_32.png</iconUrl>
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
-    <description>MongoDB integration for the NServicebus</description>
-    <releaseNotes></releaseNotes>
+    <description>MongoDB integration for  NServiceBus</description>
+    <releaseNotes>Note: this is a preview release and should not be used for production</releaseNotes>
     <copyright>Copyright 2014 SharkByte Software Inc.. All rights reserved</copyright>
     <tags>nservicebus servicebus msmq cqrs publish subscribe mongodb</tags>
     <dependencies>
 		<dependency id="mongocsharpdriver" version="1.9.2" />	
 	</dependencies>
+    <references>
+	  <reference file="NServiceBus.MongoDB.dll" />
+    </references>
   </metadata>
   <files>
     <file src="..\..\src\NServiceBus.MongoDB\bin\Release\NServiceBus.MongoDB.???" target="lib\net45" />
-    <!-- <file src="..\..\src\NserviceBus.MongoDB\bin\Release\CodeContracts\*" target="lib\net45" /> -->
+    <file src="..\..\src\NserviceBus.MongoDB\bin\Release\CodeContracts\*.*" target="lib\net45\CodeContracts" />
   </files>
 </package>

@@ -24,6 +24,8 @@ namespace NServiceBus.MongoDB.SubscriptionStorage
 {
     using System;
     using System.Diagnostics.Contracts;
+    using global::MongoDB.Bson.Serialization;
+    using NServiceBus.Unicast.Subscriptions;
 
     /// <summary>
     /// The configure mongo subscription storage.
@@ -50,7 +52,41 @@ namespace NServiceBus.MongoDB.SubscriptionStorage
 
             config.Configurer.ConfigureComponent<MongoSubscriptionStorage>(DependencyLifecycle.SingleInstance);
 
+            ConfigureClassMaps();
+
             return config;
+        }
+
+        internal static void ConfigureClassMaps()
+        {
+            if (!BsonClassMap.IsClassMapRegistered(typeof(MessageType)))
+            {
+                ConfigureMessageTypeClassMap();
+            }
+
+            if (!BsonClassMap.IsClassMapRegistered(typeof(Address)))
+            {
+                ConfigureAddressClassMap();
+            }
+        }
+
+        private static void ConfigureAddressClassMap()
+        {
+            BsonClassMap.RegisterClassMap<Address>(
+                cm =>
+                    {
+                        cm.AutoMap();
+                        cm.MapCreator(a => new Address(a.Queue, a.Machine));
+                    });
+        }
+
+        private static void ConfigureMessageTypeClassMap()
+        {
+            BsonClassMap.RegisterClassMap<MessageType>(cm =>
+            {
+                cm.AutoMap();
+                cm.MapCreator(m => new MessageType(m.TypeName, m.Version));
+            });            
         }
     }
 }
