@@ -117,8 +117,7 @@ namespace NServiceBus.MongoDB.SubscriptionStorage
             var insertResult = collection.InsertBatch(newSubscriptions);
             if (!insertResult.Any(r => r.Ok))
             {
-                throw new InvalidOperationException(
-                    string.Format("Unable to save subscription"));
+                throw new InvalidOperationException(string.Format("Unable to save {0} subscription", client));
             }
         }
 
@@ -133,6 +132,18 @@ namespace NServiceBus.MongoDB.SubscriptionStorage
         /// </param>
         void ISubscriptionStorage.Unsubscribe(Address client, IEnumerable<MessageType> messageTypes)
         {
+            var queries =
+                messageTypes.Select(mt => Query<Subscription>.EQ(s => s.Id, Subscription.FormatId(mt))).ToList();
+            var update = Update<Subscription>.Pull(subscription => subscription.Clients, client);
+
+            var collection = this.mongoDatabase.GetCollection(SubscriptionName);
+            var results = queries.Select(q => collection.Update(q, update)).Where(result => !result.Ok);
+
+            if (results.Any())
+            {
+                throw new InvalidOperationException(
+                    string.Format("Unable to unsubscribe {0} from one of its subscriptions", client));
+            }
         }
 
         /// <summary>

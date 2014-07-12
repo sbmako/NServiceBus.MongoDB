@@ -78,7 +78,7 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
 
         [Theory, IntegrationTest]
         [AutoDatabase]
-        public void SavingSagaTwiceThrowsException(
+        public void InterleavedSavingSagaShouldThrowException(
             MongoSagaPersister sut,
             MongoDatabaseFactory factory,
             SagaWithUniqueProperty sagaData)

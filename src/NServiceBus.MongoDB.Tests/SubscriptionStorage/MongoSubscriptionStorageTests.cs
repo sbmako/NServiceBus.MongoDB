@@ -47,7 +47,7 @@ namespace NServiceBus.MongoDB.Tests.SubscriptionStorage
 
         [Theory, IntegrationTest]
         [AutoDatabase]
-        public void BasicMessageSubscription(
+        public void SingleSubscriptionShouldOnlyCreateOneSubscription(
             MongoSubscriptionStorage storage,
             MongoDatabaseFactory factory,
             Address client,
@@ -59,19 +59,17 @@ namespace NServiceBus.MongoDB.Tests.SubscriptionStorage
             sut.Subscribe(client, messageTypes);
 
             var subscriptions = storage.GetSubscriptions(messageTypes).ToList();
-            subscriptions.Count.Should().Be(messageTypes.Count);
+            subscriptions.Should().HaveCount(messageTypes.Count);
 
             var subscription = subscriptions.First();
-            subscription.Id.Should().Be(Subscription.FormatId(messageTypes.First()));
             subscription.MessageType.Should().Be(messageTypes.First());
-            subscription.DocumentVersion.Should().Be(0);
-            subscription.Clients.Count.Should().Be(1);
+            subscription.Clients.Should().HaveCount(1);
             subscription.Clients.First().Should().Be(client);
         }
 
         [Theory, IntegrationTest]
         [AutoDatabase]
-        public void BasicMessageSubscriptionTwice(
+        public void SameClientSubscribesTwiceShouldOnlyCreateOneSubscribtion(
             MongoSubscriptionStorage storage,
             MongoDatabaseFactory factory,
             string messageTypeString)
@@ -84,19 +82,17 @@ namespace NServiceBus.MongoDB.Tests.SubscriptionStorage
             sut.Subscribe(client, messageTypes);
 
             var subscriptions = storage.GetSubscriptions(messageTypes).ToList();
-            subscriptions.Count.Should().Be(messageTypes.Count);
+            subscriptions.Should().HaveCount(messageTypes.Count);
 
             var subscription = subscriptions.First();
-            subscription.Id.Should().Be(Subscription.FormatId(messageTypes.First()));
             subscription.MessageType.Should().Be(messageTypes.First());
-            subscription.DocumentVersion.Should().Be(0);
-            subscription.Clients.Count.Should().Be(1);
+            subscription.Clients.Should().HaveCount(1);
             subscription.Clients.First().Should().Be(client);
         }
 
         [Theory, IntegrationTest]
         [AutoDatabase]
-        public void MessageSubscriptionTwoMessageTypes(
+        public void SubscribeTwoMessageTypesShouldCreateTwoSubscriptions(
             MongoSubscriptionStorage storage,
             MongoDatabaseFactory factory,
             Address client,
@@ -113,22 +109,18 @@ namespace NServiceBus.MongoDB.Tests.SubscriptionStorage
             sut.Subscribe(client, messageTypes);
 
             var subscriptions = storage.GetSubscriptions(messageTypes).ToList();
-            subscriptions.Count.Should().Be(messageTypes.Count);
-
-            var ids = messageTypes.Select(Subscription.FormatId).ToList();
+            subscriptions.Should().HaveCount(messageTypes.Count);
 
             subscriptions.ForEach(s =>
                 {
-                    s.Id.Should().BeOneOf(ids);
-                    s.DocumentVersion.Should().Be(0);
-                    s.Clients.Count.Should().Be(1);
+                    s.Clients.Should().HaveCount(1);
                     s.Clients.First().Should().Be(client);
                 });
         }
 
         [Theory, IntegrationTest]
         [AutoDatabase]
-        public void MessageSubscriptionTwoClientsOneMessageTypes(
+        public void SubscribeTwoClientsOneMessageTypeShouldCreateOneSubscriptionWithMultipleAddresses(
             MongoSubscriptionStorage storage,
             MongoDatabaseFactory factory,
             Address client1,
@@ -145,13 +137,14 @@ namespace NServiceBus.MongoDB.Tests.SubscriptionStorage
             sut.Subscribe(client2, messageTypes);
 
             var clients = sut.GetSubscriberAddressesForMessage(messageTypes).ToList();
+            clients.Should().HaveCount(2);
             clients.Should().ContainSingle(a => client1 == a);
             clients.Should().ContainSingle(a => client2 == a);
         }
 
         [Theory, IntegrationTest]
         [AutoDatabase]
-        public void UnsubscribeWhenThereIsNoSubscription(
+        public void UnsubscribeWhenThereIsNoSubscriptionShouldNotCreateSubscription(
             MongoSubscriptionStorage storage,
             MongoDatabaseFactory factory,
             Address client,
@@ -165,6 +158,85 @@ namespace NServiceBus.MongoDB.Tests.SubscriptionStorage
 
             sut.Unsubscribe(client, messageTypes);
             storage.GetSubscriptions(messageTypes).Should().BeEmpty();
+        }
+
+        [Theory, IntegrationTest]
+        [AutoDatabase]
+        public void UnsubscribeWhenClientSubscriptionIsTheOnlyOneShouldRemoveOnlyClient(
+            MongoSubscriptionStorage storage,
+            MongoDatabaseFactory factory,
+            Address client,
+            string messageTypeString1)
+        {
+            var sut = storage as ISubscriptionStorage;
+            var messageTypes = new List<MessageType>()
+                                   {
+                                       new MessageType(messageTypeString1, "1.0.0.0"),
+                                   };
+
+            sut.Subscribe(client, messageTypes);
+            storage.GetSubscriptions(messageTypes).Should().HaveCount(1);
+            sut.GetSubscriberAddressesForMessage(messageTypes).Should().HaveCount(1);
+
+            sut.Unsubscribe(client, messageTypes);
+            storage.GetSubscriptions(messageTypes).Should().HaveCount(1);
+
+            sut.GetSubscriberAddressesForMessage(messageTypes).Should().HaveCount(0);
+        }
+
+        [Theory, IntegrationTest]
+        [AutoDatabase]
+        public void UnsubscribeWhenThereAreSubscriptionsButNotClientsShouldNotChangeAnything(
+            MongoSubscriptionStorage storage,
+            MongoDatabaseFactory factory,
+            Address client,
+            Address otherClient1,
+            Address otherClient2,
+            string messageTypeString1)
+        {
+            var sut = storage as ISubscriptionStorage;
+            var messageTypes = new List<MessageType>()
+                                   {
+                                       new MessageType(messageTypeString1, "1.0.0.0"),
+                                   };
+
+            sut.Subscribe(otherClient1, messageTypes);
+            sut.Subscribe(otherClient2, messageTypes);
+            sut.GetSubscriberAddressesForMessage(messageTypes).Should().HaveCount(2);
+
+            sut.Unsubscribe(client, messageTypes);
+            var clients = sut.GetSubscriberAddressesForMessage(messageTypes).ToList();
+            clients.Should().HaveCount(2);
+            clients.First().Should().Be(otherClient1);
+            clients.Last().Should().Be(otherClient2);
+        }
+
+        [Theory, IntegrationTest]
+        [AutoDatabase]
+        public void UnsubscribeWhenThereAreSubscriptionsShouldRemoveClientsAddress(
+            MongoSubscriptionStorage storage,
+            MongoDatabaseFactory factory,
+            Address client,
+            Address otherClient1,
+            Address otherClient2,
+            string messageTypeString1)
+        {
+            var sut = storage as ISubscriptionStorage;
+            var messageTypes = new List<MessageType>()
+                                   {
+                                       new MessageType(messageTypeString1, "1.0.0.0"),
+                                   };
+
+            sut.Subscribe(client, messageTypes);
+            sut.Subscribe(otherClient1, messageTypes);
+            sut.Subscribe(otherClient2, messageTypes);
+            sut.GetSubscriberAddressesForMessage(messageTypes).Should().HaveCount(3);
+
+            sut.Unsubscribe(client, messageTypes);
+            var clients = sut.GetSubscriberAddressesForMessage(messageTypes).ToList();
+            clients.Should().HaveCount(2);
+            clients.First().Should().Be(otherClient1);
+            clients.Last().Should().Be(otherClient2);
         }
     }
 }
