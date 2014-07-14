@@ -25,6 +25,9 @@ namespace NServiceBus.MongoDB.Tests
     using System.Configuration;
     using FluentAssertions;
     using NServiceBus.MongoDB.Tests.TestingUtilities;
+    using NServiceBus.Saga;
+    using NServiceBus.Unicast.Subscriptions.MessageDrivenSubscriptions;
+
     using Xunit.Extensions;
 
     public class ConfigureMongoPersistenceTests

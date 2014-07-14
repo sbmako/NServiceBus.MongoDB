@@ -14,6 +14,7 @@
     <releaseNotes>Note: this is a preview release and should not be used for production</releaseNotes>
     <copyright>Copyright 2014 SharkByte Software Inc.. All rights reserved</copyright>
     <tags>nservicebus servicebus msmq cqrs publish subscribe mongodb</tags>
+    <language>en-US</language>
     <dependencies>
 		<dependency id="mongocsharpdriver" version="1.9.2" />	
 	</dependencies>

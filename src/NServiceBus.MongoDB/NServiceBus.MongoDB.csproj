@@ -197,6 +197,8 @@
     <Compile Include="SubscriptionStorage\ConfigureMongoSubscriptionStorage.cs" />
     <Compile Include="SubscriptionStorage\MongoSubscriptionStorage.cs" />
     <Compile Include="SubscriptionStorage\Subscription.cs" />
+    <Compile Include="TimeoutPersister\ConfigureMongoTimeoutPersister.cs" />
+    <Compile Include="TimeoutPersister\MongoTimeoutPersister.cs" />
     <Compile Include="Utils\DeterministicGuid.cs" />
   </ItemGroup>
   <ItemGroup>

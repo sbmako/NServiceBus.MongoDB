@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ConfigureMongoSubscriptionStorage.cs" company="SharkByte Software Inc.">
+// <copyright file="ConfigureMongoTimeoutPersister.cs" company="SharkByte Software Inc.">
 //   Copyright (c) 2014 Carlos Sandoval. All rights reserved.
 //   
 //   This program is free software: you can redistribute it and/or modify
@@ -16,24 +16,22 @@
 //   along with this program.  If not, see http://www.gnu.org/licenses/.
 // </copyright>
 // <summary>
-//   The configure mongo subscription storage.
+//   Defines the ConfigureMongoTimeoutPersister type.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace NServiceBus.MongoDB.SubscriptionStorage
+namespace NServiceBus.MongoDB.TimeoutPersister
 {
     using System;
     using System.Diagnostics.Contracts;
-    using global::MongoDB.Bson.Serialization;
-    using NServiceBus.Unicast.Subscriptions;
 
     /// <summary>
-    /// The configure mongo subscription storage.
+    /// The configure mongo timeout persister.
     /// </summary>
-    public static class ConfigureMongoSubscriptionStorage
+    public static class ConfigureMongoTimeoutPersister
     {
         /// <summary>
-        /// The mongo subscription storage.
+        /// The mongo timeout persister.
         /// </summary>
         /// <param name="config">
         /// The config.
@@ -41,7 +39,7 @@ namespace NServiceBus.MongoDB.SubscriptionStorage
         /// <returns>
         /// The <see cref="Configure"/>.
         /// </returns>
-        public static Configure MongoSubscriptionStorage(this Configure config)
+        public static Configure MongoTimeoutPersister(this Configure config)
         {
             Contract.Requires<ArgumentNullException>(config != null);
             Contract.Ensures(Contract.Result<Configure>() != null);
@@ -51,43 +49,9 @@ namespace NServiceBus.MongoDB.SubscriptionStorage
                 config.MongoPersistence();
             }
 
-            config.Configurer.ConfigureComponent<MongoSubscriptionStorage>(DependencyLifecycle.SingleInstance);
-
-            ConfigureClassMaps();
+            config.Configurer.ConfigureComponent<MongoTimeoutPersister>(DependencyLifecycle.SingleInstance);
 
             return config;
-        }
-
-        internal static void ConfigureClassMaps()
-        {
-            if (!BsonClassMap.IsClassMapRegistered(typeof(MessageType)))
-            {
-                ConfigureMessageTypeClassMap();
-            }
-
-            if (!BsonClassMap.IsClassMapRegistered(typeof(Address)))
-            {
-                ConfigureAddressClassMap();
-            }
-        }
-
-        private static void ConfigureAddressClassMap()
-        {
-            BsonClassMap.RegisterClassMap<Address>(
-                cm =>
-                    {
-                        cm.AutoMap();
-                        cm.MapCreator(a => new Address(a.Queue, a.Machine));
-                    });
-        }
-
-        private static void ConfigureMessageTypeClassMap()
-        {
-            BsonClassMap.RegisterClassMap<MessageType>(cm =>
-            {
-                cm.AutoMap();
-                cm.MapCreator(m => new MessageType(m.TypeName, m.Version));
-            });            
         }
     }
 }

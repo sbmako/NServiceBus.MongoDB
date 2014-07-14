@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ConfigureMongoSubscriptionStorageTests.cs" company="SharkByte Software Inc.">
+// <copyright file="ConfigureMongoTimeoutPersisterTests.cs" company="SharkByte Software Inc.">
 //   Copyright (c) 2014 Carlos Sandoval. All rights reserved.
 //   
 //   This program is free software: you can redistribute it and/or modify
@@ -16,58 +16,58 @@
 //   along with this program.  If not, see http://www.gnu.org/licenses/.
 // </copyright>
 // <summary>
-//   Defines the ConfigureMongoSubscriptionStorageTests type.
+//   Defines the ConfigureMongoTimeoutPersisterTests type.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace NServiceBus.MongoDB.Tests.SubscriptionStorage
+namespace NServiceBus.MongoDB.Tests.TimeoutPersister
 {
     using FluentAssertions;
-    using NServiceBus.MongoDB.SubscriptionStorage;
     using NServiceBus.MongoDB.Tests.TestingUtilities;
+    using NServiceBus.MongoDB.TimeoutPersister;
     using Xunit.Extensions;
 
-    public class ConfigureMongoSubscriptionStorageTests
+    public class ConfigureMongoTimeoutPersisterTests
     {
         [Theory, UnitTest]
         [AutoConfigureData]
-        public void MongoSubscriptionStorageCalledOnce(Configure config)
+        public void MongoTimeoutPersisterSingleCall(Configure config)
         {
-            config.MongoSubscriptionStorage();
+            config.MongoTimeoutPersister();
 
             Configure.Instance.Configurer.HasComponent<MongoClientAccessor>().Should().BeTrue();
             Configure.Instance.Configurer.HasComponent<MongoDatabaseFactory>().Should().BeTrue();
-            Configure.Instance.Configurer.HasComponent<MongoSubscriptionStorage>().Should().BeTrue();
+            Configure.Instance.Configurer.HasComponent<MongoTimeoutPersister>().Should().BeTrue();
         }
 
         [Theory, UnitTest]
         [AutoConfigureData]
-        public void MongoSubscriptionStorageAfterPersistenceConfigure(Configure config)
+        public void MongoTimeoutPersisterAfterPersistenceConfigure(Configure config)
         {
             config.MongoPersistence();
             Configure.Instance.Configurer.HasComponent<MongoClientAccessor>().Should().BeTrue();
             Configure.Instance.Configurer.HasComponent<MongoDatabaseFactory>().Should().BeTrue();
-            Configure.Instance.Configurer.HasComponent<MongoSubscriptionStorage>().Should().BeFalse();
+            Configure.Instance.Configurer.HasComponent<MongoTimeoutPersister>().Should().BeFalse();
 
-            config.MongoSubscriptionStorage();
-            Configure.Instance.Configurer.HasComponent<MongoSubscriptionStorage>().Should().BeTrue();
+            config.MongoTimeoutPersister();
+            Configure.Instance.Configurer.HasComponent<MongoTimeoutPersister>().Should().BeTrue();
         }
 
         [Theory, UnitTest]
         [AutoConfigureData]
-        public void MongoSubscriptionStorageCalledTwice(Configure config)
+        public void MongoTimeoutPersisterCalledTwice(Configure config)
         {
-            config.MongoSubscriptionStorage();
+            config.MongoTimeoutPersister();
 
             Configure.Instance.Configurer.HasComponent<MongoClientAccessor>().Should().BeTrue();
             Configure.Instance.Configurer.HasComponent<MongoDatabaseFactory>().Should().BeTrue();
-            Configure.Instance.Configurer.HasComponent<MongoSubscriptionStorage>().Should().BeTrue();
+            Configure.Instance.Configurer.HasComponent<MongoTimeoutPersister>().Should().BeTrue();
 
-            config.MongoSubscriptionStorage();
+            config.MongoTimeoutPersister();
 
             Configure.Instance.Configurer.HasComponent<MongoClientAccessor>().Should().BeTrue();
             Configure.Instance.Configurer.HasComponent<MongoDatabaseFactory>().Should().BeTrue();
-            Configure.Instance.Configurer.HasComponent<MongoSubscriptionStorage>().Should().BeTrue();
+            Configure.Instance.Configurer.HasComponent<MongoTimeoutPersister>().Should().BeTrue();
         }
     }
 }

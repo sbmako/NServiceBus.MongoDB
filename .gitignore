@@ -16,6 +16,7 @@ build/
 [Oo]bj/
 
 # Enable "build/" folder in the NuGet Packages folder since NuGet packages use it for MSBuild targets
+packaging/*.nupkg
 src/packages/NServiceBus.*
 src/packages/mongocsharpdriver.*
 src/packages/xunit.*
