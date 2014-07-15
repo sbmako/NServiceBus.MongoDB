@@ -25,6 +25,8 @@ namespace Sample
     using NServiceBus;
     using NServiceBus.Features;
     using NServiceBus.MongoDB.SagaPersister;
+    using NServiceBus.MongoDB.SubscriptionStorage;
+    using NServiceBus.MongoDB.TimeoutPersister;
 
     /// <summary>
     /// The endpoint config.
@@ -44,8 +46,8 @@ namespace Sample
                      .DefaultBuilder()
                      .UnicastBus()
                      .MongoSagaPersister()
-                     .InMemorySubscriptionStorage()
-                     .UseInMemoryTimeoutPersister();
+                     .MongoSubscriptionStorage()
+                     .MongoTimeoutPersister();
         }
     }
 }
