@@ -25,8 +25,10 @@ namespace NServiceBus.MongoDB.TimeoutPersister
     using System;
     using System.Collections.Generic;
     using System.Diagnostics.Contracts;
+    using System.Linq;
     using global::MongoDB.Driver;
     using global::MongoDB.Driver.Builders;
+    using global::MongoDB.Driver.Linq;
     using NServiceBus.Timeout.Core;
 
     /// <summary>
@@ -61,8 +63,25 @@ namespace NServiceBus.MongoDB.TimeoutPersister
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1002:DoNotExposeGenericLists", Justification = "Ok here.")]
         public List<Tuple<string, DateTime>> GetNextChunk(DateTime startSlice, out DateTime nextTimeToRunQuery)
         {
-            nextTimeToRunQuery = DateTime.Now + TimeSpan.FromSeconds(1);
-            return new List<Tuple<string, DateTime>>();
+            var collection = this.mongoDatabase.GetCollection<TimeoutData>(TimeoutDataName);
+
+            var results = from data in collection.AsQueryable<TimeoutData>()
+                          where data.Time > startSlice && data.Time <= DateTime.UtcNow
+                          orderby data.Time
+                          select new Tuple<string, DateTime>(data.Id, data.Time);
+
+            var nextTimeout =
+                (from data in collection.AsQueryable<TimeoutData>()
+                 where data.Time > DateTime.UtcNow
+                 orderby data.Time
+                 select data).FirstOrDefault();
+
+            nextTimeToRunQuery = nextTimeout != null
+                                     ? nextTimeout.Time
+                                     : DateTime.UtcNow.AddMinutes(
+                                         MongoPersistenceConstants.DefaultNextTimeoutIncrementMinutes);
+
+            return results.ToList();
         }
 
         /// <summary>
@@ -71,6 +90,8 @@ namespace NServiceBus.MongoDB.TimeoutPersister
         /// <param name="timeout">Timeout data.</param>
         public void Add(TimeoutData timeout)
         {
+            timeout.Id = Guid.NewGuid().ToString();
+
             var collection = this.mongoDatabase.GetCollection<TimeoutData>(TimeoutDataName);
             var result = collection.Save(timeout);
 

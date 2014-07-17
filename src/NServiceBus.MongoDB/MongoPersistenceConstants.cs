@@ -26,11 +26,13 @@ namespace NServiceBus.MongoDB
 
     internal static class MongoPersistenceConstants
     {
+        public const int DefaultNextTimeoutIncrementMinutes = 10;
+
         public const string VersionPropertyName = "DocumentVersion";
 
-        private const int DefaultPort = 27017;
+        public const int DefaultPort = 27017;
 
-        private const string DefaultHost = "localhost";
+        public const string DefaultHost = "localhost";
 
         public static string DefaultConnectionString
         {

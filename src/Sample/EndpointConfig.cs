@@ -41,6 +41,7 @@ namespace Sample
             Configure.Serialization.Json();
 
             Configure.Features.Disable<Audit>();
+            Configure.Transactions.Advanced(t => t.DisableDistributedTransactions());
 
             Configure.With()
                      .DefaultBuilder()
