@@ -25,6 +25,7 @@ namespace NServiceBus.MongoDB.Tests.TestingUtilities
     using System.Collections.Generic;
 
     using NServiceBus.MongoDB.SubscriptionStorage;
+    using NServiceBus.MongoDB.TimeoutPersister;
     using NServiceBus.Unicast.Subscriptions;
 
     using global::MongoDB.Driver.Builders;
@@ -59,6 +60,12 @@ namespace NServiceBus.MongoDB.Tests.TestingUtilities
                 factory.GetDatabase().GetCollection<SagaUniqueIdentity>(typeof(SagaUniqueIdentity).Name).FindOne(query);
 
             return entity;
+        }
+
+        public static void ResetTimeoutCollection(this MongoDatabaseFactory factory)
+        {
+            var collection = factory.GetDatabase().GetCollection(MongoTimeoutPersister.TimeoutDataName);
+            collection.Drop();
         }
     }
 }

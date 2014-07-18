@@ -36,7 +36,7 @@ namespace NServiceBus.MongoDB.TimeoutPersister
     /// </summary>
     public class MongoTimeoutPersister : IPersistTimeouts
     {
-        private static readonly string TimeoutDataName = typeof(TimeoutData).Name;
+        internal static readonly string TimeoutDataName = typeof(TimeoutData).Name;
 
         private readonly MongoDatabase mongoDatabase;
 

@@ -60,7 +60,7 @@ namespace Sample
             this.Data.SomeId = message.SomeId;
             this.Data.Count = 0;
 
-            this.RequestTimeout(TimeSpan.FromMinutes(1), new MyTimeout() { HowLong = 5 });
+            this.RequestTimeout(TimeSpan.FromMinutes(10), new MyTimeout() { HowLong = 5 });
         }
 
         /// <summary>

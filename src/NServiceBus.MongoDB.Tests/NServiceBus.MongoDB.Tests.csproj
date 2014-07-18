@@ -118,6 +118,7 @@
     <Compile Include="TestingUtilities\MongoDatabaseFactoryExtensions.cs" />
     <Compile Include="TestingUtilities\UnitTestAttribute.cs" />
     <Compile Include="TimeoutPersister\ConfigureMongoTimeoutPersisterTests.cs" />
+    <Compile Include="TimeoutPersister\MongoTimeoutPersisterTests.cs" />
     <Compile Include="Utils\DeterministicGuidTests.cs" />
   </ItemGroup>
   <ItemGroup>
