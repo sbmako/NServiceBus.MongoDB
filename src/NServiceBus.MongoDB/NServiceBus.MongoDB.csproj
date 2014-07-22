@@ -169,11 +169,11 @@
     </Reference>
     <Reference Include="NServiceBus, Version=4.6.0.0, Culture=neutral, PublicKeyToken=9fc386479f8a226c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\NServiceBus.Interfaces.4.6.2\lib\net40\NServiceBus.dll</HintPath>
+      <HintPath>..\packages\NServiceBus.Interfaces.4.6.3\lib\net40\NServiceBus.dll</HintPath>
     </Reference>
     <Reference Include="NServiceBus.Core, Version=4.6.0.0, Culture=neutral, PublicKeyToken=9fc386479f8a226c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\NServiceBus.4.6.2\lib\net40\NServiceBus.Core.dll</HintPath>
+      <HintPath>..\packages\NServiceBus.4.6.3\lib\net40\NServiceBus.Core.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -195,7 +195,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SagaPersister\ConfigureMongoSagaPersister.cs" />
     <Compile Include="SagaPersister\MongoSagaPersister.cs" />
-    <Compile Include="SagaPersister\SagaUniqueIdentity.cs" />
     <Compile Include="SubscriptionStorage\ConfigureMongoSubscriptionStorage.cs" />
     <Compile Include="SubscriptionStorage\MongoSubscriptionStorage.cs" />
     <Compile Include="SubscriptionStorage\Subscription.cs" />

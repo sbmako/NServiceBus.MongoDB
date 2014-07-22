@@ -58,8 +58,6 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
 
             entity.Id.Should().Be(sagaData.Id);
             entity.NonUniqueProperty.Should().Be(sagaData.NonUniqueProperty);
-
-            factory.RetrieveSagaUniqueIdentity(entity).Should().BeNull();
         }
 
         [Theory, IntegrationTest]
@@ -76,10 +74,6 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
             entity.Id.Should().Be(sagaData.Id);
             entity.UniqueProperty.Should().Be(sagaData.UniqueProperty);
             entity.NonUniqueProperty.Should().Be(sagaData.NonUniqueProperty);
-
-            var uniqueIdentity = factory.RetrieveSagaUniqueIdentity(entity);
-            uniqueIdentity.Should().NotBeNull();
-            uniqueIdentity.SagaId.Should().Be(sagaData.Id);
         }
 
         [Theory, IntegrationTest]
@@ -108,8 +102,6 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
 
             var entity = factory.RetrieveSagaData(sagaData);
             entity.NonUniqueProperty.Should().Be(newValue);
-
-            factory.RetrieveSagaUniqueIdentity(entity).Should().BeNull();
         }
 
         [Theory, IntegrationTest]
@@ -127,10 +119,6 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
 
             var entity = factory.RetrieveSagaData(sagaData);
             entity.NonUniqueProperty.Should().Be(newValue);
-
-            var uniqueIdentity = factory.RetrieveSagaUniqueIdentity(entity);
-            uniqueIdentity.Should().NotBeNull();
-            uniqueIdentity.SagaId.Should().Be(sagaData.Id);
         }
 
         [Theory, IntegrationTest]
@@ -143,7 +131,6 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
             sut.Invoking(s => s.Update(sagaData)).ShouldThrow<InvalidOperationException>();
 
             factory.RetrieveSagaData(sagaData).Should().BeNull();
-            factory.RetrieveSagaUniqueIdentity(sagaData).Should().BeNull();
         }
 
         [Theory, IntegrationTest]
@@ -156,7 +143,6 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
             sut.Invoking(s => s.Update(sagaData)).ShouldThrow<InvalidOperationException>();
 
             factory.RetrieveSagaData(sagaData).Should().BeNull();
-            factory.RetrieveSagaUniqueIdentity(sagaData).Should().BeNull();
         }
 
         [Theory, IntegrationTest]

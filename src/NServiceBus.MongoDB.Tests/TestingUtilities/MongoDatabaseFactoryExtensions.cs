@@ -28,9 +28,7 @@
 
 namespace NServiceBus.MongoDB.Tests.TestingUtilities
 {
-
     using global::MongoDB.Driver.Builders;
-    using NServiceBus.MongoDB.SagaPersister;
     using NServiceBus.MongoDB.TimeoutPersister;
     using NServiceBus.Saga;
 
@@ -43,24 +41,6 @@ namespace NServiceBus.MongoDB.Tests.TestingUtilities
             var entity = factory.GetDatabase()
                                 .GetCollection<T>(typeof(T).Name)
                                 .FindOne(query);
-            return entity;
-        }
-
-        public static SagaUniqueIdentity RetrieveSagaUniqueIdentity<T>(this MongoDatabaseFactory factory, T sagaData)
-            where T : IContainSagaData
-        {
-            var property = UniqueAttribute.GetUniqueProperty(sagaData);
-
-            if (!property.HasValue)
-            {
-                return null;
-            }
-
-            var id = SagaUniqueIdentity.FormatId(typeof(T), property.Value);
-            var query = Query<SagaUniqueIdentity>.EQ(e => e.Id, id);
-            var entity =
-                factory.GetDatabase().GetCollection<SagaUniqueIdentity>(typeof(SagaUniqueIdentity).Name).FindOne(query);
-
             return entity;
         }
 

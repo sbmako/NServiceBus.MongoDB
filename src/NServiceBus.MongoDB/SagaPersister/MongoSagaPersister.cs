@@ -29,11 +29,9 @@
 namespace NServiceBus.MongoDB.SagaPersister
 {
     using System;
-    using System.Collections.Generic;
     using System.Diagnostics.Contracts;
     using global::MongoDB.Driver;
     using global::MongoDB.Driver.Builders;
-    using NServiceBus.Logging;
     using NServiceBus.MongoDB.Extensions;
     using NServiceBus.Saga;
 
@@ -42,10 +40,6 @@ namespace NServiceBus.MongoDB.SagaPersister
     /// </summary>
     public class MongoSagaPersister : ISagaPersister
     {
-        private static readonly ILog Logger = LogManager.GetLogger(typeof(MongoSagaPersister));
-
-        private static readonly string SagaUniqueIdentityName = typeof(SagaUniqueIdentity).Name;
-
         private readonly MongoDatabase mongoDatabase;
 
         /// <summary>
@@ -66,6 +60,8 @@ namespace NServiceBus.MongoDB.SagaPersister
         /// <param name="saga">The saga entity to save.</param>
         public void Save(IContainSagaData saga)
         {
+            this.CreateUniqueIndex(saga);
+
             var collection = this.mongoDatabase.GetCollection(saga.GetType().Name);
             var result = collection.Insert(saga);
 
@@ -74,8 +70,6 @@ namespace NServiceBus.MongoDB.SagaPersister
                 throw new InvalidOperationException(
                     string.Format("Unable to save with id {0}", saga.Id));
             }
-
-            this.StoreUniqueProperty(saga);
         }
 
         /// <summary>
@@ -84,14 +78,6 @@ namespace NServiceBus.MongoDB.SagaPersister
         /// <param name="saga">The saga entity to updated.</param>
         public void Update(IContainSagaData saga)
         {
-            var p = UniqueAttribute.GetUniqueProperty(saga);
-
-            if (!p.HasValue)
-            {
-                //// TODO: check if unique property has changed 
-                Logger.Debug("Update unique property stuff goes here");
-            }
-
             var collection = this.mongoDatabase.GetCollection(saga.GetType().Name);
 
             var query = saga.MongoUpdateQuery();
@@ -159,15 +145,6 @@ namespace NServiceBus.MongoDB.SagaPersister
                 throw new InvalidOperationException(
                     string.Format("Unable to find and remove saga with id {0}", saga.Id));
             }
-
-            var uniqueProperty = UniqueAttribute.GetUniqueProperty(saga);
-
-            if (!uniqueProperty.HasValue)
-            {
-                return;
-            }
-
-            this.DeleteUniqueProperty(saga, uniqueProperty.Value);
         }
 
         private T GetByUniqueProperty<T>(string property, object value) where T : IContainSagaData
@@ -175,36 +152,14 @@ namespace NServiceBus.MongoDB.SagaPersister
             Contract.Requires(!string.IsNullOrWhiteSpace(property));
             Contract.Requires(value != null);
 
-            var lookupId = SagaUniqueIdentity.FormatId(typeof(T), new KeyValuePair<string, object>(property, value));
+            var query = Query.EQ(property, value.ToString());
 
-            var query = Query.EQ("_id", lookupId);
-            var result = this.mongoDatabase.GetCollection<SagaUniqueIdentity>(SagaUniqueIdentityName).FindOne(query);
+            var entity = this.mongoDatabase.GetCollection<T>(typeof(T).Name).FindOne(query);
 
-            if (result == null)
-            {
-                return default(T);
-            }
-
-            return this.Get<T>(result.SagaId);
+            return entity;
         }
 
-        private void DeleteUniqueProperty(IContainSagaData saga, KeyValuePair<string, object> uniqueProperty)
-        {
-            Contract.Requires(saga != null);
-
-            var uniqueId = SagaUniqueIdentity.FormatId(saga.GetType(), uniqueProperty);
-
-            var query = Query.EQ("_id", uniqueId);
-            var result = this.mongoDatabase.GetCollection(SagaUniqueIdentityName).Remove(query);
-
-            if (!result.Ok)
-            {
-                throw new InvalidOperationException(
-                    string.Format("Unable to find and remove saga unique identity with id {0}", uniqueId));
-            }
-        }
-
-        private void StoreUniqueProperty(IContainSagaData saga)
+        private void CreateUniqueIndex(IContainSagaData saga)
         {
             Contract.Requires(saga != null);
 
@@ -215,26 +170,14 @@ namespace NServiceBus.MongoDB.SagaPersister
                 return;
             }
 
-            var id = SagaUniqueIdentity.FormatId(saga.GetType(), uniqueProperty.Value);
-            var sagaUniqueIdentity = new SagaUniqueIdentity
-                                         {
-                                             Id = id,
-                                             SagaId = saga.Id,
-                                             UniqueValue = uniqueProperty.Value.Value,
-                                         };
-
-            var collection = this.mongoDatabase.GetCollection<SagaUniqueIdentity>(sagaUniqueIdentity.GetType().Name);
-            collection.Insert(sagaUniqueIdentity);
-
-            this.SetUniqueValueMetadata(saga, uniqueProperty.Value);
-        }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "TBD")]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "saga", Justification = "TBD")]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "uniqueProperty", Justification = "TBD")]
-        private void SetUniqueValueMetadata(IContainSagaData saga, KeyValuePair<string, object> uniqueProperty)
-        {
-            ////Session.Advanced.GetMetadataFor(saga)[UniqueValueMetadataKey] = uniqueProperty.Value.ToString();
+            var collection = this.mongoDatabase.GetCollection(saga.GetType().Name);
+            var result = collection.CreateIndex(IndexKeys.Ascending(uniqueProperty.Value.Value.ToString()));
+            if (!result.Ok)
+            {
+                throw new InvalidOperationException(
+                    string.Format(
+                        "Unable to create unique index on {0}: {1}", saga.GetType().Name, uniqueProperty.Value.Value));
+            }
         }
     }
 }
