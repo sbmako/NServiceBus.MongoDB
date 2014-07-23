@@ -36,6 +36,10 @@ namespace NServiceBus.MongoDB
 
         public const string VersionPropertyName = "DocumentVersion";
 
+        public const string OwningTimeoutManagerAndTimeName = "OwningTimeoutManagerAndTime";
+
+        public const string OwningTimeoutManagerAndSagaIdAndTimeName = "OwningTimeoutManagerAndSagaIdAndTime";
+        
         public const int DefaultPort = 27017;
 
         public const string DefaultHost = "localhost";

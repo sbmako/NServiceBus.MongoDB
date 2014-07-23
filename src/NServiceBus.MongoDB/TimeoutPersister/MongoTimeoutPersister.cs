@@ -46,6 +46,8 @@ namespace NServiceBus.MongoDB.TimeoutPersister
 
         private readonly MongoDatabase mongoDatabase;
 
+        private bool indexesCreated;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="MongoTimeoutPersister"/> class.
         /// </summary>
@@ -56,6 +58,7 @@ namespace NServiceBus.MongoDB.TimeoutPersister
         {
             Contract.Requires<ArgumentNullException>(mongoFactory != null);
             this.mongoDatabase = mongoFactory.GetDatabase();
+            this.indexesCreated = false;
         }
 
         /// <summary>
@@ -99,6 +102,8 @@ namespace NServiceBus.MongoDB.TimeoutPersister
         /// <param name="timeout">Timeout data.</param>
         public void Add(TimeoutData timeout)
         {
+            this.EnsureTimeoutIndexes();
+
             timeout.Id = Guid.NewGuid().ToString();
 
             var collection = this.mongoDatabase.GetCollection<TimeoutData>(TimeoutDataName);
@@ -150,6 +155,43 @@ namespace NServiceBus.MongoDB.TimeoutPersister
             {
                 throw new InvalidOperationException(string.Format("Unable to remove timeouts for saga id {0}", sagaId));
             }
+        }
+
+        private void EnsureTimeoutIndexes()
+        {
+            if (this.indexesCreated)
+            {
+                return;
+            }
+
+            var collection = this.mongoDatabase.GetCollection<TimeoutData>(TimeoutDataName);
+
+            var indexOptions = IndexOptions.SetName(MongoPersistenceConstants.OwningTimeoutManagerAndTimeName);
+            var result =
+                collection.CreateIndex(
+                    IndexKeys<TimeoutData>.Ascending(t => t.OwningTimeoutManager, t => t.Time), indexOptions);
+            
+            if (!result.Ok)
+            {
+                throw new InvalidOperationException(
+                    string.Format(
+                        "Unable to create {0} index", MongoPersistenceConstants.OwningTimeoutManagerAndTimeName));
+            }
+
+            indexOptions.SetName(MongoPersistenceConstants.OwningTimeoutManagerAndSagaIdAndTimeName);
+            result =
+                collection.CreateIndex(
+                    IndexKeys<TimeoutData>.Ascending(t => t.OwningTimeoutManager, t => t.SagaId, t => t.Time),
+                    indexOptions);
+
+            if (!result.Ok)
+            {
+                throw new InvalidOperationException(
+                    string.Format(
+                        "Unable to create {0} index", MongoPersistenceConstants.OwningTimeoutManagerAndSagaIdAndTimeName));
+            }
+
+            this.indexesCreated = true;
         }
     }
 }

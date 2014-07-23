@@ -171,12 +171,14 @@ namespace NServiceBus.MongoDB.SagaPersister
             }
 
             var collection = this.mongoDatabase.GetCollection(saga.GetType().Name);
-            var result = collection.CreateIndex(IndexKeys.Ascending(uniqueProperty.Value.Value.ToString()));
+            var indexOptions = IndexOptions.SetName(uniqueProperty.Value.Key);
+            var result = collection.CreateIndex(IndexKeys.Ascending(uniqueProperty.Value.Key), indexOptions);
+
             if (!result.Ok)
             {
                 throw new InvalidOperationException(
                     string.Format(
-                        "Unable to create unique index on {0}: {1}", saga.GetType().Name, uniqueProperty.Value.Value));
+                        "Unable to create unique index on {0}: {1}", saga.GetType().Name, uniqueProperty.Value.Key));
             }
         }
     }
