@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="LocalMongoDatabaseCustomization.cs" company="Carlos Sandoval">
+// <copyright file="INeedInitialization.cs" company="Carlos Sandoval">
 //   The MIT License (MIT)
 //   
 //   Copyright (c) 2014 Carlos Sandoval
@@ -22,31 +22,20 @@
 //   CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // </copyright>
 // <summary>
-//   Defines the LocalMongoDatabaseCustomization type.
+//   Defines the INeedInitialization type.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace NServiceBus.MongoDB.Tests.TestingUtilities
+namespace NServiceBus.MongoDB
 {
-    using NServiceBus.MongoDB.TimeoutPersister;
-
-    using global::MongoDB.Driver;
-    using NServiceBus.Timeout.Core;
-    using Ploeh.AutoFixture;
-
-    public class LocalMongoDatabaseCustomization : ICustomization
+    /// <summary>
+    /// The NeedInitialization interface.
+    /// </summary>
+    public interface INeedInitialization
     {
-        public void Customize(IFixture fixture)
-        {
-            var client = new MongoClient(MongoPersistenceConstants.DefaultConnectionString);
-            var clientAccessor = new MongoClientAccessor(client, "UnitTest");
-            var databaseFactory = new MongoDatabaseFactory(clientAccessor);
-
-            fixture.Register(() => client);
-            fixture.Register(() => clientAccessor);
-            fixture.Register(() => databaseFactory);
-
-            fixture.Customize<TimeoutData>(c => c.With(t => t.OwningTimeoutManager, Configure.EndpointName));
-        }
+        /// <summary>
+        /// The initialize method.
+        /// </summary>
+        void Initialize();
     }
 }

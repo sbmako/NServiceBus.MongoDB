@@ -29,6 +29,7 @@
 namespace NServiceBus.MongoDB.Tests.TimeoutPersister
 {
     using System;
+    using System.Linq;
 
     using FluentAssertions;
 
@@ -53,6 +54,7 @@ namespace NServiceBus.MongoDB.Tests.TimeoutPersister
             MongoTimeoutPersister sut,
             MongoDatabaseFactory factory)
         {
+            sut.Initialize();
             factory.ResetTimeoutCollection();
 
             var startSlice = DateTime.UtcNow.Subtract(TimeSpan.FromMinutes(5));
@@ -72,6 +74,7 @@ namespace NServiceBus.MongoDB.Tests.TimeoutPersister
             MongoDatabaseFactory factory,
             TimeoutData timeoutData)
         {
+            sut.Initialize();
             factory.ResetTimeoutCollection();
             timeoutData.Time = DateTime.UtcNow.AddMinutes(-1);
             sut.Add(timeoutData);
@@ -81,6 +84,7 @@ namespace NServiceBus.MongoDB.Tests.TimeoutPersister
             var result = sut.GetNextChunk(startSlice, out nextTimeToRunQuery);
 
             result.Should().HaveCount(1);
+            nextTimeToRunQuery.Should().BeOnOrAfter(timeoutData.Time);
         }
 
         [Theory, IntegrationTest]
@@ -90,6 +94,7 @@ namespace NServiceBus.MongoDB.Tests.TimeoutPersister
             MongoDatabaseFactory factory,
             TimeoutData timeoutData)
         {
+            sut.Initialize();
             factory.ResetTimeoutCollection();
             timeoutData.Time = DateTime.UtcNow.AddMinutes(-1);
             sut.Add(timeoutData);
@@ -101,6 +106,7 @@ namespace NServiceBus.MongoDB.Tests.TimeoutPersister
             var result = sut.GetNextChunk(startSlice, out nextTimeToRunQuery);
 
             result.Should().HaveCount(1);
+            nextTimeToRunQuery.Should().BeOnOrBefore(timeoutData.Time);
         }
 
         [Theory, IntegrationTest]
@@ -110,6 +116,7 @@ namespace NServiceBus.MongoDB.Tests.TimeoutPersister
             MongoDatabaseFactory factory,
             TimeoutData timeoutData)
         {
+            sut.Initialize();
             factory.ResetTimeoutCollection();
             timeoutData.Time = DateTime.UtcNow.AddMinutes(1);
             sut.Add(timeoutData);
@@ -120,6 +127,7 @@ namespace NServiceBus.MongoDB.Tests.TimeoutPersister
             var result = sut.GetNextChunk(startSlice, out nextTimeToRunQuery);
 
             result.Should().HaveCount(0);
+            nextTimeToRunQuery.Should().BeOnOrBefore(timeoutData.Time);
         }
     }
 }

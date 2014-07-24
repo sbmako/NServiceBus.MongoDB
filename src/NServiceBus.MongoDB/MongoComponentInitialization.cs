@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="LocalMongoDatabaseCustomization.cs" company="Carlos Sandoval">
+// <copyright file="MongoComponentInitialization.cs" company="Carlos Sandoval">
 //   The MIT License (MIT)
 //   
 //   Copyright (c) 2014 Carlos Sandoval
@@ -22,31 +22,26 @@
 //   CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // </copyright>
 // <summary>
-//   Defines the LocalMongoDatabaseCustomization type.
+//   The mongo component initialization.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace NServiceBus.MongoDB.Tests.TestingUtilities
+namespace NServiceBus.MongoDB
 {
-    using NServiceBus.MongoDB.TimeoutPersister;
+    using System.Linq;
 
-    using global::MongoDB.Driver;
-    using NServiceBus.Timeout.Core;
-    using Ploeh.AutoFixture;
-
-    public class LocalMongoDatabaseCustomization : ICustomization
+    /// <summary>
+    /// The mongo component initialization.
+    /// </summary>
+    public class MongoComponentInitialization : IWantToRunBeforeConfigurationIsFinalized
     {
-        public void Customize(IFixture fixture)
+        /// <summary>
+        /// The run.
+        /// </summary>
+        public void Run()
         {
-            var client = new MongoClient(MongoPersistenceConstants.DefaultConnectionString);
-            var clientAccessor = new MongoClientAccessor(client, "UnitTest");
-            var databaseFactory = new MongoDatabaseFactory(clientAccessor);
-
-            fixture.Register(() => client);
-            fixture.Register(() => clientAccessor);
-            fixture.Register(() => databaseFactory);
-
-            fixture.Customize<TimeoutData>(c => c.With(t => t.OwningTimeoutManager, Configure.EndpointName));
+            var components = Configure.Instance.Builder.BuildAll<INeedInitialization>().ToList();
+            components.ForEach(c => c.Initialize());
         }
     }
 }

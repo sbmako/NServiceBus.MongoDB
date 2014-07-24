@@ -40,13 +40,11 @@ namespace NServiceBus.MongoDB.TimeoutPersister
     /// <summary>
     /// The mongo timeout persister.
     /// </summary>
-    public class MongoTimeoutPersister : IPersistTimeouts
+    public class MongoTimeoutPersister : IPersistTimeouts, INeedInitialization
     {
         internal static readonly string TimeoutDataName = typeof(TimeoutData).Name;
 
         private readonly MongoDatabase mongoDatabase;
-
-        private bool indexesCreated;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MongoTimeoutPersister"/> class.
@@ -58,7 +56,14 @@ namespace NServiceBus.MongoDB.TimeoutPersister
         {
             Contract.Requires<ArgumentNullException>(mongoFactory != null);
             this.mongoDatabase = mongoFactory.GetDatabase();
-            this.indexesCreated = false;
+        }
+
+        /// <summary>
+        /// The initialize method.
+        /// </summary>
+        public void Initialize()
+        {
+            this.EnsureTimeoutIndexes();
         }
 
         /// <summary>
@@ -102,8 +107,6 @@ namespace NServiceBus.MongoDB.TimeoutPersister
         /// <param name="timeout">Timeout data.</param>
         public void Add(TimeoutData timeout)
         {
-            this.EnsureTimeoutIndexes();
-
             timeout.Id = Guid.NewGuid().ToString();
 
             var collection = this.mongoDatabase.GetCollection<TimeoutData>(TimeoutDataName);
@@ -159,11 +162,6 @@ namespace NServiceBus.MongoDB.TimeoutPersister
 
         private void EnsureTimeoutIndexes()
         {
-            if (this.indexesCreated)
-            {
-                return;
-            }
-
             var collection = this.mongoDatabase.GetCollection<TimeoutData>(TimeoutDataName);
 
             var indexOptions = IndexOptions.SetName(MongoPersistenceConstants.OwningTimeoutManagerAndTimeName);
@@ -190,8 +188,6 @@ namespace NServiceBus.MongoDB.TimeoutPersister
                     string.Format(
                         "Unable to create {0} index", MongoPersistenceConstants.OwningTimeoutManagerAndSagaIdAndTimeName));
             }
-
-            this.indexesCreated = true;
         }
     }
 }

@@ -31,6 +31,7 @@ namespace NServiceBus.MongoDB
     using System;
     using System.Configuration;
     using System.Diagnostics.Contracts;
+    using System.Linq;
     using System.Text;
     using global::MongoDB.Driver;
     using NServiceBus.Logging;

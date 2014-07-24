@@ -189,7 +189,9 @@
     <Compile Include="Extensions\DocumentVersionExtensions.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="IHaveDocumentVersion.cs" />
+    <Compile Include="INeedInitialization.cs" />
     <Compile Include="MongoClientAccessor.cs" />
+    <Compile Include="MongoComponentInitialization.cs" />
     <Compile Include="MongoDatabaseFactory.cs" />
     <Compile Include="MongoPersistenceConstants.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -203,7 +205,9 @@
     <Compile Include="Utils\DeterministicGuid.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <CodeAnalysisDictionary Include="..\CustomDictionary\CustomDictionary.xml">
