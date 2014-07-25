@@ -84,8 +84,13 @@ task All {
 
 task Build -depends Compile, UnitTest {}
 
-task NugetPackage {
+task BuildPackage -Depends Release{
+	Remove-Item $baseDir\packaging\*.nupkg
 	exec { & "$nugetExecutable" pack $nuspecFile -OutputDirectory $nugetOutDir }
+}
+
+task Release {
+    Invoke-psake -nologo -properties @{"projectConfig"="Release"} Compile
 }
 
 task Analysis {
