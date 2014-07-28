@@ -30,13 +30,10 @@ namespace NServiceBus.MongoDB.Tests.TimeoutPersister
 {
     using System;
     using System.Linq;
-
     using FluentAssertions;
-
     using NServiceBus.MongoDB.Tests.TestingUtilities;
     using NServiceBus.MongoDB.TimeoutPersister;
     using NServiceBus.Timeout.Core;
-
     using Xunit.Extensions;
 
     public class MongoTimeoutPersisterTests
@@ -128,6 +125,76 @@ namespace NServiceBus.MongoDB.Tests.TimeoutPersister
 
             result.Should().HaveCount(0);
             nextTimeToRunQuery.Should().BeOnOrBefore(timeoutData.Time);
+        }
+
+        [Theory, IntegrationTest]
+        [AutoDatabase]
+        public void AddOneTimeout(
+            MongoTimeoutPersister sut,
+            MongoDatabaseFactory factory,
+            TimeoutData timeoutData)
+        {
+            sut.Initialize();
+            factory.ResetTimeoutCollection();
+            sut.Add(timeoutData);
+
+            var result = factory.RetrieveAllTimeouts();
+
+            result.Should().HaveCount(1);
+        }
+
+        [Theory, IntegrationTest]
+        [AutoDatabase]
+        public void AddTwoDifferentTimeouts(
+            MongoTimeoutPersister sut,
+            MongoDatabaseFactory factory,
+            TimeoutData timeout1,
+            TimeoutData timeout2)
+        {
+            sut.Initialize();
+            factory.ResetTimeoutCollection();
+            sut.Add(timeout1);
+            sut.Add(timeout2);
+
+            var result = factory.RetrieveAllTimeouts();
+
+            result.Should().HaveCount(2);
+        }
+
+        [Theory, IntegrationTest]
+        [AutoDatabase]
+        public void TryRemoveShouldSucceedAndReturnData(
+            MongoTimeoutPersister sut,
+            MongoDatabaseFactory factory,
+            TimeoutData timeoutData)
+        {      
+            sut.Initialize();
+            factory.ResetTimeoutCollection();
+            sut.Add(timeoutData);
+            TimeoutData returnedTimeoutData;
+
+            var timeouts = factory.RetrieveAllTimeouts();
+
+            var result = sut.TryRemove(timeouts.First().Id, out returnedTimeoutData);
+
+            result.Should().BeTrue();
+            returnedTimeoutData.ShouldBeEquivalentTo(timeoutData);
+        }
+
+        [Theory, IntegrationTest]
+        [AutoDatabase]
+        public void TryRemoveEmptyTimeoutCollectionShouldReturnFalseAndNullData(
+            MongoTimeoutPersister sut,
+            MongoDatabaseFactory factory,
+            string timeoutId)
+        {
+            factory.ResetTimeoutCollection();
+            TimeoutData timeoutData;
+
+            var result = sut.TryRemove(timeoutId, out timeoutData);
+
+            result.Should().BeFalse();
+            timeoutData.Should().BeNull();
         }
     }
 }

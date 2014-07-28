@@ -28,9 +28,16 @@
 
 namespace NServiceBus.MongoDB.Tests.TestingUtilities
 {
+    using System.Collections.Generic;
+    using System.Linq;
+
+    using NServiceBus.Timeout.Core;
+
     using global::MongoDB.Driver.Builders;
     using NServiceBus.MongoDB.TimeoutPersister;
     using NServiceBus.Saga;
+
+    using global::MongoDB.Driver.Linq;
 
     internal static class MongoDatabaseFactoryExtensions
     {
@@ -44,9 +51,18 @@ namespace NServiceBus.MongoDB.Tests.TestingUtilities
             return entity;
         }
 
+        public static IEnumerable<TimeoutData> RetrieveAllTimeouts(this MongoDatabaseFactory factor)
+        {
+            var timeouts = from t in factor.GetDatabase()
+                               .GetCollection<TimeoutData>(MongoTimeoutPersister.TimeoutDataName).AsQueryable()
+                            select t;
+
+            return timeouts;
+        }
+
         public static void ResetTimeoutCollection(this MongoDatabaseFactory factory)
         {
-            var collection = factory.GetDatabase().GetCollection(MongoTimeoutPersister.TimeoutDataName);
+            var collection = factory.GetDatabase().GetCollection<TimeoutData>(MongoTimeoutPersister.TimeoutDataName);
             collection.Drop();
         }
     }

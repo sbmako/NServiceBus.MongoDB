@@ -28,6 +28,8 @@
 
 namespace NServiceBus.MongoDB.Tests.TestingUtilities
 {
+    using System;
+
     using NServiceBus.Timeout.Core;
 
     using Ploeh.AutoFixture;
