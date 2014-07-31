@@ -30,6 +30,10 @@ namespace NServiceBus.MongoDB.TimeoutPersister
 {
     using System;
     using System.Diagnostics.Contracts;
+    using global::MongoDB.Bson;
+    using global::MongoDB.Bson.Serialization;
+    using global::MongoDB.Bson.Serialization.Options;
+    using NServiceBus.Timeout.Core;
 
     /// <summary>
     /// The configure mongo timeout persister.
@@ -57,7 +61,26 @@ namespace NServiceBus.MongoDB.TimeoutPersister
 
             config.Configurer.ConfigureComponent<MongoTimeoutPersister>(DependencyLifecycle.SingleInstance);
 
+            ConfigureClassMaps();
+
             return config;
+        }
+
+        internal static void ConfigureClassMaps()
+        {
+            if (BsonClassMap.IsClassMapRegistered(typeof(TimeoutData)))
+            {
+                return;
+            }
+
+            BsonClassMap.RegisterClassMap<TimeoutData>(
+                cm =>
+                    {
+                        cm.AutoMap();
+                        cm.GetMemberMap(mm => mm.Time)
+                          .SetSerializationOptions(
+                              new DateTimeSerializationOptions(DateTimeKind.Utc, BsonType.Document));
+                    });
         }
     }
 }

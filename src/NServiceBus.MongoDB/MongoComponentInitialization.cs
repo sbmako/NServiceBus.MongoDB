@@ -28,8 +28,6 @@
 
 namespace NServiceBus.MongoDB
 {
-    using System.Linq;
-
     /// <summary>
     /// The mongo component initialization.
     /// </summary>
@@ -40,8 +38,6 @@ namespace NServiceBus.MongoDB
         /// </summary>
         public void Run()
         {
-            var components = Configure.Instance.Builder.BuildAll<INeedInitialization>().ToList();
-            components.ForEach(c => c.Initialize());
         }
     }
 }

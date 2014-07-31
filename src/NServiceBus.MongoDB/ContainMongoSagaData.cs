@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="INeedInitialization.cs" company="Carlos Sandoval">
+// <copyright file="ContainMongoSagaData.cs" company="Carlos Sandoval">
 //   The MIT License (MIT)
 //   
 //   Copyright (c) 2014 Carlos Sandoval
@@ -22,20 +22,39 @@
 //   CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // </copyright>
 // <summary>
-//   Defines the INeedInitialization type.
+//   Defines the ContainMongoSagaData type.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace NServiceBus.MongoDB
 {
+    using System;
+
+    using NServiceBus.Saga;
+
     /// <summary>
-    /// The NeedInitialization interface.
+    /// The contain mongo saga data.
     /// </summary>
-    public interface INeedInitialization
+    public abstract class ContainMongoSagaData : IContainSagaData, IHaveDocumentVersion
     {
         /// <summary>
-        /// The initialize method.
+        /// Gets or sets the id.
         /// </summary>
-        void Initialize();
+        public virtual Guid Id { get; set; }
+
+        /// <summary>
+        /// Gets or sets the originator.
+        /// </summary>
+        public virtual string Originator { get; set; }
+
+        /// <summary>
+        /// Gets or sets the original message id.
+        /// </summary>
+        public virtual string OriginalMessageId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the document version.
+        /// </summary>
+        public int DocumentVersion { get; set; }
     }
 }

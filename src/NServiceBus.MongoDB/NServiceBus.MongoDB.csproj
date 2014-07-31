@@ -189,13 +189,13 @@
     <Compile Include="Extensions\DocumentVersionExtensions.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="IHaveDocumentVersion.cs" />
-    <Compile Include="INeedInitialization.cs" />
     <Compile Include="MongoClientAccessor.cs" />
     <Compile Include="MongoComponentInitialization.cs" />
     <Compile Include="MongoDatabaseFactory.cs" />
     <Compile Include="MongoPersistenceConstants.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SagaPersister\ConfigureMongoSagaPersister.cs" />
+    <Compile Include="ContainMongoSagaData.cs" />
     <Compile Include="SagaPersister\MongoSagaPersister.cs" />
     <Compile Include="SubscriptionStorage\ConfigureMongoSubscriptionStorage.cs" />
     <Compile Include="SubscriptionStorage\MongoSubscriptionStorage.cs" />

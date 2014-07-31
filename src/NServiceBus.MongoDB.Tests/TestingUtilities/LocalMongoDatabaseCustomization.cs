@@ -30,6 +30,8 @@ namespace NServiceBus.MongoDB.Tests.TestingUtilities
 {
     using System;
 
+    using NServiceBus.MongoDB.TimeoutPersister;
+
     using global::MongoDB.Driver;
     using NServiceBus.Timeout.Core;
     using Ploeh.AutoFixture;
@@ -48,6 +50,8 @@ namespace NServiceBus.MongoDB.Tests.TestingUtilities
 
             fixture.Customize<TimeoutData>(
                 c => c.With(t => t.OwningTimeoutManager, Configure.EndpointName).With(t => t.Time, DateTime.UtcNow));
+
+            ConfigureMongoTimeoutPersister.ConfigureClassMaps();
         }
     }
 }

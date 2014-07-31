@@ -26,15 +26,14 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-using System;
+using NServiceBus.MongoDB;
 using NServiceBus.Saga;
 
-public class MySagaData : IContainSagaData
+/// <summary>
+/// The my saga data.
+/// </summary>
+public class MySagaData : ContainMongoSagaData
 {
-    public Guid Id { get; set; }
-    public string Originator { get; set; }
-    public string OriginalMessageId { get; set; }
-
     [Unique]
     public string SomeId { get; set; }
 

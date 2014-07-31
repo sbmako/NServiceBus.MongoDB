@@ -63,7 +63,7 @@ namespace NServiceBus.MongoDB.Tests.TestingUtilities
         public static void ResetTimeoutCollection(this MongoDatabaseFactory factory)
         {
             var collection = factory.GetDatabase().GetCollection<TimeoutData>(MongoTimeoutPersister.TimeoutDataName);
-            collection.Drop();
+            collection.RemoveAll();
         }
     }
 }

@@ -28,12 +28,8 @@
 
 namespace NServiceBus.MongoDB.Tests.Sample
 {
-    using NServiceBus.Saga;
-
-    public class SagaWithoutUniqueProperties : ContainSagaData, IHaveDocumentVersion
+    public class SagaWithoutUniqueProperties : ContainMongoSagaData
     {
-        public int DocumentVersion { get; set; }
-
         public virtual string UniqueProperty { get; set; }
 
         public string NonUniqueProperty { get; set; }

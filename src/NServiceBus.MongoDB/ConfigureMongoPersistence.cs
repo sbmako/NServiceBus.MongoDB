@@ -32,11 +32,6 @@ namespace NServiceBus.MongoDB
     using System.Configuration;
     using System.Diagnostics.Contracts;
     using System.Text;
-
-    using global::MongoDB.Bson;
-    using global::MongoDB.Bson.Serialization;
-    using global::MongoDB.Bson.Serialization.Options;
-    using global::MongoDB.Bson.Serialization.Serializers;
     using global::MongoDB.Driver;
     using NServiceBus.Logging;
 
@@ -46,8 +41,6 @@ namespace NServiceBus.MongoDB
     public static class ConfigureMongoPersistence
     {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(ConfigureMongoPersistence));
-
-        private static bool isBsonSerializationInitialized = false;
 
         /// <summary>
         /// The mongo persistence.
@@ -203,8 +196,6 @@ namespace NServiceBus.MongoDB
             config.Configurer.ConfigureComponent(clientAccessorFactory, DependencyLifecycle.SingleInstance);
             config.Configurer.ConfigureComponent<MongoDatabaseFactory>(DependencyLifecycle.SingleInstance);
 
-            InitializeBsonSerialization();
-
             return config;
         }
 
@@ -271,20 +262,6 @@ namespace NServiceBus.MongoDB
             return !string.IsNullOrWhiteSpace(connectionStringSettings.ConnectionString)
                        ? connectionStringSettings.ConnectionString
                        : string.Empty;
-        }
-        
-        private static void InitializeBsonSerialization()
-        {
-            if (isBsonSerializationInitialized)
-            {
-                return;
-            }
-
-            var options = new DateTimeSerializationOptions(DateTimeKind.Utc, BsonType.Document);
-            var serializer = new DateTimeSerializer(options);
-            BsonSerializer.RegisterSerializer(typeof(DateTime), serializer);
-
-            isBsonSerializationInitialized = true;
         }
     }
 }

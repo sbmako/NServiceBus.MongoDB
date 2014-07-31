@@ -40,7 +40,7 @@ namespace NServiceBus.MongoDB.TimeoutPersister
     /// <summary>
     /// The mongo timeout persister.
     /// </summary>
-    public class MongoTimeoutPersister : IPersistTimeouts, INeedInitialization
+    public class MongoTimeoutPersister : IPersistTimeouts
     {
         internal static readonly string TimeoutDataName = typeof(TimeoutData).Name;
 
@@ -56,13 +56,6 @@ namespace NServiceBus.MongoDB.TimeoutPersister
         {
             Contract.Requires<ArgumentNullException>(mongoFactory != null);
             this.mongoDatabase = mongoFactory.GetDatabase();
-        }
-
-        /// <summary>
-        /// The initialize method.
-        /// </summary>
-        public void Initialize()
-        {
             this.EnsureTimeoutIndexes();
         }
 
@@ -139,7 +132,7 @@ namespace NServiceBus.MongoDB.TimeoutPersister
             }
 
             timeoutData = result.GetModifiedDocumentAs<TimeoutData>();
-            return timeoutData == null ? false : true;
+            return timeoutData != null;
         }
 
         /// <summary>
@@ -167,7 +160,7 @@ namespace NServiceBus.MongoDB.TimeoutPersister
             var result =
                 collection.CreateIndex(
                     IndexKeys<TimeoutData>.Ascending(t => t.OwningTimeoutManager, t => t.Time), indexOptions);
-            
+
             if (!result.Ok)
             {
                 throw new InvalidOperationException(

@@ -29,6 +29,7 @@
 namespace NServiceBus.MongoDB
 {
     using System.Diagnostics.Contracts;
+    using NServiceBus.Timeout.Core;
 
     internal static class MongoPersistenceConstants
     {
