@@ -178,6 +178,8 @@ namespace NServiceBus.MongoDB.Tests.TimeoutPersister
 
             result.Should().BeTrue();
             returnedTimeoutData.ShouldBeEquivalentTo(timeoutData);
+
+            factory.RetrieveAllTimeouts().Should().HaveCount(0);
         }
 
         [Theory, IntegrationTest]
@@ -195,6 +197,101 @@ namespace NServiceBus.MongoDB.Tests.TimeoutPersister
 
             result.Should().BeFalse();
             timeoutData.Should().BeNull();
+
+            factory.RetrieveAllTimeouts().Should().HaveCount(0);
+        }
+
+        [Theory, IntegrationTest]
+        [AutoDatabase]
+        public void TryRemoveShouldSucceedAndReturnDataForOneTimeoutAndLeaveTheOther(
+            MongoTimeoutPersister sut,
+            MongoDatabaseFactory factory,
+            TimeoutData timeoutData1,
+            TimeoutData timeoutData2)
+        {
+            factory.ResetTimeoutCollection();
+
+            sut.Add(timeoutData1);
+            sut.Add(timeoutData2);
+            TimeoutData returnedTimeoutData;
+
+            var timeouts = factory.RetrieveAllTimeouts();
+
+            var result = sut.TryRemove(timeouts.First().Id, out returnedTimeoutData);
+
+            result.Should().BeTrue();
+            returnedTimeoutData.ShouldBeEquivalentTo(timeoutData1);
+
+            var remainingTimeout = factory.RetrieveAllTimeouts().ToList();
+            remainingTimeout.Should().HaveCount(1);
+            remainingTimeout.First().ShouldBeEquivalentTo(timeoutData2);
+        }
+
+        [Theory, IntegrationTest]
+        [AutoDatabase]
+        public void RemoveTimeoutByIdRemovesTimeout(
+            MongoTimeoutPersister sut,
+            MongoDatabaseFactory factory,
+            TimeoutData timeoutData)
+        {
+            factory.ResetTimeoutCollection();
+            
+            sut.Add(timeoutData);
+
+            sut.RemoveTimeoutBy(timeoutData.SagaId);
+            
+            factory.RetrieveAllTimeouts().Should().HaveCount(0);
+        }
+
+        [Theory, IntegrationTest]
+        [AutoDatabase]
+        public void RemoveTimeoutByIdOnEmptyTimeoutCollection(
+            MongoTimeoutPersister sut,
+            MongoDatabaseFactory factory,
+            TimeoutData timeoutData)
+        {
+            factory.ResetTimeoutCollection();
+
+            sut.RemoveTimeoutBy(timeoutData.SagaId);
+
+            factory.RetrieveAllTimeouts().Should().HaveCount(0);
+        }
+
+        [Theory, IntegrationTest]
+        [AutoDatabase]
+        public void RemoveTimeoutByIdOnNonExistantIdDoesNotRemoveOtherTimeout(
+            MongoTimeoutPersister sut,
+            MongoDatabaseFactory factory,
+            TimeoutData timeoutData)
+        {
+            factory.ResetTimeoutCollection();
+
+            sut.Add(timeoutData);
+
+            sut.RemoveTimeoutBy(Guid.NewGuid());
+
+            factory.RetrieveAllTimeouts().Should().HaveCount(1);
+        }
+
+        [Theory, IntegrationTest]
+        [AutoDatabase]
+        public void RemoveTimeoutByIdRemovesCorrectTimeoutAndDoesNotRemoveOtherTimeout(
+            MongoTimeoutPersister sut,
+            MongoDatabaseFactory factory,
+            TimeoutData timeoutData1,
+            TimeoutData timeoutData2)
+        {
+            factory.ResetTimeoutCollection();
+
+            sut.Add(timeoutData1);
+            sut.Add(timeoutData2);
+
+            sut.RemoveTimeoutBy(timeoutData2.SagaId);
+
+            var remainingTimeouts = factory.RetrieveAllTimeouts().ToList();
+            remainingTimeouts.Should().HaveCount(1);
+
+            remainingTimeouts.First().ShouldBeEquivalentTo(timeoutData1);
         }
     }
 }
