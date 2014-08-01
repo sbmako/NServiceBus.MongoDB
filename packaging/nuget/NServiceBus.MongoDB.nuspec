@@ -11,8 +11,8 @@
     <iconUrl>http://s3.amazonaws.com/nuget.images/NServiceBus_32.png</iconUrl>
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
     <description>MongoDB integration for  NServiceBus</description>
-    <releaseNotes>Note: this is a preview release and should not be used for production</releaseNotes>
-    <copyright>Copyright 2014 Carlos Sandoval. All rights reserved</copyright>
+    <releaseNotes>Note: this is a beta release and should not be used for production</releaseNotes>
+    <copyright>Copyright 2014 Carlos Sandoval. All rights reserved.</copyright>
     <tags>nservicebus servicebus msmq cqrs publish subscribe mongodb</tags>
     <language>en-US</language>
     <dependencies>
