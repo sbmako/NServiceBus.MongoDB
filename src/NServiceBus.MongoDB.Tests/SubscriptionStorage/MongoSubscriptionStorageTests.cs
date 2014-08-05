@@ -168,6 +168,31 @@ namespace NServiceBus.MongoDB.Tests.SubscriptionStorage
 
         [Theory, IntegrationTest]
         [AutoDatabase]
+        public void UnsubscribeFromAllMessages(
+            MongoSubscriptionStorage storage,
+            MongoDatabaseFactory factory,
+            Address client,
+            string messageTypeString1,
+            string messageTypeString2,
+            string messageTypeString3)
+        {
+            var sut = storage as ISubscriptionStorage;
+            var messageTypes = new List<MessageType>()
+                                   {
+                                       new MessageType(messageTypeString1, "1.0.0.0"),
+                                       new MessageType(messageTypeString2, "1.0.0.0"),
+                                       new MessageType(messageTypeString3, "1.0.0.0"),
+                                   };
+
+            sut.Subscribe(client, messageTypes);
+            storage.GetSubscriptions(messageTypes).Should().HaveCount(3);
+
+            sut.Unsubscribe(client, messageTypes);
+            storage.GetSubscriptions(messageTypes).ToList().ForEach(s => s.Clients.Should().HaveCount(0));
+        }
+
+        [Theory, IntegrationTest]
+        [AutoDatabase]
         public void UnsubscribeWhenClientSubscriptionIsTheOnlyOneShouldRemoveOnlyClient(
             MongoSubscriptionStorage storage,
             MongoDatabaseFactory factory,

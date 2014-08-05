@@ -62,6 +62,8 @@ namespace NServiceBus.MongoDB.SagaPersister
         {
             this.CreateUniqueIndex(saga);
 
+            CheckUniqueProperty(saga);
+
             var collection = this.mongoDatabase.GetCollection(saga.GetType().Name);
             var result = collection.Insert(saga);
 
@@ -144,6 +146,21 @@ namespace NServiceBus.MongoDB.SagaPersister
             {
                 throw new InvalidOperationException(
                     string.Format("Unable to find and remove saga with id {0}", saga.Id));
+            }
+        }
+
+        private static void CheckUniqueProperty(IContainSagaData sagaData)
+        {
+            var uniqueProperty = UniqueAttribute.GetUniqueProperty(sagaData);
+
+            if (!uniqueProperty.HasValue)
+            {
+                return;
+            }
+
+            if (uniqueProperty.Value.Value == null)
+            {
+                throw new ArgumentNullException("uniqueProperty", string.Format("Property {0} is marked with the [Unique] attribute on {1} but contains a null value.", uniqueProperty.Value.Key, sagaData.GetType().Name));
             }
         }
 

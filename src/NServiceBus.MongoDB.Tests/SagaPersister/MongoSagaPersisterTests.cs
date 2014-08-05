@@ -78,6 +78,17 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
 
         [Theory, IntegrationTest]
         [AutoDatabase]
+        public void SavingSagaWithNullUniquePropertyShouldThrowException(
+            MongoSagaPersister sut,
+            MongoDatabaseFactory factory,
+            SagaWithUniqueProperty sagaData)
+        {
+            sagaData.UniqueProperty = null;
+            sut.Invoking(s => s.Save(sagaData)).ShouldThrow<ArgumentNullException>();
+        }
+
+        [Theory, IntegrationTest]
+        [AutoDatabase]
         public void InterleavedSavingSagaShouldThrowException(
             MongoSagaPersister sut,
             MongoDatabaseFactory factory,
