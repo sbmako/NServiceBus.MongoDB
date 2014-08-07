@@ -100,6 +100,22 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
 
         [Theory, IntegrationTest]
         [AutoDatabase]
+        public void SavingDifferentSagaWithSameUniquePropertyShouldThrowDuplicateException(
+            MongoSagaPersister sut,
+            MongoDatabaseFactory factory,
+            SagaWithUniqueProperty sagaData1,
+            SagaWithUniqueProperty sagaData2)
+        {
+            var uniqueProperty = Guid.NewGuid().ToString();
+            sagaData1.UniqueProperty = uniqueProperty;
+            sagaData2.UniqueProperty = uniqueProperty;
+
+            sut.Save(sagaData1);
+            sut.Invoking(s => s.Save(sagaData2)).ShouldThrow<MongoDuplicateKeyException>();
+        }
+
+        [Theory, IntegrationTest]
+        [AutoDatabase]
         public void UpdatingSagaWithoutUniqueProperty(
             MongoSagaPersister sut,
             MongoDatabaseFactory factory,

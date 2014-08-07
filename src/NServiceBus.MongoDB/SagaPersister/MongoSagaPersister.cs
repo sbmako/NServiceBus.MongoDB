@@ -29,6 +29,8 @@
 namespace NServiceBus.MongoDB.SagaPersister
 {
     using System;
+    using System.Collections.Concurrent;
+    using System.Diagnostics.CodeAnalysis;
     using System.Diagnostics.Contracts;
     using global::MongoDB.Driver;
     using global::MongoDB.Driver.Builders;
@@ -40,6 +42,8 @@ namespace NServiceBus.MongoDB.SagaPersister
     /// </summary>
     public class MongoSagaPersister : ISagaPersister
     {
+        ////private static ConcurrentDictionary<Type, string> indexes = new ConcurrentDictionary<Type, string>();
+
         private readonly MongoDatabase mongoDatabase;
 
         /// <summary>
@@ -62,9 +66,16 @@ namespace NServiceBus.MongoDB.SagaPersister
         {
             this.CreateUniqueIndex(saga);
 
+            var sagaTypeName = saga.GetType().Name;
+
+            ////if (!indexes.ContainsKey(sagaTypeName))
+            ////{
+            ////    this.CreateUniqueIndex(saga);
+            ////}
+
             CheckUniqueProperty(saga);
 
-            var collection = this.mongoDatabase.GetCollection(saga.GetType().Name);
+            var collection = this.mongoDatabase.GetCollection(sagaTypeName);
             var result = collection.Insert(saga);
 
             if (!result.Ok)
@@ -188,7 +199,7 @@ namespace NServiceBus.MongoDB.SagaPersister
             }
 
             var collection = this.mongoDatabase.GetCollection(saga.GetType().Name);
-            var indexOptions = IndexOptions.SetName(uniqueProperty.Value.Key);
+            var indexOptions = IndexOptions.SetName(uniqueProperty.Value.Key).SetUnique(true);
             var result = collection.CreateIndex(IndexKeys.Ascending(uniqueProperty.Value.Key), indexOptions);
 
             if (!result.Ok)
