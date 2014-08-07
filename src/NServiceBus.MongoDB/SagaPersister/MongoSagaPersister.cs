@@ -29,8 +29,7 @@
 namespace NServiceBus.MongoDB.SagaPersister
 {
     using System;
-    using System.Collections.Concurrent;
-    using System.Diagnostics.CodeAnalysis;
+    using System.Collections.Generic;
     using System.Diagnostics.Contracts;
     using global::MongoDB.Driver;
     using global::MongoDB.Driver.Builders;
@@ -64,16 +63,14 @@ namespace NServiceBus.MongoDB.SagaPersister
         /// <param name="saga">The saga entity to save.</param>
         public void Save(IContainSagaData saga)
         {
-            this.CreateUniqueIndex(saga);
-
             var sagaTypeName = saga.GetType().Name;
 
-            ////if (!indexes.ContainsKey(sagaTypeName))
-            ////{
-            ////    this.CreateUniqueIndex(saga);
-            ////}
-
-            CheckUniqueProperty(saga);
+            var uniqueProperty = UniqueAttribute.GetUniqueProperty(saga);
+            if (uniqueProperty.HasValue)
+            {
+                this.EnsureUniqueIndex(saga, uniqueProperty.Value);
+                CheckUniqueProperty(saga, uniqueProperty.Value);
+            }
 
             var collection = this.mongoDatabase.GetCollection(sagaTypeName);
             var result = collection.Insert(saga);
@@ -160,18 +157,11 @@ namespace NServiceBus.MongoDB.SagaPersister
             }
         }
 
-        private static void CheckUniqueProperty(IContainSagaData sagaData)
+        private static void CheckUniqueProperty(IContainSagaData sagaData, KeyValuePair<string, object> uniqueProperty)
         {
-            var uniqueProperty = UniqueAttribute.GetUniqueProperty(sagaData);
-
-            if (!uniqueProperty.HasValue)
+            if (uniqueProperty.Value == null)
             {
-                return;
-            }
-
-            if (uniqueProperty.Value.Value == null)
-            {
-                throw new ArgumentNullException("uniqueProperty", string.Format("Property {0} is marked with the [Unique] attribute on {1} but contains a null value.", uniqueProperty.Value.Key, sagaData.GetType().Name));
+                throw new ArgumentNullException("uniqueProperty", string.Format("Property {0} is marked with the [Unique] attribute on {1} but contains a null value.", uniqueProperty.Key, sagaData.GetType().Name));
             }
         }
 
@@ -187,26 +177,19 @@ namespace NServiceBus.MongoDB.SagaPersister
             return entity;
         }
 
-        private void CreateUniqueIndex(IContainSagaData saga)
+        private void EnsureUniqueIndex(IContainSagaData saga, KeyValuePair<string, object> uniqueProperty)
         {
             Contract.Requires(saga != null);
 
-            var uniqueProperty = UniqueAttribute.GetUniqueProperty(saga);
-
-            if (!uniqueProperty.HasValue)
-            {
-                return;
-            }
-
             var collection = this.mongoDatabase.GetCollection(saga.GetType().Name);
-            var indexOptions = IndexOptions.SetName(uniqueProperty.Value.Key).SetUnique(true);
-            var result = collection.CreateIndex(IndexKeys.Ascending(uniqueProperty.Value.Key), indexOptions);
+            var indexOptions = IndexOptions.SetName(uniqueProperty.Key).SetUnique(true);
+            var result = collection.CreateIndex(IndexKeys.Ascending(uniqueProperty.Key), indexOptions);
 
             if (!result.Ok)
             {
                 throw new InvalidOperationException(
                     string.Format(
-                        "Unable to create unique index on {0}: {1}", saga.GetType().Name, uniqueProperty.Value.Key));
+                        "Unable to create unique index on {0}: {1}", saga.GetType().Name, uniqueProperty.Key));
             }
         }
     }
