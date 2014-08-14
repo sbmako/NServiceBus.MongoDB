@@ -34,6 +34,7 @@ namespace NServiceBus.MongoDB
     using System.Text;
     using global::MongoDB.Driver;
     using NServiceBus.Logging;
+    using NServiceBus.MongoDB.Utils;
 
     /// <summary>
     /// The configure mongo persistence.
@@ -67,7 +68,10 @@ namespace NServiceBus.MongoDB
                                        ? connectionStringSettings.ConnectionString
                                        : MongoPersistenceConstants.DefaultConnectionString;
 
-            return config.InternalMongoPersistence(new MongoClientAccessor(new MongoClient(connectionString), Configure.EndpointName));
+            return
+                config.InternalMongoPersistence(
+                    new MongoClientAccessor(
+                        new MongoClient(connectionString), Configure.EndpointName.NullOrWhiteSpaceChecked()));
         }
 
         /// <summary>
@@ -89,7 +93,11 @@ namespace NServiceBus.MongoDB
             Contract.Ensures(Contract.Result<Configure>() != null);
 
             var connectionString = GetConnectionString(connectionStringName);
-            return config.InternalMongoPersistence(new MongoClientAccessor(new MongoClient(connectionString), Configure.EndpointName));
+
+            return
+                config.InternalMongoPersistence(
+                    new MongoClientAccessor(
+                        new MongoClient(connectionString), Configure.EndpointName.NullOrWhiteSpaceChecked()));
         }
 
         /// <summary>
@@ -145,7 +153,8 @@ namespace NServiceBus.MongoDB
 
             return
                 config.InternalMongoPersistence(
-                    new MongoClientAccessor(new MongoClient(getConnectionString()), Configure.EndpointName));
+                    new MongoClientAccessor(
+                        new MongoClient(getConnectionString()), Configure.EndpointName.NullOrWhiteSpaceChecked()));
         }
 
         /// <summary>

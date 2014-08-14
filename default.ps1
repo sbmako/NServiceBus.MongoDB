@@ -35,7 +35,7 @@ Properties {
 # default task
 task default -Depends Build
 
-task Compile -Depends RestorePackages {
+task Compile {
     Write-Host "Building main solution ($projectConfig)" -ForegroundColor Green
     exec { msbuild /nologo /m /nr:false /v:m /p:Configuration=$projectConfig $sourceDir\$solutionName.sln }
 }
@@ -66,10 +66,6 @@ task CleanAll -Depends Clean {
     {
 		Remove-Item $testDir -recurse -force
 	}
-}
-
-task RestorePackages {
-    exec { & "$nugetExecutable" restore $sourceDir\$solutionName.sln }
 }
 
 task All {

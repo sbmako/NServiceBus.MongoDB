@@ -34,6 +34,7 @@ namespace NServiceBus.MongoDB.SagaPersister
     using global::MongoDB.Driver;
     using global::MongoDB.Driver.Builders;
     using NServiceBus.MongoDB.Extensions;
+    using NServiceBus.MongoDB.Utils;
     using NServiceBus.Saga;
 
     /// <summary>
@@ -137,7 +138,7 @@ namespace NServiceBus.MongoDB.SagaPersister
         /// </returns>
         public T Get<T>(string property, object value) where T : IContainSagaData
         {
-            return this.GetByUniqueProperty<T>(property, value);
+            return this.GetByUniqueProperty<T>(property.NullOrWhiteSpaceChecked(), value.NullChecked());
         }
 
         /// <summary>

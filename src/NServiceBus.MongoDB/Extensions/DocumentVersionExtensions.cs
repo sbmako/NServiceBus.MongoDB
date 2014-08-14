@@ -34,6 +34,7 @@ namespace NServiceBus.MongoDB.Extensions
     using global::MongoDB.Driver;
     using global::MongoDB.Driver.Builders;
     using NServiceBus.MongoDB.SubscriptionStorage;
+    using NServiceBus.MongoDB.Utils;
     using NServiceBus.Saga;
 
     internal static class DocumentVersionExtensions
@@ -43,18 +44,18 @@ namespace NServiceBus.MongoDB.Extensions
             Contract.Requires(saga != null);
             Contract.Ensures(Contract.Result<IMongoQuery>() != null);
 
-            var query = Query.EQ("_id", saga.Id);
+            var query = Query.EQ("_id", saga.Id).NullChecked();
 
             var versionedDocument = saga as IHaveDocumentVersion;
             return versionedDocument == null
-                       ? query
-                       : Query.And(
-                           query,
-                           Query.EQ(MongoPersistenceConstants.VersionPropertyName, versionedDocument.DocumentVersion));
+                ? query
+                : Query.And(
+                    query,
+                    Query.EQ(MongoPersistenceConstants.VersionPropertyName, versionedDocument.DocumentVersion))
+                    .NullChecked();
         }
 
-        public static IMongoUpdate MongoUpdate<T>(this T saga)
-            where T : IContainSagaData
+        public static IMongoUpdate MongoUpdate<T>(this T saga) where T : IContainSagaData
         {
             Contract.Requires(saga != null);
             Contract.Ensures(Contract.Result<IMongoUpdate>() != null);
@@ -64,7 +65,7 @@ namespace NServiceBus.MongoDB.Extensions
             var versionedDocument = saga as IHaveDocumentVersion;
             if (versionedDocument == null)
             {
-                return Update.Replace(saga);
+                return Update.Replace(saga).NullChecked();
             }
 
             classMap.Remove("_id");
@@ -73,7 +74,7 @@ namespace NServiceBus.MongoDB.Extensions
 
             classMap.ToList().ForEach(f => updateBuilder.Set(f.Name, f.Value));
 
-            return updateBuilder;
+            return updateBuilder.NullChecked();
         }
 
         public static IMongoQuery MongoUpdateQuery(this Subscription subscription)
@@ -81,9 +82,10 @@ namespace NServiceBus.MongoDB.Extensions
             Contract.Requires(subscription != null);
             Contract.Ensures(Contract.Result<IMongoQuery>() != null);
 
-            return Query.And(
-                Query<Subscription>.EQ(s => s.Id, subscription.Id),
-                Query<Subscription>.EQ(s => s.DocumentVersion, subscription.DocumentVersion));
+            return
+                Query.And(
+                    Query<Subscription>.EQ(s => s.Id, subscription.Id),
+                    Query<Subscription>.EQ(s => s.DocumentVersion, subscription.DocumentVersion)).NullChecked();
         }
 
         public static IMongoUpdate MongoUpdate(this Subscription subscription)
@@ -91,7 +93,7 @@ namespace NServiceBus.MongoDB.Extensions
             Contract.Requires(subscription != null);
             Contract.Ensures(Contract.Result<IMongoUpdate>() != null);
 
-            return Update.Replace(subscription);
+            return Update.Replace(subscription).NullChecked();
         }
     }
 }

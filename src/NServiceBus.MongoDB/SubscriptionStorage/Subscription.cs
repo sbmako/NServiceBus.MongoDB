@@ -102,6 +102,9 @@ namespace NServiceBus.MongoDB.SubscriptionStorage
         /// </returns>
         public static string FormatId(MessageType messageType)
         {
+            Contract.Requires<ArgumentNullException>(messageType != null);
+            Contract.Ensures(Contract.Result<string>() != null);
+
             var id = DeterministicGuid.Create(messageType.TypeName, "/", messageType.Version.Major);
             return string.Format("Subscriptions/{0}", id);
         }

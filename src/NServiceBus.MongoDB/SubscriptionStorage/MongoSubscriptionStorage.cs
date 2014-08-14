@@ -35,6 +35,7 @@ namespace NServiceBus.MongoDB.SubscriptionStorage
     using global::MongoDB.Driver;
     using global::MongoDB.Driver.Builders;
     using NServiceBus.MongoDB.Extensions;
+    using NServiceBus.MongoDB.Utils;
     using NServiceBus.Unicast.Subscriptions;
     using NServiceBus.Unicast.Subscriptions.MessageDrivenSubscriptions;
 
@@ -77,7 +78,7 @@ namespace NServiceBus.MongoDB.SubscriptionStorage
         /// </param>
         void ISubscriptionStorage.Subscribe(Address client, IEnumerable<MessageType> messageTypes)
         {
-            var messageTypeLookup = messageTypes.ToDictionary(Subscription.FormatId);
+            var messageTypeLookup = messageTypes.NullChecked().ToDictionary(Subscription.FormatId);
 
             var existingSubscriptions = this.GetSubscriptions(messageTypeLookup.Values).ToDictionary(m => m.Id);
             var newSubscriptions = new List<Subscription>();
@@ -139,7 +140,9 @@ namespace NServiceBus.MongoDB.SubscriptionStorage
         void ISubscriptionStorage.Unsubscribe(Address client, IEnumerable<MessageType> messageTypes)
         {
             var queries =
-                messageTypes.Select(mt => Query<Subscription>.EQ(s => s.Id, Subscription.FormatId(mt))).ToList();
+                messageTypes.NullChecked()
+                            .Select(mt => Query<Subscription>.EQ(s => s.Id, Subscription.FormatId(mt)))
+                            .ToList();
             var update = Update<Subscription>.Pull(subscription => subscription.Clients, client);
 
             var collection = this.mongoDatabase.GetCollection(SubscriptionName);
@@ -163,7 +166,7 @@ namespace NServiceBus.MongoDB.SubscriptionStorage
         /// </returns>
         IEnumerable<Address> ISubscriptionStorage.GetSubscriberAddressesForMessage(IEnumerable<MessageType> messageTypes)
         {
-            var subscriptions = this.GetSubscriptions(messageTypes);
+            var subscriptions = this.GetSubscriptions(messageTypes.NullChecked());
             return subscriptions.SelectMany(s => s.Clients).Distinct().ToArray();
         }
 
@@ -174,7 +177,9 @@ namespace NServiceBus.MongoDB.SubscriptionStorage
 
             var ids = messageTypes.Select(Subscription.FormatId);
             var query = Query<Subscription>.In(p => p.Id, ids);
-            return this.mongoDatabase.GetCollection<Subscription>(SubscriptionName).Find(query);
+            var result = this.mongoDatabase.GetCollection<Subscription>(SubscriptionName).Find(query);
+
+            return result.NullChecked();
         }
     }
 }

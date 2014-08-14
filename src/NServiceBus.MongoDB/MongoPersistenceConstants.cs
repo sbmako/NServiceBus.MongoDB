@@ -29,7 +29,7 @@
 namespace NServiceBus.MongoDB
 {
     using System.Diagnostics.Contracts;
-    using NServiceBus.Timeout.Core;
+    using NServiceBus.MongoDB.Utils;
 
     internal static class MongoPersistenceConstants
     {
@@ -51,9 +51,7 @@ namespace NServiceBus.MongoDB
             {
                 Contract.Ensures(!string.IsNullOrWhiteSpace(Contract.Result<string>()));
                 var connectionString = string.Format("mongodb://{0}:{1}", DefaultHost, DefaultPort);
-                Contract.Assume(!string.IsNullOrWhiteSpace(connectionString));
-
-                return connectionString;
+                return connectionString.NullOrWhiteSpaceChecked();
             }
         }
     }

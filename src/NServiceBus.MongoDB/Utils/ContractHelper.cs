@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="MongoDatabaseFactory.cs" company="Carlos Sandoval">
+// <copyright file="ContractHelper.cs" company="Carlos Sandoval">
 //   The MIT License (MIT)
 //   
 //   Copyright (c) 2014 Carlos Sandoval
@@ -22,52 +22,80 @@
 //   CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // </copyright>
 // <summary>
-//   The mongo database factory.
+//   Defines the ContractHelpers type.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace NServiceBus.MongoDB
+namespace NServiceBus.MongoDB.Utils
 {
     using System;
     using System.Diagnostics.Contracts;
-    using global::MongoDB.Driver;
-    using NServiceBus.MongoDB.Utils;
 
     /// <summary>
-    /// The mongo database factory.
+    /// The contract helpers.
     /// </summary>
-    public class MongoDatabaseFactory
+    public static class ContractHelper
     {
-        [ThreadStatic]
-        private static MongoClientAccessor mongoClientAccessor;
-
         /// <summary>
-        /// Initializes a new instance of the <see cref="MongoDatabaseFactory"/> class.
+        /// Helper class to assist with invariant warnings
         /// </summary>
-        /// <param name="clientAccessor">
-        /// The clientAccessor.
+        /// <param name="obj">
+        ///  The object to assume the invariants on
         /// </param>
-        public MongoDatabaseFactory(MongoClientAccessor clientAccessor)
+        /// <typeparam name="T">
+        /// The type to assume invariants
+        /// </typeparam>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage(
+            "Microsoft.Usage",
+            "CA1801:ReviewUnusedParameters",
+            MessageId = "obj",
+            Justification = "Ok here.")]
+        [Pure]
+        public static void AssumeInvariant<T>(T obj)
         {
-            Contract.Requires<ArgumentNullException>(clientAccessor != null, "clientAccessor");
-            mongoClientAccessor = clientAccessor;
         }
 
         /// <summary>
-        /// The get database.
+        /// The null checked.
         /// </summary>
+        /// <typeparam name="T">
+        /// The type to null check
+        /// </typeparam>
+        /// <param name="obj">
+        /// The object.
+        /// </param>
         /// <returns>
-        /// The <see cref="MongoDatabase"/>.
+        /// The <see cref="T"/>.
         /// </returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Reviewed")]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate", Justification = "Ok here")]
-        public MongoDatabase GetDatabase()
+        public static T NullChecked<T>(this T obj) where T : class
         {
-            Contract.Ensures(Contract.Result<MongoDatabase>() != null);
+            if (obj == null)
+            {
+                throw new ArgumentNullException("obj");
+            }
 
-            var databaseName = mongoClientAccessor.DatabaseName;
-            var server = mongoClientAccessor.MongoClient.GetServer();
-            return server.GetDatabase(databaseName).NullChecked();
+            return obj;
+        }
+
+        /// <summary>
+        /// The is null or whitespace checked.
+        /// </summary>
+        /// <param name="value">
+        /// The value.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
+        public static string NullOrWhiteSpaceChecked(this string value)
+        {
+            Contract.Ensures(!string.IsNullOrWhiteSpace(Contract.Result<string>()));
+
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                throw new ArgumentNullException("value");
+            }
+
+            return value;
         }
     }
 }

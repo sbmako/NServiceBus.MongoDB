@@ -35,6 +35,7 @@ namespace NServiceBus.MongoDB.TimeoutPersister
     using global::MongoDB.Driver;
     using global::MongoDB.Driver.Builders;
     using global::MongoDB.Driver.Linq;
+    using NServiceBus.MongoDB.Utils;
     using NServiceBus.Timeout.Core;
 
     /// <summary>
@@ -72,7 +73,7 @@ namespace NServiceBus.MongoDB.TimeoutPersister
         {
             var collection = this.mongoDatabase.GetCollection<TimeoutData>(TimeoutDataName);
 
-            var results = from data in collection.AsQueryable()
+            var results = from data in collection.AsQueryable().NullChecked()
                           where data.Time > startSlice && data.Time <= DateTime.UtcNow
                           where
                               data.OwningTimeoutManager == string.Empty
@@ -80,14 +81,13 @@ namespace NServiceBus.MongoDB.TimeoutPersister
                           orderby data.Time
                           select new Tuple<string, DateTime>(data.Id, data.Time);
 
-            var nextTimeout =
-                (from data in collection.AsQueryable()
-                 where data.Time > DateTime.UtcNow
-                 orderby data.Time
-                 select data).FirstOrDefault();
+            var nextTimeout = from data in collection.AsQueryable().NullChecked()
+                              where data.Time > DateTime.UtcNow
+                              orderby data.Time
+                              select data;
 
-            nextTimeToRunQuery = nextTimeout != null
-                                     ? nextTimeout.Time
+            nextTimeToRunQuery = nextTimeout.Any()
+                                     ? nextTimeout.First().Time
                                      : DateTime.UtcNow.AddMinutes(
                                          MongoPersistenceConstants.DefaultNextTimeoutIncrementMinutes);
 

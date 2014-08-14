@@ -6,6 +6,7 @@
     <Recognized>
       <Word>Mongo</Word>
       <Word>persister</Word>
+      <Word>Utils</Word>
     </Recognized>
     <Deprecated>
       <!--<Term PreferredAlternate=""></Term>-->
