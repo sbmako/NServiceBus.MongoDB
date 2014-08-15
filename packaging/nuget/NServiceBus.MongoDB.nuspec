@@ -8,7 +8,7 @@
     <owners>Carlos Sandoval</owners>
     <licenseUrl>https://github.com/sbmako/NServiceBus.MongoDB/blob/master/LICENSE</licenseUrl>
     <projectUrl>https://github.com/sbmako/NServiceBus.MongoDB</projectUrl>
-    <iconUrl>http://s3.amazonaws.com/nuget.images/NServiceBus_32.png</iconUrl>
+    <iconUrl>https://raw.githubusercontent.com/sbmako/NServiceBus.MongoDB/master/packaging/NServiceBus_mongo_32.png</iconUrl>
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
     <description>MongoDB integration for  NServiceBus</description>
     <releaseNotes>Note: this is a beta release and should not be used for production</releaseNotes>
