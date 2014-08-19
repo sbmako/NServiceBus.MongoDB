@@ -2,7 +2,7 @@
   <Analyzers>
     <Analyzer AnalyzerId="StyleCop.CSharp.DocumentationRules">
       <Rules>
-        <Rule Name="FileHeaderMustShowCopyright">
+        <Rule Name="FileHeaderMustHaveCopyrightText">
           <RuleSettings>
             <BooleanProperty Name="Enabled">False</BooleanProperty>
           </RuleSettings>
