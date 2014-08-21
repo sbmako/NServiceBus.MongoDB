@@ -28,6 +28,7 @@
 
 namespace NServiceBus.MongoDB.Extensions
 {
+    using System;
     using System.Diagnostics.Contracts;
     using System.Linq;
     using global::MongoDB.Bson;
@@ -44,15 +45,19 @@ namespace NServiceBus.MongoDB.Extensions
             Contract.Requires(saga != null);
             Contract.Ensures(Contract.Result<IMongoQuery>() != null);
 
-            var query = Query.EQ("_id", saga.Id).NullChecked();
-
             var versionedDocument = saga as IHaveDocumentVersion;
-            return versionedDocument == null
-                ? query
-                : Query.And(
-                    query,
+
+            if (versionedDocument == null)
+            {
+                throw new InvalidOperationException(
+                    string.Format("Saga type {0} does not implement IHaveDocumentVersion", saga.GetType().Name));
+            }
+
+            return
+                Query.And(
+                    Query.EQ("_id", saga.Id),
                     Query.EQ(MongoPersistenceConstants.VersionPropertyName, versionedDocument.DocumentVersion))
-                    .NullChecked();
+                     .NullChecked();
         }
 
         public static IMongoUpdate MongoUpdate<T>(this T saga) where T : IContainSagaData

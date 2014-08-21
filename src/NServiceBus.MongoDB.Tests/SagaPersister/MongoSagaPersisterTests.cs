@@ -138,6 +138,16 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
 
         [Theory, IntegrationTest]
         [AutoDatabase]
+        public void SavingSagaWithoutDocumentVersionShouldThrowException(
+            MongoSagaPersister sut,
+            MongoDatabaseFactory factory,
+            SagaWithoutDocumentVersion sagaData)
+        {
+            sut.Invoking(s => s.Save(sagaData)).ShouldThrow<InvalidOperationException>();
+        }
+
+        [Theory, IntegrationTest]
+        [AutoDatabase]
         public void UpdatingSagaWithoutUniqueProperty(
             MongoSagaPersister sut,
             MongoDatabaseFactory factory,
@@ -210,6 +220,16 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
 
             saga2.UniqueProperty = Guid.NewGuid().ToString();
             sut.Invoking(s => s.Update(saga2)).ShouldThrow<InvalidOperationException>();
+        }
+
+        [Theory, IntegrationTest]
+        [AutoDatabase]
+        public void UpdatingSagaWithoutDocumentVersion(
+            MongoSagaPersister sut,
+            MongoDatabaseFactory factory,
+            SagaWithoutUniqueProperties sagaData)
+        {
+            sut.Invoking(s => s.Update(sagaData)).ShouldThrow<InvalidOperationException>();
         }
     }
 }

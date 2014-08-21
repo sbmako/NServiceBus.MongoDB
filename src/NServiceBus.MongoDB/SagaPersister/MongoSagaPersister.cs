@@ -66,6 +66,12 @@ namespace NServiceBus.MongoDB.SagaPersister
         {
             var sagaTypeName = saga.GetType().Name;
 
+            if (!(saga is IHaveDocumentVersion))
+            {
+                throw new InvalidOperationException(
+                    string.Format("Saga type {0} does not implement IHaveDocumentVersion", sagaTypeName));
+            }
+
             var uniqueProperty = UniqueAttribute.GetUniqueProperty(saga);
             if (uniqueProperty.HasValue)
             {
@@ -78,8 +84,7 @@ namespace NServiceBus.MongoDB.SagaPersister
 
             if (!result.Ok)
             {
-                throw new InvalidOperationException(
-                    string.Format("Unable to save with id {0}", saga.Id));
+                throw new InvalidOperationException(string.Format("Unable to save with id {0}", saga.Id));
             }
         }
 
@@ -96,8 +101,7 @@ namespace NServiceBus.MongoDB.SagaPersister
             var result = collection.Update(query, update, UpdateFlags.None);
             if (!result.UpdatedExisting)
             {
-                throw new InvalidOperationException(
-                    string.Format("Unable to update saga with id {0}", saga.Id));
+                throw new InvalidOperationException(string.Format("Unable to update saga with id {0}", saga.Id));
             }
         }
 
