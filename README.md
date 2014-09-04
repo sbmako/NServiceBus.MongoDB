@@ -21,29 +21,29 @@ Getting Started
 ### ConfigureMongoPersistence Members
 |Name | Description |
 |-----|-------------|
-| `MongoPersistence(Configure config)` | Default MongoDB persistence using ```localhost:27172``` |
-| `MongoPersistence(Configure config, string connectionString)` | fill in |
-| `MongoPersistence(Configure config, string connectionStringName, string databaseName)` | fill in |
-| `MongoPersistence(this Configure config, Func<string> getConnectionString)` | fill in |
-| `MongoPersistence(this Configure config, Func<string> getConnectionString, string databaseName)` | fill in |
+| `.MongoPersistence(Configure config)` | Default MongoDB persistence using ```localhost:27172``` |
+| `.MongoPersistence(Configure config, string connectionString)` | fill in |
+| `.MongoPersistence(Configure config, string connectionStringName, string databaseName)` | fill in |
+| `.MongoPersistence(this Configure config, Func<string> getConnectionString)` | fill in |
+| `.MongoPersistence(this Configure config, Func<string> getConnectionString, string databaseName)` | fill in |
 | ----|-------------|
 
 ### ConfigureMongoSagaPersister Members
 |Name | Description |
 |-----|-------------|
-| `MongoSagaPersister(Configure config)` | Enables MongoDB saga persistence |
+| `.MongoSagaPersister(Configure config)` | Enables MongoDB saga persistence |
 | ----|-------------|
 
 ### ConfigureMongoSubscriptionStorage Members
 |Name | Description |
 |-----|-------------|
-| `MongoSubscriptionStorage(Configure config)` | Enables MongoDB subscription storage |
+| `.MongoSubscriptionStorage(Configure config)` | Enables MongoDB subscription storage |
 | ----|-------------|
 
 ### ConfigureMongoTimeoutPersister Members
 |Name | Description |
 |-----|-------------|
-| `MongoTimeoutPersister(Configure config)` | Enables MongoDB timeout persister |
+| `.MongoTimeoutPersister(Configure config)` | Enables MongoDB timeout persister |
 | ----|-------------|
 
 #### Example Configuration
