@@ -10,10 +10,10 @@
     <projectUrl>https://github.com/sbmako/NServiceBus.MongoDB</projectUrl>
     <iconUrl>https://raw.githubusercontent.com/sbmako/NServiceBus.MongoDB/master/packaging/NServiceBus_mongo_32.png</iconUrl>
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
-    <description>MongoDB integration for  NServiceBus</description>
-    <releaseNotes>Note: this is a beta release and should not be used for production</releaseNotes>
+    <description>MongoDB persistence for  NServiceBus</description>
+    <!-- <releaseNotes>Note: this is a beta release and should not be used for production</releaseNotes> -->
     <copyright>Copyright 2014 Carlos Sandoval. All rights reserved.</copyright>
-    <tags>nservicebus servicebus msmq cqrs publish subscribe mongodb</tags>
+    <tags>nservicebus mongodb persistence servicebus msmq cqrs publish subscribe</tags>
     <language>en-US</language>
     <dependencies>
 		<dependency id="mongocsharpdriver" version="1.9.2" />	
