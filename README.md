@@ -20,7 +20,7 @@ Getting Started
 -
 ### ConfigureMongoPersistence Members
 |Name | Description |
-|-----|-------------|
+|:-----|:-------------|
 | `.MongoPersistence(Configure config)` | Default MongoDB persistence using ```localhost:27172``` |
 | `.MongoPersistence(Configure config, string connectionString)` | Configures persistence using the given connection string  |
 | `.MongoPersistence(Configure config, string connectionStringName, string databaseName)` | Configures persistence using the given connection string and uses the provided database |
@@ -29,17 +29,17 @@ Getting Started
 
 ### ConfigureMongoSagaPersister Members
 |Name | Description |
-|-----|-------------|
+|:-----|:-------------|
 | `.MongoSagaPersister(Configure config)` | Enables MongoDB saga persistence |
 
 ### ConfigureMongoSubscriptionStorage Members
 |Name | Description |
-|-----|-------------|
+|:-----|:-------------|
 | `.MongoSubscriptionStorage(Configure config)` | Enables MongoDB subscription storage |
 
 ### ConfigureMongoTimeoutPersister Members
 |Name | Description |
-|-----|-------------|
+|:-----|:-------------|
 | `.MongoTimeoutPersister(Configure config)` | Enables MongoDB timeout persister |
 
 #### Example Configuration
