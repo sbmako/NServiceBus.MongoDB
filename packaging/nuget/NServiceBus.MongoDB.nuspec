@@ -3,7 +3,7 @@
   <metadata xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <id>NServiceBus.MongoDB</id>
     <title>NServiceBus MongoDB</title>
-    <version>0.1.2</version>
+    <version>0.1.3</version>
     <authors>Carlos Sandoval</authors>
     <owners>Carlos Sandoval</owners>
     <licenseUrl>https://github.com/sbmako/NServiceBus.MongoDB/blob/master/LICENSE</licenseUrl>
