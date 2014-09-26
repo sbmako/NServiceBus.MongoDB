@@ -32,11 +32,9 @@ namespace NServiceBus.MongoDB
     using System.Configuration;
     using System.Diagnostics.Contracts;
     using System.Text;
-
-    using NServiceBus.MongoDB.Extensions;
-
     using global::MongoDB.Driver;
     using NServiceBus.Logging;
+    using NServiceBus.MongoDB.Extensions;
     using NServiceBus.MongoDB.Utils;
 
     /// <summary>
