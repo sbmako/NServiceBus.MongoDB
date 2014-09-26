@@ -30,6 +30,8 @@ namespace NServiceBus.MongoDB.Extensions
 {
     using System.Diagnostics.Contracts;
 
+    using NServiceBus.MongoDB.Utils;
+
     internal static class DatabaseNameExtensions
     {
         public static string EndpointNameAsDatabaseName(this string endpointName)
@@ -37,7 +39,7 @@ namespace NServiceBus.MongoDB.Extensions
             Contract.Requires(!string.IsNullOrWhiteSpace(endpointName));
             Contract.Ensures(!string.IsNullOrWhiteSpace(Contract.Result<string>()));
 
-            return endpointName.Replace('.', '_');
+            return endpointName.Replace('.', '_').NullOrWhiteSpaceChecked();
         }
     }
 }
