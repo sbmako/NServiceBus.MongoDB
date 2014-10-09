@@ -164,6 +164,8 @@ namespace NServiceBus.MongoDB.SagaPersister
 
         private static void CheckUniqueProperty(IContainSagaData sagaData, KeyValuePair<string, object> uniqueProperty)
         {
+            Contract.Requires(sagaData != null);
+
             if (uniqueProperty.Value == null)
             {
                 throw new ArgumentNullException("uniqueProperty", string.Format("Property {0} is marked with the [Unique] attribute on {1} but contains a null value.", uniqueProperty.Key, sagaData.GetType().Name));

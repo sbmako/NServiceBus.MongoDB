@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="MongoComponentInitialization.cs" company="Carlos Sandoval">
+// <copyright file="DocumentVersionExtensionsTests.cs" company="Carlos Sandoval">
 //   The MIT License (MIT)
 //   
 //   Copyright (c) 2014 Carlos Sandoval
@@ -22,22 +22,28 @@
 //   CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // </copyright>
 // <summary>
-//   The mongo component initialization.
+//   Defines the DocumentVersionExtensionsTests type.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace NServiceBus.MongoDB
+namespace NServiceBus.MongoDB.Tests.Extensions
 {
-    /// <summary>
-    /// The mongo component initialization.
-    /// </summary>
-    public class MongoComponentInitialization : IWantToRunBeforeConfigurationIsFinalized
+    using FluentAssertions;
+
+    using NServiceBus.MongoDB.Extensions;
+    using NServiceBus.MongoDB.Tests.Sample;
+    using NServiceBus.MongoDB.Tests.TestingUtilities;
+    using Xunit.Extensions;
+
+    public class DocumentVersionExtensionsTests
     {
-        /// <summary>
-        /// The run.
-        /// </summary>
-        public void Run()
+        [Theory, UnitTest]
+        [AutoConfigureData]
+        public void BaseSagaUpdateQuery(SagaWithUniqueProperty saga)
         {
+            var query = saga.MongoUpdateQuery();
+            
+            query.Should().Be("something");
         }
     }
 }

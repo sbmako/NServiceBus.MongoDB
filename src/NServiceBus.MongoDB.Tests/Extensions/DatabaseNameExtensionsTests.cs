@@ -29,18 +29,18 @@
 namespace NServiceBus.MongoDB.Tests.Extensions
 {
     using FluentAssertions;
-
     using NServiceBus.MongoDB.Extensions;
     using NServiceBus.MongoDB.Tests.TestingUtilities;
-    using Xunit.Extensions;
+    using Xunit;
 
     public class DatabaseNameExtensionsTests
     {
-        [Theory, UnitTest]
-        [AutoConfigureData]
-        public void MongoPersistenceWithNoParameters(Configure config)
+        [Fact, UnitTest]
+        public void VerifyPeriodsAreReplacedWithUnderscores()
         {
-            var databaseName = "test.endpoint.name".EndpointNameAsDatabaseName();
+            const string EndpointName = "test.endpoint.name";
+
+            var databaseName = EndpointName.EndpointNameAsDatabaseName();
 
             databaseName.Should().Be("test_endpoint_name");
         }

@@ -192,7 +192,6 @@
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="IHaveDocumentVersion.cs" />
     <Compile Include="MongoClientAccessor.cs" />
-    <Compile Include="MongoComponentInitialization.cs" />
     <Compile Include="MongoDatabaseFactory.cs" />
     <Compile Include="MongoPersistenceConstants.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

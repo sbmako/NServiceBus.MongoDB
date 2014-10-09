@@ -197,6 +197,9 @@ namespace NServiceBus.MongoDB
 
         internal static Configure InternalMongoPersistence(this Configure config, MongoClientAccessor clientAccessor)
         {
+            Contract.Requires(config != null);
+            Contract.Requires(clientAccessor != null);
+
             return config.InternalMongoPersistence(() =>
             {
                 VerifyConnectionToMongoServer(clientAccessor);
@@ -206,6 +209,9 @@ namespace NServiceBus.MongoDB
 
         internal static Configure InternalMongoPersistence(this Configure config, Func<MongoClientAccessor> clientAccessorFactory)
         {
+            Contract.Requires(config != null);
+            Contract.Requires(clientAccessorFactory != null);
+
             config.Configurer.ConfigureComponent(clientAccessorFactory, DependencyLifecycle.SingleInstance);
             config.Configurer.ConfigureComponent<MongoDatabaseFactory>(DependencyLifecycle.SingleInstance);
 
@@ -227,9 +233,6 @@ namespace NServiceBus.MongoDB
                 ShowUncontactableMongoWarning(mongoClientAccessor.MongoClient, ex);
                 return;
             }
-
-            //// TODO: check to see if database is valid on this server using
-            //// server.DatabaseExists(name);
 
             Logger.InfoFormat("Connection to MongoDB at {0} verified.", mongoClientAccessor.MongoClient.Settings.Server);
         }
@@ -262,6 +265,8 @@ namespace NServiceBus.MongoDB
         private static string GetConnectionString(string connectionStringName)
         {
             Contract.Requires(!string.IsNullOrWhiteSpace(connectionStringName));
+            Contract.Ensures(Contract.Result<string>() != null);
+
             var connectionStringSettings = ConfigurationManager.ConnectionStrings[connectionStringName];
 
             if (connectionStringSettings == null)
