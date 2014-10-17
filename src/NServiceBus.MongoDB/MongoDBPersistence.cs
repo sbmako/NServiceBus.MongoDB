@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ConfigureMongoSagaPersister.cs" company="Carlos Sandoval">
+// <copyright file="MongoDBPersistence.cs" company="Carlos Sandoval">
 //   The MIT License (MIT)
 //   
 //   Copyright (c) 2014 Carlos Sandoval
@@ -22,42 +22,40 @@
 //   CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // </copyright>
 // <summary>
-//   The configure mongo saga persister.
+//   The mongo db persistence.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace NServiceBus.MongoDB.SagaPersister
+
+
+namespace NServiceBus.MongoDB
 {
-    using System;
-    using System.Diagnostics.Contracts;
+    using NServiceBus.Features;
+    using NServiceBus.MongoDB.SagaPersister;
+    using NServiceBus.MongoDB.TimeoutPersister;
+    using NServiceBus.Persistence;
 
     /// <summary>
-    /// The configure mongo saga persister.
+    /// The mongo DB persistence.
     /// </summary>
-    public static class ConfigureMongoSagaPersister
+    public class MongoDBPersistence : PersistenceDefinition
     {
         /// <summary>
-        /// The mongo saga persister.
+        /// Initializes a new instance of the <see cref="MongoDBPersistence"/> class.
         /// </summary>
-        /// <param name="config">
-        /// The config.
-        /// </param>
-        /// <returns>
-        /// The <see cref="Configure"/>.
-        /// </returns>
-        public static Configure MongoSagaPersister(this Configure config)
+        public MongoDBPersistence()
         {
-            Contract.Requires<ArgumentNullException>(config != null);
-            Contract.Ensures(Contract.Result<Configure>() != null);
+            this.Defaults(s =>
+            {
+                ////RavenLogManager.CurrentLogManager = new NoOpLogManager();
 
-            ////if (!config.Configurer.HasComponent<MongoClientAccessor>())
-            ////{
-            ////    config.MongoPersistence();
-            ////}
+                ////s.EnableFeatureByDefault<RavenDbStorageSession>();
+                ////s.EnableFeatureByDefault<SharedDocumentStore>();
+            });
 
-            ////config.Configurer.ConfigureComponent<MongoSagaPersister>(DependencyLifecycle.SingleInstance);
-
-            return config;
+            ////Supports(Storage.GatewayDeduplication, s => s.EnableFeatureByDefault<RavenDbGatewayDeduplication>());
+            this.Supports(Storage.Timeouts, s => s.EnableFeatureByDefault<MongoDBTimeoutStorage>());
+            this.Supports(Storage.Sagas, s => s.EnableFeatureByDefault<MongoDBSagaStorage>());
+            ////Supports(Storage.Subscriptions, s => s.EnableFeatureByDefault<RavenDbSubscriptionStorage>());
         }
-    }
-}
+    }}

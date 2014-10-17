@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ConfigureMongoSagaPersister.cs" company="Carlos Sandoval">
+// <copyright file="MongoDBSagaStorage.cs" company="Carlos Sandoval">
 //   The MIT License (MIT)
 //   
 //   Copyright (c) 2014 Carlos Sandoval
@@ -22,42 +22,38 @@
 //   CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // </copyright>
 // <summary>
-//   The configure mongo saga persister.
+//   Defines the MongoDBSagaStorage type.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace NServiceBus.MongoDB.SagaPersister
 {
-    using System;
-    using System.Diagnostics.Contracts;
+    using NServiceBus.Features;
 
     /// <summary>
-    /// The configure mongo saga persister.
+    /// The mongo DB saga storage.
     /// </summary>
-    public static class ConfigureMongoSagaPersister
+    public class MongoDBSagaStorage : Feature
     {
-        /// <summary>
-        /// The mongo saga persister.
-        /// </summary>
-        /// <param name="config">
-        /// The config.
-        /// </param>
-        /// <returns>
-        /// The <see cref="Configure"/>.
-        /// </returns>
-        public static Configure MongoSagaPersister(this Configure config)
+        internal MongoDBSagaStorage()
         {
-            Contract.Requires<ArgumentNullException>(config != null);
-            Contract.Ensures(Contract.Result<Configure>() != null);
+            this.DependsOn<Sagas>();
+        }
 
-            ////if (!config.Configurer.HasComponent<MongoClientAccessor>())
-            ////{
-            ////    config.MongoPersistence();
-            ////}
+        /// <summary>
+        /// Called when the features is activated
+        /// </summary>
+        /// <param name="context">
+        /// The feature configuration context.
+        /// </param>
+        protected override void Setup(FeatureConfigurationContext context)
+        {
+            //// TODO: setup feature
 
-            ////config.Configurer.ConfigureComponent<MongoSagaPersister>(DependencyLifecycle.SingleInstance);
-
-            return config;
+            context.Container.ConfigureComponent<MongoSagaPersister>(DependencyLifecycle.InstancePerCall);
+            ////       .ConfigureProperty(
+            ////           p => p.AllowUnsafeLoads,
+            ////           context.Settings.GetOrDefault<bool>(RavenDbSagaSettingsExtensions.AllowStaleSagaReadsKey));
         }
     }
 }

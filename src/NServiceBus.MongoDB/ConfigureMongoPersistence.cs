@@ -58,22 +58,24 @@ namespace NServiceBus.MongoDB
             Contract.Requires<ArgumentNullException>(config != null, "config");
             Contract.Ensures(Contract.Result<Configure>() != null);
 
-            if (Configure.Instance.Configurer.HasComponent<MongoDatabaseFactory>())
-            {
-                return config;
-            }
+            ////if (config.HasComponent<MongoDatabaseFactory>())
+            ////{
+            ////    return config;
+            ////}
 
-            var connectionStringSettings = GetConnectionString();
+            ////var connectionStringSettings = GetConnectionString();
 
-            var connectionString = connectionStringSettings != null
-                                       ? connectionStringSettings.ConnectionString
-                                       : MongoPersistenceConstants.DefaultConnectionString;
+            ////var connectionString = connectionStringSettings != null
+            ////                           ? connectionStringSettings.ConnectionString
+            ////                           : MongoPersistenceConstants.DefaultConnectionString;
 
-            return
-                config.InternalMongoPersistence(
-                    new MongoClientAccessor(
-                        new MongoClient(connectionString),
-                        Configure.EndpointName.NullOrWhiteSpaceChecked().EndpointNameAsDatabaseName()));
+            ////return
+            ////    config.InternalMongoPersistence(
+            ////        new MongoClientAccessor(
+            ////            new MongoClient(connectionString),
+            ////            Configure.EndpointName.NullOrWhiteSpaceChecked().EndpointNameAsDatabaseName()));
+
+            return config;
         }
 
         /// <summary>
@@ -94,13 +96,15 @@ namespace NServiceBus.MongoDB
             Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(connectionStringName), "connectionStringName");
             Contract.Ensures(Contract.Result<Configure>() != null);
 
-            var connectionString = GetConnectionString(connectionStringName);
+            ////var connectionString = GetConnectionString(connectionStringName);
 
-            return
-                config.InternalMongoPersistence(
-                    new MongoClientAccessor(
-                        new MongoClient(connectionString),
-                        Configure.EndpointName.NullOrWhiteSpaceChecked().EndpointNameAsDatabaseName()));
+            ////return
+            ////    config.InternalMongoPersistence(
+            ////        new MongoClientAccessor(
+            ////            new MongoClient(connectionString),
+            ////            Configure.EndpointName.NullOrWhiteSpaceChecked().EndpointNameAsDatabaseName()));
+
+            return config;
         }
 
         /// <summary>
@@ -125,8 +129,10 @@ namespace NServiceBus.MongoDB
             Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(databaseName), "databaseName");
             Contract.Ensures(Contract.Result<Configure>() != null);
 
-            var connectionString = GetConnectionString(connectionStringName);
-            return config.InternalMongoPersistence(new MongoClientAccessor(new MongoClient(connectionString), databaseName));
+            ////var connectionString = GetConnectionString(connectionStringName);
+            ////return config.InternalMongoPersistence(new MongoClientAccessor(new MongoClient(connectionString), databaseName));
+
+            return config;
         }
 
         /// <summary>
@@ -147,18 +153,20 @@ namespace NServiceBus.MongoDB
             Contract.Requires<ArgumentException>(getConnectionString != null, "getConnectionString");
             Contract.Ensures(Contract.Result<Configure>() != null);
 
-            var connectionString = getConnectionString();
-            if (string.IsNullOrEmpty(connectionString))
-            {
-                throw new ConfigurationErrorsException(
-                    "Cannot configure Mongo Persister. Connection string can not be null or empty.");
-            }
+            ////var connectionString = getConnectionString();
+            ////if (string.IsNullOrEmpty(connectionString))
+            ////{
+            ////    throw new ConfigurationErrorsException(
+            ////        "Cannot configure Mongo Persister. Connection string can not be null or empty.");
+            ////}
 
-            return
-                config.InternalMongoPersistence(
-                    new MongoClientAccessor(
-                        new MongoClient(getConnectionString()),
-                        Configure.EndpointName.NullOrWhiteSpaceChecked().EndpointNameAsDatabaseName()));
+            ////return
+            ////    config.InternalMongoPersistence(
+            ////        new MongoClientAccessor(
+            ////            new MongoClient(getConnectionString()),
+            ////            Configure.EndpointName.NullOrWhiteSpaceChecked().EndpointNameAsDatabaseName()));
+
+            return config;
         }
 
         /// <summary>
@@ -183,103 +191,105 @@ namespace NServiceBus.MongoDB
             Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(databaseName), "databaseName");
             Contract.Ensures(Contract.Result<Configure>() != null);
 
-            var connectionString = getConnectionString();
-            if (string.IsNullOrEmpty(connectionString))
-            {
-                throw new ConfigurationErrorsException(
-                    "Cannot configure Mongo Persister. Connection string can not be null or empty.");
-            }
+            ////var connectionString = getConnectionString();
+            ////if (string.IsNullOrEmpty(connectionString))
+            ////{
+            ////    throw new ConfigurationErrorsException(
+            ////        "Cannot configure Mongo Persister. Connection string can not be null or empty.");
+            ////}
 
-            return
-                config.InternalMongoPersistence(
-                    new MongoClientAccessor(new MongoClient(connectionString), databaseName));
-        }
-
-        internal static Configure InternalMongoPersistence(this Configure config, MongoClientAccessor clientAccessor)
-        {
-            Contract.Requires(config != null);
-            Contract.Requires(clientAccessor != null);
-
-            return config.InternalMongoPersistence(() =>
-            {
-                VerifyConnectionToMongoServer(clientAccessor);
-                return clientAccessor;
-            });
-        }
-
-        internal static Configure InternalMongoPersistence(this Configure config, Func<MongoClientAccessor> clientAccessorFactory)
-        {
-            Contract.Requires(config != null);
-            Contract.Requires(clientAccessorFactory != null);
-
-            config.Configurer.ConfigureComponent(clientAccessorFactory, DependencyLifecycle.SingleInstance);
-            config.Configurer.ConfigureComponent<MongoDatabaseFactory>(DependencyLifecycle.SingleInstance);
+            ////return
+            ////    config.InternalMongoPersistence(
+            ////        new MongoClientAccessor(new MongoClient(connectionString), databaseName));
 
             return config;
         }
 
-        internal static void VerifyConnectionToMongoServer(MongoClientAccessor mongoClientAccessor)
-        {
-            Contract.Requires(mongoClientAccessor != null);
+        ////internal static Configure InternalMongoPersistence(this Configure config, MongoClientAccessor clientAccessor)
+        ////{
+        ////    Contract.Requires(config != null);
+        ////    Contract.Requires(clientAccessor != null);
 
-            var server = mongoClientAccessor.MongoClient.GetServer();
+        ////    return config.InternalMongoPersistence(() =>
+        ////    {
+        ////        VerifyConnectionToMongoServer(clientAccessor);
+        ////        return clientAccessor;
+        ////    });
+        ////}
 
-            try
-            {
-                server.Ping();
-            }
-            catch (Exception ex)
-            {
-                ShowUncontactableMongoWarning(mongoClientAccessor.MongoClient, ex);
-                return;
-            }
+        ////internal static Configure InternalMongoPersistence(this Configure config, Func<MongoClientAccessor> clientAccessorFactory)
+        ////{
+        ////    Contract.Requires(config != null);
+        ////    Contract.Requires(clientAccessorFactory != null);
 
-            Logger.InfoFormat("Connection to MongoDB at {0} verified.", mongoClientAccessor.MongoClient.Settings.Server);
-        }
+        ////    config.Configurer.ConfigureComponent(clientAccessorFactory, DependencyLifecycle.SingleInstance);
+        ////    config.Configurer.ConfigureComponent<MongoDatabaseFactory>(DependencyLifecycle.SingleInstance);
 
-        internal static void ShowUncontactableMongoWarning(MongoClient mongoClient, Exception exception)
-        {
-            Contract.Requires(mongoClient != null);
-            Contract.Requires(exception != null);
+        ////    return config;
+        ////}
 
-            var serverSettings = mongoClient.Settings.Server;
+        ////internal static void VerifyConnectionToMongoServer(MongoClientAccessor mongoClientAccessor)
+        ////{
+        ////    Contract.Requires(mongoClientAccessor != null);
 
-            var sb = new StringBuilder();
-            sb.AppendFormat("Mongo could not be contacted using: {0}.", serverSettings);
-            sb.AppendLine();
-            sb.AppendFormat("Please ensure that there is a Mongo instance at {0}:{1}.", serverSettings.Host, serverSettings.Port);
-            sb.AppendLine();
-            sb.AppendLine(
-                @"To configure NServiceBus to use a different connection string add a connection string named ""NServiceBus/Persistence"" in your config file.");
-            sb.AppendLine("Reason: " + exception);
+        ////    var server = mongoClientAccessor.MongoClient.GetServer();
 
-            Logger.Warn(sb.ToString());
-        }
+        ////    try
+        ////    {
+        ////        server.Ping();
+        ////    }
+        ////    catch (Exception ex)
+        ////    {
+        ////        ShowUncontactableMongoWarning(mongoClientAccessor.MongoClient, ex);
+        ////        return;
+        ////    }
 
-        private static ConnectionStringSettings GetConnectionString()
-        {
-            return ConfigurationManager.ConnectionStrings["NServiceBus.Persistence"]
-                   ?? ConfigurationManager.ConnectionStrings["NServiceBus/Persistence"];
-        }
+        ////    Logger.InfoFormat("Connection to MongoDB at {0} verified.", mongoClientAccessor.MongoClient.Settings.Server);
+        ////}
 
-        private static string GetConnectionString(string connectionStringName)
-        {
-            Contract.Requires(!string.IsNullOrWhiteSpace(connectionStringName));
-            Contract.Ensures(Contract.Result<string>() != null);
+        ////internal static void ShowUncontactableMongoWarning(MongoClient mongoClient, Exception exception)
+        ////{
+        ////    Contract.Requires(mongoClient != null);
+        ////    Contract.Requires(exception != null);
 
-            var connectionStringSettings = ConfigurationManager.ConnectionStrings[connectionStringName];
+        ////    var serverSettings = mongoClient.Settings.Server;
 
-            if (connectionStringSettings == null)
-            {
-                throw new ConfigurationErrorsException(
-                    string.Format(
-                        "Cannot configure Mongo Persister. No connection string named {0} was found",
-                        connectionStringName));
-            }
+        ////    var sb = new StringBuilder();
+        ////    sb.AppendFormat("Mongo could not be contacted using: {0}.", serverSettings);
+        ////    sb.AppendLine();
+        ////    sb.AppendFormat("Please ensure that there is a Mongo instance at {0}:{1}.", serverSettings.Host, serverSettings.Port);
+        ////    sb.AppendLine();
+        ////    sb.AppendLine(
+        ////        @"To configure NServiceBus to use a different connection string add a connection string named ""NServiceBus/Persistence"" in your config file.");
+        ////    sb.AppendLine("Reason: " + exception);
 
-            return !string.IsNullOrWhiteSpace(connectionStringSettings.ConnectionString)
-                       ? connectionStringSettings.ConnectionString
-                       : string.Empty;
-        }
+        ////    Logger.Warn(sb.ToString());
+        ////}
+
+        ////private static ConnectionStringSettings GetConnectionString()
+        ////{
+        ////    return ConfigurationManager.ConnectionStrings["NServiceBus.Persistence"]
+        ////           ?? ConfigurationManager.ConnectionStrings["NServiceBus/Persistence"];
+        ////}
+
+        ////private static string GetConnectionString(string connectionStringName)
+        ////{
+        ////    Contract.Requires(!string.IsNullOrWhiteSpace(connectionStringName));
+        ////    Contract.Ensures(Contract.Result<string>() != null);
+
+        ////    var connectionStringSettings = ConfigurationManager.ConnectionStrings[connectionStringName];
+
+        ////    if (connectionStringSettings == null)
+        ////    {
+        ////        throw new ConfigurationErrorsException(
+        ////            string.Format(
+        ////                "Cannot configure Mongo Persister. No connection string named {0} was found",
+        ////                connectionStringName));
+        ////    }
+
+        ////    return !string.IsNullOrWhiteSpace(connectionStringSettings.ConnectionString)
+        ////               ? connectionStringSettings.ConnectionString
+        ////               : string.Empty;
+        ////}
     }
 }

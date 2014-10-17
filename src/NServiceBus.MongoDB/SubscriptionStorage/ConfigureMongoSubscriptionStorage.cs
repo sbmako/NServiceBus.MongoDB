@@ -52,14 +52,14 @@ namespace NServiceBus.MongoDB.SubscriptionStorage
             Contract.Requires<ArgumentNullException>(config != null);
             Contract.Ensures(Contract.Result<Configure>() != null);
 
-            if (!config.Configurer.HasComponent<MongoClientAccessor>())
-            {
-                config.MongoPersistence();
-            }
+            ////if (!config.Configurer.HasComponent<MongoClientAccessor>())
+            ////{
+            ////    config.MongoPersistence();
+            ////}
 
-            config.Configurer.ConfigureComponent<MongoSubscriptionStorage>(DependencyLifecycle.SingleInstance);
+            ////config.Configurer.ConfigureComponent<MongoSubscriptionStorage>(DependencyLifecycle.SingleInstance);
 
-            ConfigureClassMaps();
+            ////ConfigureClassMaps();
 
             return config;
         }

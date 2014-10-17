@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ConfigureMongoSagaPersister.cs" company="Carlos Sandoval">
+// <copyright file="MongoDBTimeoutStorage.cs" company="Carlos Sandoval">
 //   The MIT License (MIT)
 //   
 //   Copyright (c) 2014 Carlos Sandoval
@@ -22,42 +22,33 @@
 //   CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // </copyright>
 // <summary>
-//   The configure mongo saga persister.
+//   Defines the MongoDBTimeoutStorage type.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace NServiceBus.MongoDB.SagaPersister
+namespace NServiceBus.MongoDB.TimeoutPersister
 {
-    using System;
-    using System.Diagnostics.Contracts;
+    using NServiceBus.Features;
 
     /// <summary>
-    /// The configure mongo saga persister.
+    /// The mongo DB timeout storage.
     /// </summary>
-    public static class ConfigureMongoSagaPersister
+    public class MongoDBTimeoutStorage : Feature
     {
-        /// <summary>
-        /// The mongo saga persister.
-        /// </summary>
-        /// <param name="config">
-        /// The config.
-        /// </param>
-        /// <returns>
-        /// The <see cref="Configure"/>.
-        /// </returns>
-        public static Configure MongoSagaPersister(this Configure config)
+        internal MongoDBTimeoutStorage()
         {
-            Contract.Requires<ArgumentNullException>(config != null);
-            Contract.Ensures(Contract.Result<Configure>() != null);
+            this.DependsOn<TimeoutManager>();
+            ////this.DependsOn<SharedDocumentStore>();
+        }
 
-            ////if (!config.Configurer.HasComponent<MongoClientAccessor>())
-            ////{
-            ////    config.MongoPersistence();
-            ////}
-
-            ////config.Configurer.ConfigureComponent<MongoSagaPersister>(DependencyLifecycle.SingleInstance);
-
-            return config;
+        /// <summary>
+        /// Called when the features is activated
+        /// </summary>
+        /// <param name="context">
+        /// The context.
+        /// </param>
+        protected override void Setup(FeatureConfigurationContext context)
+        {
         }
     }
 }

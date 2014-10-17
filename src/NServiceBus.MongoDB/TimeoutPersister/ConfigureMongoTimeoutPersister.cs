@@ -54,14 +54,14 @@ namespace NServiceBus.MongoDB.TimeoutPersister
             Contract.Requires<ArgumentNullException>(config != null);
             Contract.Ensures(Contract.Result<Configure>() != null);
 
-            if (!config.Configurer.HasComponent<MongoClientAccessor>())
-            {
-                config.MongoPersistence();
-            }
+            ////if (!config.Configurer.HasComponent<MongoClientAccessor>())
+            ////{
+            ////    config.MongoPersistence();
+            ////}
 
-            config.Configurer.ConfigureComponent<MongoTimeoutPersister>(DependencyLifecycle.SingleInstance);
+            ////config.Configurer.ConfigureComponent<MongoTimeoutPersister>(DependencyLifecycle.SingleInstance);
 
-            ConfigureClassMaps();
+            ////ConfigureClassMaps();
 
             return config;
         }

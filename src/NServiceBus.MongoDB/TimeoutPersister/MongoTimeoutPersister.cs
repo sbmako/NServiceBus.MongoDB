@@ -69,7 +69,7 @@ namespace NServiceBus.MongoDB.TimeoutPersister
         /// Returns the next range of timeouts that are due.
         /// </returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1002:DoNotExposeGenericLists", Justification = "Ok here.")]
-        public List<Tuple<string, DateTime>> GetNextChunk(DateTime startSlice, out DateTime nextTimeToRunQuery)
+        IEnumerable<Tuple<string, DateTime>> IPersistTimeouts.GetNextChunk(DateTime startSlice, out DateTime nextTimeToRunQuery)
         {
             var collection = this.mongoDatabase.GetCollection<TimeoutData>(TimeoutDataName);
 
@@ -77,7 +77,7 @@ namespace NServiceBus.MongoDB.TimeoutPersister
                           where data.Time > startSlice && data.Time <= DateTime.UtcNow
                           where
                               data.OwningTimeoutManager == string.Empty
-                              || data.OwningTimeoutManager == Configure.EndpointName
+                              ////|| data.OwningTimeoutManager == Configure.EndpointName
                           orderby data.Time
                           select new Tuple<string, DateTime>(data.Id, data.Time);
 

@@ -168,13 +168,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\mongocsharpdriver.1.9.2\lib\net35\MongoDB.Driver.dll</HintPath>
     </Reference>
-    <Reference Include="NServiceBus, Version=4.6.0.0, Culture=neutral, PublicKeyToken=9fc386479f8a226c, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\NServiceBus.Interfaces.4.6.3\lib\net40\NServiceBus.dll</HintPath>
-    </Reference>
-    <Reference Include="NServiceBus.Core, Version=4.6.0.0, Culture=neutral, PublicKeyToken=9fc386479f8a226c, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\NServiceBus.4.6.3\lib\net40\NServiceBus.Core.dll</HintPath>
+    <Reference Include="NServiceBus.Core">
+      <HintPath>..\packages\NServiceBus.5.0.1\lib\net45\NServiceBus.Core.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -193,15 +188,18 @@
     <Compile Include="IHaveDocumentVersion.cs" />
     <Compile Include="MongoClientAccessor.cs" />
     <Compile Include="MongoDatabaseFactory.cs" />
+    <Compile Include="MongoDBPersistence.cs" />
     <Compile Include="MongoPersistenceConstants.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SagaPersister\ConfigureMongoSagaPersister.cs" />
     <Compile Include="ContainMongoSagaData.cs" />
+    <Compile Include="SagaPersister\MongoDBSagaStorage.cs" />
     <Compile Include="SagaPersister\MongoSagaPersister.cs" />
     <Compile Include="SubscriptionStorage\ConfigureMongoSubscriptionStorage.cs" />
     <Compile Include="SubscriptionStorage\MongoSubscriptionStorage.cs" />
     <Compile Include="SubscriptionStorage\Subscription.cs" />
     <Compile Include="TimeoutPersister\ConfigureMongoTimeoutPersister.cs" />
+    <Compile Include="TimeoutPersister\MongoDBTimeoutStorage.cs" />
     <Compile Include="TimeoutPersister\MongoTimeoutPersister.cs" />
     <Compile Include="Utils\ContractHelper.cs" />
     <Compile Include="Utils\DeterministicGuid.cs" />
