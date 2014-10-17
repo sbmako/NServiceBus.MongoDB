@@ -28,8 +28,6 @@
 
 namespace NServiceBus.MongoDB.Tests.TestingUtilities
 {
-    using System;
-
     using NServiceBus.Timeout.Core;
 
     using Ploeh.AutoFixture;
@@ -40,7 +38,7 @@ namespace NServiceBus.MongoDB.Tests.TestingUtilities
         public void Customize(IFixture fixture)
         {
             var config = Configure.With(new[] { GetType().Assembly })
-                                  .DefineEndpointName("UnitTests")
+                                  .DefineEndpointName("Unit.Tests")
                                   .DefaultBuilder();
 
             fixture.Register(() => config);

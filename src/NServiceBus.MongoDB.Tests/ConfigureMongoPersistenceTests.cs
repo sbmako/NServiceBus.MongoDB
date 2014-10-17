@@ -31,9 +31,6 @@ namespace NServiceBus.MongoDB.Tests
     using System.Configuration;
     using FluentAssertions;
     using NServiceBus.MongoDB.Tests.TestingUtilities;
-    using NServiceBus.Saga;
-    using NServiceBus.Unicast.Subscriptions.MessageDrivenSubscriptions;
-
     using Xunit.Extensions;
 
     public class ConfigureMongoPersistenceTests
@@ -47,7 +44,7 @@ namespace NServiceBus.MongoDB.Tests
             Configure.Instance.Configurer.HasComponent<MongoClientAccessor>().Should().BeTrue();
             Configure.Instance.Configurer.HasComponent<MongoDatabaseFactory>().Should().BeTrue();
             var clientAccessor = Configure.Instance.Builder.Build<MongoClientAccessor>();
-            clientAccessor.DatabaseName.Should().Be(Configure.EndpointName);
+            clientAccessor.DatabaseName.Should().Be("Unit_Tests");
         }
 
         [Theory, UnitTest]
@@ -72,7 +69,7 @@ namespace NServiceBus.MongoDB.Tests
             Configure.Instance.Configurer.HasComponent<MongoDatabaseFactory>().Should().BeTrue();
 
             var clientAccessor = Configure.Instance.Builder.Build<MongoClientAccessor>();
-            clientAccessor.DatabaseName.Should().Be(Configure.EndpointName);
+            clientAccessor.DatabaseName.Should().Be("Unit_Tests");
         }
 
         [Theory, UnitTest]
@@ -108,7 +105,7 @@ namespace NServiceBus.MongoDB.Tests
             Configure.Instance.Configurer.HasComponent<MongoDatabaseFactory>().Should().BeTrue();
 
             var clientAccessor = Configure.Instance.Builder.Build<MongoClientAccessor>();
-            clientAccessor.DatabaseName.Should().Be(Configure.EndpointName);
+            clientAccessor.DatabaseName.Should().Be("Unit_Tests");
         }
 
         [Theory, UnitTest]

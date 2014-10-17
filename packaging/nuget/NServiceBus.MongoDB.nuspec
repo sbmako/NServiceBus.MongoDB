@@ -3,7 +3,7 @@
   <metadata xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <id>NServiceBus.MongoDB</id>
     <title>NServiceBus MongoDB</title>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <authors>Carlos Sandoval</authors>
     <owners>Carlos Sandoval</owners>
     <licenseUrl>https://github.com/sbmako/NServiceBus.MongoDB/blob/master/LICENSE</licenseUrl>
@@ -17,7 +17,7 @@
     <language>en-US</language>
     <dependencies>
 		<dependency id="mongocsharpdriver" version="1.9.2" />	
-		<dependency id="NServiceBus" version="4.6.3" />	
+		<dependency id="NServiceBus" version="[4.6.3,5.0)" />	
 	</dependencies>
     <references>
 	  <reference file="NServiceBus.MongoDB.dll" />

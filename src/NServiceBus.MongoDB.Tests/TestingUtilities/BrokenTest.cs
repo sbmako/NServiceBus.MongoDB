@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="DocumentVersionExtensionsTests.cs" company="Carlos Sandoval">
+// <copyright file="BrokenTest.cs" company="Carlos Sandoval">
 //   The MIT License (MIT)
 //   
 //   Copyright (c) 2014 Carlos Sandoval
@@ -22,28 +22,21 @@
 //   CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // </copyright>
 // <summary>
-//   Defines the DocumentVersionExtensionsTests type.
+//   Defines the BrokenTest type.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace NServiceBus.MongoDB.Tests.Extensions
+
+
+namespace NServiceBus.MongoDB.Tests.TestingUtilities
 {
-    using FluentAssertions;
+    using Xunit;
 
-    using NServiceBus.MongoDB.Extensions;
-    using NServiceBus.MongoDB.Tests.Sample;
-    using NServiceBus.MongoDB.Tests.TestingUtilities;
-    using Xunit.Extensions;
-
-    public class DocumentVersionExtensionsTests
+    public class BrokenTest : TraitAttribute
     {
-        [Theory, UnitTest, BrokenTest]
-        [AutoConfigureData]
-        public void BaseSagaUpdateQuery(SagaWithUniqueProperty saga)
+        public BrokenTest()
+            : base("Category", "Broken")
         {
-            var query = saga.MongoUpdateQuery();
-            
-            query.Should().Be("something");
         }
     }
 }
