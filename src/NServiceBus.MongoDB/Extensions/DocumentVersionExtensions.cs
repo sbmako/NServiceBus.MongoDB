@@ -57,7 +57,7 @@ namespace NServiceBus.MongoDB.Extensions
                 Query.And(
                     Query.EQ("_id", saga.Id),
                     Query.EQ(MongoPersistenceConstants.VersionPropertyName, versionedDocument.DocumentVersion))
-                     .NullChecked();
+                     .AssumedNotNull();
         }
 
         public static IMongoUpdate MongoUpdate<T>(this T saga) where T : IContainSagaData
@@ -70,7 +70,7 @@ namespace NServiceBus.MongoDB.Extensions
             var versionedDocument = saga as IHaveDocumentVersion;
             if (versionedDocument == null)
             {
-                return Update.Replace(saga).NullChecked();
+                return Update.Replace(saga).AssumedNotNull();
             }
 
             classMap.Remove("_id");
@@ -79,7 +79,7 @@ namespace NServiceBus.MongoDB.Extensions
 
             classMap.ToList().ForEach(f => updateBuilder.Set(f.Name, f.Value));
 
-            return updateBuilder.NullChecked();
+            return updateBuilder.AssumedNotNull();
         }
 
         public static IMongoQuery MongoUpdateQuery(this Subscription subscription)
@@ -90,7 +90,7 @@ namespace NServiceBus.MongoDB.Extensions
             return
                 Query.And(
                     Query<Subscription>.EQ(s => s.Id, subscription.Id),
-                    Query<Subscription>.EQ(s => s.DocumentVersion, subscription.DocumentVersion)).NullChecked();
+                    Query<Subscription>.EQ(s => s.DocumentVersion, subscription.DocumentVersion)).AssumedNotNull();
         }
 
         public static IMongoUpdate MongoUpdate(this Subscription subscription)
@@ -98,7 +98,7 @@ namespace NServiceBus.MongoDB.Extensions
             Contract.Requires(subscription != null);
             Contract.Ensures(Contract.Result<IMongoUpdate>() != null);
 
-            return Update.Replace(subscription).NullChecked();
+            return Update.Replace(subscription).AssumedNotNull();
         }
     }
 }

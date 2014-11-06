@@ -73,7 +73,7 @@ namespace NServiceBus.MongoDB
                 config.InternalMongoPersistence(
                     new MongoClientAccessor(
                         new MongoClient(connectionString),
-                        Configure.EndpointName.NullOrWhiteSpaceChecked().EndpointNameAsDatabaseName()));
+                        Configure.EndpointName.AssumedNotNullOrWhiteSpace().EndpointNameAsDatabaseName()));
         }
 
         /// <summary>
@@ -100,7 +100,7 @@ namespace NServiceBus.MongoDB
                 config.InternalMongoPersistence(
                     new MongoClientAccessor(
                         new MongoClient(connectionString),
-                        Configure.EndpointName.NullOrWhiteSpaceChecked().EndpointNameAsDatabaseName()));
+                        Configure.EndpointName.AssumedNotNullOrWhiteSpace().EndpointNameAsDatabaseName()));
         }
 
         /// <summary>
@@ -158,7 +158,7 @@ namespace NServiceBus.MongoDB
                 config.InternalMongoPersistence(
                     new MongoClientAccessor(
                         new MongoClient(getConnectionString()),
-                        Configure.EndpointName.NullOrWhiteSpaceChecked().EndpointNameAsDatabaseName()));
+                        Configure.EndpointName.AssumedNotNullOrWhiteSpace().EndpointNameAsDatabaseName()));
         }
 
         /// <summary>

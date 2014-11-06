@@ -67,7 +67,7 @@ namespace NServiceBus.MongoDB
 
             var databaseName = mongoClientAccessor.DatabaseName;
             var server = mongoClientAccessor.MongoClient.GetServer();
-            return server.GetDatabase(databaseName).NullChecked();
+            return server.GetDatabase(databaseName).AssumedNotNull();
         }
     }
 }

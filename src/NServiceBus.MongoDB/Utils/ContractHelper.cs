@@ -56,24 +56,22 @@ namespace NServiceBus.MongoDB.Utils
         }
 
         /// <summary>
-        /// The null checked.
+        /// Helper class to assist with contracts
         /// </summary>
-        /// <typeparam name="T">
-        /// The type to null check
-        /// </typeparam>
         /// <param name="obj">
-        /// The object.
+        /// The object to assume is not null
         /// </param>
+        /// <typeparam name="T">
+        /// The type of assume is not null
+        /// </typeparam>
         /// <returns>
-        /// The <see cref="T"/>.
+        /// The same object
         /// </returns>
-        public static T NullChecked<T>(this T obj) where T : class
+        public static T AssumedNotNull<T>(this T obj) where T : class
         {
-            if (obj == null)
-            {
-                throw new ArgumentNullException("obj");
-            }
+            Contract.Ensures(Contract.Result<T>() != null);
 
+            Contract.Assume(obj != null);
             return obj;
         }
 
@@ -86,15 +84,11 @@ namespace NServiceBus.MongoDB.Utils
         /// <returns>
         /// The <see cref="string"/>.
         /// </returns>
-        public static string NullOrWhiteSpaceChecked(this string value)
+        public static string AssumedNotNullOrWhiteSpace(this string value)
         {
             Contract.Ensures(!string.IsNullOrWhiteSpace(Contract.Result<string>()));
 
-            if (string.IsNullOrWhiteSpace(value))
-            {
-                throw new ArgumentNullException("value");
-            }
-
+            Contract.Assume(!string.IsNullOrWhiteSpace(value));
             return value;
         }
     }

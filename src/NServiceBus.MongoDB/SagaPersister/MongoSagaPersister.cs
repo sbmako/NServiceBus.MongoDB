@@ -142,7 +142,7 @@ namespace NServiceBus.MongoDB.SagaPersister
         /// </returns>
         public T Get<T>(string property, object value) where T : IContainSagaData
         {
-            return this.GetByUniqueProperty<T>(property.NullOrWhiteSpaceChecked(), value.NullChecked());
+            return this.GetByUniqueProperty<T>(property.AssumedNotNullOrWhiteSpace(), value.AssumedNotNull());
         }
 
         /// <summary>

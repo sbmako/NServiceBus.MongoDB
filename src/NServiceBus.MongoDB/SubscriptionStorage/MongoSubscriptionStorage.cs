@@ -48,6 +48,8 @@ namespace NServiceBus.MongoDB.SubscriptionStorage
 
         private readonly MongoDatabase mongoDatabase;
 
+        private readonly MongoCollection collection;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="MongoSubscriptionStorage"/> class.
         /// </summary>
@@ -58,6 +60,7 @@ namespace NServiceBus.MongoDB.SubscriptionStorage
         {
             Contract.Requires<ArgumentNullException>(mongoFactory != null);
             this.mongoDatabase = mongoFactory.GetDatabase();
+            this.collection = this.mongoDatabase.GetCollection(SubscriptionName).AssumedNotNull();
         }
 
         /// <summary>
@@ -78,7 +81,7 @@ namespace NServiceBus.MongoDB.SubscriptionStorage
         /// </param>
         void ISubscriptionStorage.Subscribe(Address client, IEnumerable<MessageType> messageTypes)
         {
-            var messageTypeLookup = messageTypes.NullChecked().ToDictionary(Subscription.FormatId);
+            var messageTypeLookup = messageTypes.AssumedNotNull().ToDictionary(Subscription.FormatId);
 
             var existingSubscriptions = this.GetSubscriptions(messageTypeLookup.Values).ToDictionary(m => m.Id);
             var newSubscriptions = new List<Subscription>();
@@ -101,14 +104,12 @@ namespace NServiceBus.MongoDB.SubscriptionStorage
                         }
                     });
 
-            var collection = this.mongoDatabase.GetCollection(SubscriptionName);
-
             existingSubscriptions.Values.ToList().ForEach(
                 s =>
                     {
                         var query = s.MongoUpdateQuery();
                         var update = s.MongoUpdate();
-                        var updateResult = collection.Update(query, update, UpdateFlags.None);
+                        var updateResult = this.collection.Update(query, update, UpdateFlags.None);
                         if (!updateResult.UpdatedExisting)
                         {
                             throw new InvalidOperationException(
@@ -121,7 +122,7 @@ namespace NServiceBus.MongoDB.SubscriptionStorage
                 return;
             }
 
-            var insertResult = collection.InsertBatch(newSubscriptions);
+            var insertResult = this.collection.InsertBatch(newSubscriptions);
             if (!insertResult.Any(r => r.Ok))
             {
                 throw new InvalidOperationException(string.Format("Unable to save {0} subscription", client));
@@ -140,13 +141,12 @@ namespace NServiceBus.MongoDB.SubscriptionStorage
         void ISubscriptionStorage.Unsubscribe(Address client, IEnumerable<MessageType> messageTypes)
         {
             var queries =
-                messageTypes.NullChecked()
+                messageTypes.AssumedNotNull()
                             .Select(mt => Query<Subscription>.EQ(s => s.Id, Subscription.FormatId(mt)))
                             .ToList();
             var update = Update<Subscription>.Pull(subscription => subscription.Clients, client);
 
-            var collection = this.mongoDatabase.GetCollection(SubscriptionName);
-            var results = queries.Select(q => collection.Update(q, update)).Where(result => !result.Ok);
+            var results = queries.Select(q => this.collection.Update(q, update)).Where(result => !result.Ok);
 
             if (results.Any())
             {
@@ -166,7 +166,7 @@ namespace NServiceBus.MongoDB.SubscriptionStorage
         /// </returns>
         IEnumerable<Address> ISubscriptionStorage.GetSubscriberAddressesForMessage(IEnumerable<MessageType> messageTypes)
         {
-            var subscriptions = this.GetSubscriptions(messageTypes.NullChecked());
+            var subscriptions = this.GetSubscriptions(messageTypes.AssumedNotNull());
             return subscriptions.SelectMany(s => s.Clients).Distinct().ToArray();
         }
 
@@ -179,7 +179,14 @@ namespace NServiceBus.MongoDB.SubscriptionStorage
             var query = Query<Subscription>.In(p => p.Id, ids);
             var result = this.mongoDatabase.GetCollection<Subscription>(SubscriptionName).Find(query);
 
-            return result.NullChecked();
+            return result.AssumedNotNull();
+        }
+
+        [ContractInvariantMethod]
+        private void ObjectInvariants()
+        {
+            Contract.Invariant(this.mongoDatabase != null);
+            Contract.Invariant(this.collection != null);
         }
     }
 }

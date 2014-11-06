@@ -39,7 +39,7 @@ namespace NServiceBus.MongoDB.Extensions
             Contract.Requires(!string.IsNullOrWhiteSpace(endpointName));
             Contract.Ensures(!string.IsNullOrWhiteSpace(Contract.Result<string>()));
 
-            return endpointName.Replace('.', '_').NullOrWhiteSpaceChecked();
+            return endpointName.Replace('.', '_').AssumedNotNullOrWhiteSpace();
         }
     }
 }

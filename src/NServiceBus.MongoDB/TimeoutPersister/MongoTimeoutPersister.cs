@@ -45,7 +45,7 @@ namespace NServiceBus.MongoDB.TimeoutPersister
     {
         internal static readonly string TimeoutDataName = typeof(TimeoutData).Name;
 
-        private readonly MongoDatabase mongoDatabase;
+        private readonly MongoCollection<TimeoutData> collection;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MongoTimeoutPersister"/> class.
@@ -56,7 +56,8 @@ namespace NServiceBus.MongoDB.TimeoutPersister
         public MongoTimeoutPersister(MongoDatabaseFactory mongoFactory)
         {
             Contract.Requires<ArgumentNullException>(mongoFactory != null);
-            this.mongoDatabase = mongoFactory.GetDatabase();
+
+            this.collection = mongoFactory.GetDatabase().GetCollection<TimeoutData>(TimeoutDataName);
             this.EnsureTimeoutIndexes();
         }
 
@@ -71,9 +72,7 @@ namespace NServiceBus.MongoDB.TimeoutPersister
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1002:DoNotExposeGenericLists", Justification = "Ok here.")]
         public List<Tuple<string, DateTime>> GetNextChunk(DateTime startSlice, out DateTime nextTimeToRunQuery)
         {
-            var collection = this.mongoDatabase.GetCollection<TimeoutData>(TimeoutDataName);
-
-            var results = from data in collection.AsQueryable().NullChecked()
+            var results = from data in this.collection.AsQueryable().AssumedNotNull()
                           where data.Time > startSlice && data.Time <= DateTime.UtcNow
                           where
                               data.OwningTimeoutManager == string.Empty
@@ -81,7 +80,7 @@ namespace NServiceBus.MongoDB.TimeoutPersister
                           orderby data.Time
                           select new Tuple<string, DateTime>(data.Id, data.Time);
 
-            var nextTimeout = from data in collection.AsQueryable().NullChecked()
+            var nextTimeout = from data in this.collection.AsQueryable().AssumedNotNull()
                               where data.Time > DateTime.UtcNow
                               orderby data.Time
                               select data;
@@ -101,9 +100,7 @@ namespace NServiceBus.MongoDB.TimeoutPersister
         public void Add(TimeoutData timeout)
         {
             timeout.Id = Guid.NewGuid().ToString();
-
-            var collection = this.mongoDatabase.GetCollection<TimeoutData>(TimeoutDataName);
-            var result = collection.Save(timeout);
+            var result = this.collection.Save(timeout);
 
             if (!result.Ok)
             {
@@ -122,9 +119,7 @@ namespace NServiceBus.MongoDB.TimeoutPersister
         public bool TryRemove(string timeoutId, out TimeoutData timeoutData)
         {
             var findAndRemoveArgs = new FindAndRemoveArgs { Query = Query<TimeoutData>.EQ(t => t.Id, timeoutId) };
-
-            var collection = this.mongoDatabase.GetCollection<TimeoutData>(TimeoutDataName);
-            var result = collection.FindAndRemove(findAndRemoveArgs);
+            var result = this.collection.FindAndRemove(findAndRemoveArgs);
 
             if (!result.Ok)
             {
@@ -142,9 +137,7 @@ namespace NServiceBus.MongoDB.TimeoutPersister
         public void RemoveTimeoutBy(Guid sagaId)
         {
             var query = Query<TimeoutData>.EQ(t => t.SagaId, sagaId);
-
-            var collection = this.mongoDatabase.GetCollection<TimeoutData>(TimeoutDataName);
-            var result = collection.Remove(query);
+            var result = this.collection.Remove(query);
 
             if (!result.Ok)
             {
@@ -154,11 +147,9 @@ namespace NServiceBus.MongoDB.TimeoutPersister
 
         private void EnsureTimeoutIndexes()
         {
-            var collection = this.mongoDatabase.GetCollection<TimeoutData>(TimeoutDataName);
-
             var indexOptions = IndexOptions.SetName(MongoPersistenceConstants.OwningTimeoutManagerAndTimeName);
             var result =
-                collection.CreateIndex(
+                this.collection.CreateIndex(
                     IndexKeys<TimeoutData>.Ascending(t => t.OwningTimeoutManager, t => t.Time), indexOptions);
 
             if (!result.Ok)
@@ -170,7 +161,7 @@ namespace NServiceBus.MongoDB.TimeoutPersister
 
             indexOptions.SetName(MongoPersistenceConstants.OwningTimeoutManagerAndSagaIdAndTimeName);
             result =
-                collection.CreateIndex(
+                this.collection.CreateIndex(
                     IndexKeys<TimeoutData>.Ascending(t => t.OwningTimeoutManager, t => t.SagaId, t => t.Time),
                     indexOptions);
 
@@ -180,6 +171,12 @@ namespace NServiceBus.MongoDB.TimeoutPersister
                     string.Format(
                         "Unable to create {0} index", MongoPersistenceConstants.OwningTimeoutManagerAndSagaIdAndTimeName));
             }
+        }
+
+        [ContractInvariantMethod]
+        private void ObjectInvariants()
+        {
+            Contract.Invariant(this.collection != null);
         }
     }
 }

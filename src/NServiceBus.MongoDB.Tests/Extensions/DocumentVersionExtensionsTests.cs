@@ -42,8 +42,8 @@ namespace NServiceBus.MongoDB.Tests.Extensions
         public void BaseSagaUpdateQuery(SagaWithUniqueProperty saga)
         {
             var query = saga.MongoUpdateQuery();
-            
-            query.Should().Be("something");
+
+            query.ToString().Should().Contain("DocumentVersion");
         }
     }
 }

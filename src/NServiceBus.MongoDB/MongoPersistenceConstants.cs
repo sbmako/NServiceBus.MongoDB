@@ -51,7 +51,7 @@ namespace NServiceBus.MongoDB
             {
                 Contract.Ensures(!string.IsNullOrWhiteSpace(Contract.Result<string>()));
                 var connectionString = string.Format("mongodb://{0}:{1}", DefaultHost, DefaultPort);
-                return connectionString.NullOrWhiteSpaceChecked();
+                return connectionString.AssumedNotNullOrWhiteSpace();
             }
         }
     }
