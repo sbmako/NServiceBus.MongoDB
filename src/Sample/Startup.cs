@@ -58,7 +58,10 @@ namespace Sample
         /// <summary>
         /// The run method
         /// </summary>
-        public void Run()
+        /// <param name="config">
+        /// The config.
+        /// </param>
+        public void Run(Configure config)
         {
             Logger.Info("Statup.Run()");
 

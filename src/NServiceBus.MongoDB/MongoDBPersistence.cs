@@ -26,8 +26,6 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-
-
 namespace NServiceBus.MongoDB
 {
     using NServiceBus.Features;
@@ -45,17 +43,11 @@ namespace NServiceBus.MongoDB
         /// </summary>
         public MongoDBPersistence()
         {
-            this.Defaults(s =>
-            {
-                ////RavenLogManager.CurrentLogManager = new NoOpLogManager();
+            this.Defaults(s => { });
 
-                ////s.EnableFeatureByDefault<RavenDbStorageSession>();
-                ////s.EnableFeatureByDefault<SharedDocumentStore>();
-            });
-
-            ////Supports(Storage.GatewayDeduplication, s => s.EnableFeatureByDefault<RavenDbGatewayDeduplication>());
             this.Supports(Storage.Timeouts, s => s.EnableFeatureByDefault<MongoDBTimeoutStorage>());
             this.Supports(Storage.Sagas, s => s.EnableFeatureByDefault<MongoDBSagaStorage>());
             ////Supports(Storage.Subscriptions, s => s.EnableFeatureByDefault<RavenDbSubscriptionStorage>());
         }
-    }}
+    }
+}

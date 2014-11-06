@@ -77,7 +77,7 @@ namespace NServiceBus.MongoDB.TimeoutPersister
                           where data.Time > startSlice && data.Time <= DateTime.UtcNow
                           where
                               data.OwningTimeoutManager == string.Empty
-                              ////|| data.OwningTimeoutManager == Configure.EndpointName
+                          ////|| data.OwningTimeoutManager == Configure.EndpointName
                           orderby data.Time
                           select new Tuple<string, DateTime>(data.Id, data.Time);
 

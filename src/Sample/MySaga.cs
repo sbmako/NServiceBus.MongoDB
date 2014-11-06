@@ -44,16 +44,6 @@ namespace Sample
         private static readonly ILog Logger = LogManager.GetLogger(typeof(MySaga));
 
         /// <summary>
-        /// The configure how to find saga.
-        /// </summary>
-        public override void ConfigureHowToFindSaga()
-        {
-            Logger.Info("Configuring now to find saga");
-            this.ConfigureMapping<MyMessage>(message => message.SomeId).ToSaga(saga => saga.SomeId);
-            this.ConfigureMapping<AnotherSagaCommand>(message => message.SomeId).ToSaga(saga => saga.SomeId);
-        }
-
-        /// <summary>
         /// The handle.
         /// </summary>
         /// <param name="message">
@@ -91,6 +81,17 @@ namespace Sample
         {
             Logger.InfoFormat("Timeout reached with a count of: {0}", this.Data.Count);
             this.MarkAsComplete();
+        }
+
+        /// <summary>
+        /// A generic version of <see cref="M:NServiceBus.Saga.Saga`1.ConfigureHowToFindSaga(NServiceBus.Saga.IConfigureHowToFindSagaWithMessage)"/> wraps <see cref="T:NServiceBus.Saga.IConfigureHowToFindSagaWithMessage"/> in a generic helper class (<see cref="T:NServiceBus.Saga.SagaPropertyMapper`1"/>) to provide mappings specific to <typeparamref name="TSagaData"/>.
+        /// </summary>
+        /// <param name="mapper">The <see cref="T:NServiceBus.Saga.SagaPropertyMapper`1"/> that wraps the <see cref="T:NServiceBus.Saga.IConfigureHowToFindSagaWithMessage"/></param>
+        protected override void ConfigureHowToFindSaga(SagaPropertyMapper<MySagaData> mapper)
+        {
+            Logger.Info("Configuring now to find saga");
+            mapper.ConfigureMapping<MyMessage>(message => message.SomeId).ToSaga(saga => saga.SomeId);
+            mapper.ConfigureMapping<AnotherSagaCommand>(message => message.SomeId).ToSaga(saga => saga.SomeId);
         }
     }
 }

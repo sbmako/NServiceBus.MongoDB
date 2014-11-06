@@ -30,6 +30,7 @@ namespace Sample
 {
     using NServiceBus;
     using NServiceBus.Features;
+    using NServiceBus.MongoDB;
     using NServiceBus.MongoDB.SagaPersister;
     using NServiceBus.MongoDB.SubscriptionStorage;
     using NServiceBus.MongoDB.TimeoutPersister;
@@ -37,24 +38,13 @@ namespace Sample
     /// <summary>
     /// The endpoint config.
     /// </summary>
-    public class EndpointConfig : IConfigureThisEndpoint, AsA_Server, IWantCustomInitialization
+    public class EndpointConfig : IConfigureThisEndpoint, AsA_Server
     {
-        /// <summary>
-        /// The initialization method.
-        /// </summary>
-        public void Init()
+        void IConfigureThisEndpoint.Customize(BusConfiguration configuration)
         {
-            Configure.Serialization.Json();
-
-            Configure.Features.Disable<Audit>();
-            Configure.Transactions.Advanced(t => t.DisableDistributedTransactions());
-
-            Configure.With()
-                     .DefaultBuilder()
-                     .UnicastBus()
-                     .MongoSagaPersister()
-                     .MongoSubscriptionStorage()
-                     .MongoTimeoutPersister();
+            configuration.DisableFeature<Audit>();
+            configuration.UseSerialization<JsonSerializer>();
+            configuration.UsePersistence<MongoDBPersistence>();
         }
     }
 }
