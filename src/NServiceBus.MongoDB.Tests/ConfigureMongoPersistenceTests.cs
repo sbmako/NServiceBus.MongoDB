@@ -29,6 +29,8 @@
 namespace NServiceBus.MongoDB.Tests
 {
     using System.Configuration;
+    using System.Linq;
+
     using FluentAssertions;
     using NServiceBus.MongoDB.Tests.TestingUtilities;
     using Xunit.Extensions;
@@ -106,6 +108,18 @@ namespace NServiceBus.MongoDB.Tests
 
             var clientAccessor = Configure.Instance.Builder.Build<MongoClientAccessor>();
             clientAccessor.DatabaseName.Should().Be("Unit_Tests");
+        }
+
+        [Theory, UnitTest]
+        [AutoConfigureData]
+        public void MongoPersistenceWithReplicaSetConnectionStringLambda(Configure config)
+        {
+            config.MongoPersistence(() => "mongodb://localhost:27017,localhost:27017,localhost:27017");
+            Configure.Instance.Configurer.HasComponent<MongoClientAccessor>().Should().BeTrue();
+            Configure.Instance.Configurer.HasComponent<MongoDatabaseFactory>().Should().BeTrue();
+
+            var clientAccessor = Configure.Instance.Builder.Build<MongoClientAccessor>();
+            clientAccessor.MongoClient.Settings.Servers.Count().Should().BeGreaterThan(1);
         }
 
         [Theory, UnitTest]
