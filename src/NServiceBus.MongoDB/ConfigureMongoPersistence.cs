@@ -31,6 +31,7 @@ namespace NServiceBus.MongoDB
     using System;
     using System.Configuration;
     using System.Diagnostics.Contracts;
+    using System.Linq;
     using System.Text;
     using global::MongoDB.Driver;
     using NServiceBus.Logging;
@@ -234,7 +235,10 @@ namespace NServiceBus.MongoDB
                 return;
             }
 
-            Logger.InfoFormat("Connection to MongoDB at {0} verified.", mongoClientAccessor.MongoClient.Settings.Server);
+            Logger.InfoFormat(
+                "Connection to MongoDB at {0} verified.",
+                mongoClientAccessor.MongoClient.Settings.Servers.Count() > 1 ? string.Join(", ", mongoClientAccessor.MongoClient.Settings.Servers)
+                    : mongoClientAccessor.MongoClient.Settings.Server.ToString());
         }
 
         internal static void ShowUncontactableMongoWarning(MongoClient mongoClient, Exception exception)
@@ -242,12 +246,14 @@ namespace NServiceBus.MongoDB
             Contract.Requires(mongoClient != null);
             Contract.Requires(exception != null);
 
-            var serverSettings = mongoClient.Settings.Server;
+            var serverSettings = mongoClient.Settings.Servers.Count() > 1
+                                     ? string.Join(", ", mongoClient.Settings.Servers)
+                                     : mongoClient.Settings.Server.ToString();
 
             var sb = new StringBuilder();
             sb.AppendFormat("Mongo could not be contacted using: {0}.", serverSettings);
             sb.AppendLine();
-            sb.AppendFormat("Please ensure that there is a Mongo instance at {0}:{1}.", serverSettings.Host, serverSettings.Port);
+            sb.AppendFormat("If you are using a Replica Set, please ensure that all the Mongo instance(s) {0} are available.", serverSettings);
             sb.AppendLine();
             sb.AppendLine(
                 @"To configure NServiceBus to use a different connection string add a connection string named ""NServiceBus/Persistence"" in your config file.");
