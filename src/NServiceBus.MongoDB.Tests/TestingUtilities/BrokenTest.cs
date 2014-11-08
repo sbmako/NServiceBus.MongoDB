@@ -26,8 +26,6 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-
-
 namespace NServiceBus.MongoDB.Tests.TestingUtilities
 {
     using Xunit;

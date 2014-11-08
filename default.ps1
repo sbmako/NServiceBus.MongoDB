@@ -37,7 +37,7 @@ task default -Depends Build
 
 task Compile {
     Write-Host "Building main solution ($projectConfig)" -ForegroundColor Green
-    exec { msbuild /nologo /m /nr:false /v:m /p:Configuration=$projectConfig $sourceDir\$solutionName.sln }
+    exec { msbuild /nologo /m /nr:false /v:m "/p:Configuration=$projectConfig;StyleCopEnabled=True;StyleCopTreatErrorsAsWarnings=False" $sourceDir\$solutionName.sln }
 }
 
 task UnitTest {

@@ -29,6 +29,7 @@
 namespace NServiceBus.MongoDB
 {
     using System;
+    using System.Collections.Generic;
     using System.Configuration;
     using System.Diagnostics.Contracts;
     using System.Linq;
@@ -235,10 +236,7 @@ namespace NServiceBus.MongoDB
                 return;
             }
 
-            Logger.InfoFormat(
-                "Connection to MongoDB at {0} verified.",
-                mongoClientAccessor.MongoClient.Settings.Servers.Count() > 1 ? string.Join(", ", mongoClientAccessor.MongoClient.Settings.Servers)
-                    : mongoClientAccessor.MongoClient.Settings.Server.ToString());
+            Logger.InfoFormat("Connection to MongoDB at {0} verified.", string.Join(", ", GetMongoServers(mongoClientAccessor.MongoClient)));
         }
 
         internal static void ShowUncontactableMongoWarning(MongoClient mongoClient, Exception exception)
@@ -246,9 +244,7 @@ namespace NServiceBus.MongoDB
             Contract.Requires(mongoClient != null);
             Contract.Requires(exception != null);
 
-            var serverSettings = mongoClient.Settings.Servers.Count() > 1
-                                     ? string.Join(", ", mongoClient.Settings.Servers)
-                                     : mongoClient.Settings.Server.ToString();
+            var serverSettings = string.Join(", ", GetMongoServers(mongoClient));
 
             var sb = new StringBuilder();
             sb.AppendFormat("Mongo could not be contacted using: {0}.", serverSettings);
@@ -260,6 +256,19 @@ namespace NServiceBus.MongoDB
             sb.AppendLine("Reason: " + exception);
 
             Logger.Warn(sb.ToString());
+        }
+
+        private static IEnumerable<MongoServerAddress> GetMongoServers(MongoClient mongoClient)
+        {
+            Contract.Requires<ArgumentNullException>(mongoClient != null);
+            Contract.Ensures(Contract.Result<IEnumerable<MongoServerAddress>>() != null);
+
+            if (mongoClient.Settings.Servers != null && mongoClient.Settings.Servers.Any())
+            {
+                return mongoClient.Settings.Servers.ToArray();
+            }
+
+            return new[] { mongoClient.Settings.Server };
         }
 
         private static ConnectionStringSettings GetConnectionString()

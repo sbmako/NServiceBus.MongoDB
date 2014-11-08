@@ -30,10 +30,11 @@ namespace NServiceBus.MongoDB.Tests.TestingUtilities
 {
     using System;
 
-    using NServiceBus.MongoDB.TimeoutPersister;
-
     using global::MongoDB.Driver;
+
+    using NServiceBus.MongoDB.TimeoutPersister;
     using NServiceBus.Timeout.Core;
+
     using Ploeh.AutoFixture;
 
     public class LocalMongoDatabaseCustomization : ICustomization

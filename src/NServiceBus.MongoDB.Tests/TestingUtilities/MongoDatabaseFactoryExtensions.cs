@@ -31,13 +31,13 @@ namespace NServiceBus.MongoDB.Tests.TestingUtilities
     using System.Collections.Generic;
     using System.Linq;
 
-    using NServiceBus.Timeout.Core;
-
     using global::MongoDB.Driver.Builders;
-    using NServiceBus.MongoDB.TimeoutPersister;
-    using NServiceBus.Saga;
 
     using global::MongoDB.Driver.Linq;
+
+    using NServiceBus.MongoDB.TimeoutPersister;
+    using NServiceBus.Saga;
+    using NServiceBus.Timeout.Core;
 
     internal static class MongoDatabaseFactoryExtensions
     {
