@@ -265,7 +265,7 @@ namespace NServiceBus.MongoDB
 
             if (mongoClient.Settings.Servers != null && mongoClient.Settings.Servers.Any())
             {
-                return mongoClient.Settings.Servers.ToArray();
+                return mongoClient.Settings.Servers;
             }
 
             return new[] { mongoClient.Settings.Server };
