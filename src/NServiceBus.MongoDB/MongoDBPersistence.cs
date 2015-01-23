@@ -2,7 +2,7 @@
 // <copyright file="MongoDBPersistence.cs" company="Carlos Sandoval">
 //   The MIT License (MIT)
 //   
-//   Copyright (c) 2014 Carlos Sandoval
+//   Copyright (c) 2015 Carlos Sandoval
 //   
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of
 //   this software and associated documentation files (the "Software"), to deal in
@@ -22,19 +22,21 @@
 //   CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // </copyright>
 // <summary>
-//   The mongo db persistence.
+//   
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace NServiceBus.MongoDB
 {
     using NServiceBus.Features;
+    using NServiceBus.MongoDB.Internals;
     using NServiceBus.MongoDB.SagaPersister;
+    using NServiceBus.MongoDB.SubscriptionPersister;
     using NServiceBus.MongoDB.TimeoutPersister;
     using NServiceBus.Persistence;
 
     /// <summary>
-    /// The mongo DB persistence.
+    /// The MongoDB persistence.
     /// </summary>
     public class MongoDBPersistence : PersistenceDefinition
     {
@@ -43,11 +45,15 @@ namespace NServiceBus.MongoDB
         /// </summary>
         public MongoDBPersistence()
         {
-            this.Defaults(s => { });
+            this.Defaults(
+                s =>
+                    {
+                        s.EnableFeatureByDefault<MongoDocumentStore>();
+                    });
 
-            this.Supports(Storage.Timeouts, s => s.EnableFeatureByDefault<MongoDBTimeoutStorage>());
-            this.Supports(Storage.Sagas, s => s.EnableFeatureByDefault<MongoDBSagaStorage>());
-            ////Supports(Storage.Subscriptions, s => s.EnableFeatureByDefault<RavenDbSubscriptionStorage>());
+            this.Supports(Storage.Sagas, s => s.EnableFeatureByDefault<MongoSagaStorage>()); 
+            this.Supports(Storage.Timeouts, s => s.EnableFeatureByDefault<MongoTimeoutStorage>());
+            this.Supports(Storage.Subscriptions, s => s.EnableFeatureByDefault<MongoSubscriptionStorage>());
         }
     }
 }

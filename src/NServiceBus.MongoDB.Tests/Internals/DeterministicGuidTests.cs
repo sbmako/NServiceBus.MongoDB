@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="MySagaData.cs" company="Carlos Sandoval">
+// <copyright file="DeterministicGuidTests.cs" company="Carlos Sandoval">
 //   The MIT License (MIT)
 //   
 //   Copyright (c) 2015 Carlos Sandoval
@@ -22,23 +22,43 @@
 //   CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // </copyright>
 // <summary>
-//   Defines the MySagaData type.
+//   Defines the DeterministicGuidTests type.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Sample
+namespace NServiceBus.MongoDB.Tests.Internals
 {
-    using NServiceBus.MongoDB;
-    using NServiceBus.Saga;
+    using System.Collections.Generic;
 
-    /// <summary>
-    /// The my saga data.
-    /// </summary>
-    public class MySagaData : ContainMongoSagaData
+    using FluentAssertions;
+
+    using NServiceBus.MongoDB.Internals;
+    using NServiceBus.MongoDB.Tests.TestingUtilities;
+
+    using Ploeh.AutoFixture.Xunit;
+
+    using Xunit.Extensions;
+
+    public class DeterministicGuidTests
     {
-        [Unique]
-        public string SomeId { get; set; }
+        [Theory, UnitTest]
+        [AutoData]
+        public void SameProducesSameGuid(KeyValuePair<string, int> testObject)
+        {
+            var first = DeterministicGuid.Create(testObject);
+            var second = DeterministicGuid.Create(testObject);
 
-        public int Count { get; set; }
+            first.Should().Be(second);
+        }
+
+        [Theory, UnitTest]
+        [AutoData]
+        public void DifferntProduceDifferentGuids(KeyValuePair<string, int> firstObject, KeyValuePair<string, int> secondObject)
+        {
+            var first = DeterministicGuid.Create(firstObject);
+            var second = DeterministicGuid.Create(secondObject);
+
+            first.Should().NotBe(second);
+        }
     }
 }

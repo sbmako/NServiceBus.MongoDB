@@ -1,8 +1,8 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="MongoClientAccessor.cs" company="Carlos Sandoval">
+// <copyright file="MongoDatabaseFactory.cs" company="Carlos Sandoval">
 //   The MIT License (MIT)
 //   
-//   Copyright (c) 2014 Carlos Sandoval
+//   Copyright (c) 2015 Carlos Sandoval
 //   
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of
 //   this software and associated documentation files (the "Software"), to deal in
@@ -22,54 +22,51 @@
 //   CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // </copyright>
 // <summary>
-//   The mongo client accessor.
+//   The mongo database factory.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace NServiceBus.MongoDB
+namespace NServiceBus.MongoDB.Internals
 {
     using System;
     using System.Diagnostics.Contracts;
+
     using global::MongoDB.Driver;
 
     /// <summary>
-    /// The mongo client accessor.
+    /// The MongoDB database factory.
     /// </summary>
-    public sealed class MongoClientAccessor
+    public class MongoDatabaseFactory
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MongoClientAccessor"/> class.
-        /// </summary>
-        /// <param name="mongoClient">
-        /// The mongo client.
-        /// </param>
-        /// <param name="databaseName">
-        /// The database name.
-        /// </param>
-        public MongoClientAccessor(MongoClient mongoClient, string databaseName)
-        {
-            Contract.Requires<ArgumentNullException>(mongoClient != null);
-            Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(databaseName));
+        private static MongoClientAccessor mongoClientAccessor;
 
-            this.MongoClient = mongoClient;
-            this.DatabaseName = databaseName;
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MongoDatabaseFactory"/> class.
+        /// </summary>
+        /// <param name="clientAccessor">
+        /// The clientAccessor.
+        /// </param>
+        public MongoDatabaseFactory(MongoClientAccessor clientAccessor)
+        {
+            Contract.Requires<ArgumentNullException>(clientAccessor != null, "clientAccessor");
+            mongoClientAccessor = clientAccessor;
         }
 
         /// <summary>
-        /// Gets the mongo client.
+        /// The get database.
         /// </summary>
-        public MongoClient MongoClient { get; private set; }
-
-        /// <summary>
-        /// Gets the database name.
-        /// </summary>
-        public string DatabaseName { get; private set; }
-
-        [ContractInvariantMethod]
-        private void ObjectInvariants()
+        /// <returns>
+        /// The <see cref="MongoDatabase"/>.
+        /// </returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Reviewed")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate", Justification = "Ok here")]
+        public MongoDatabase GetDatabase()
         {
-            Contract.Invariant(this.MongoClient != null);
-            Contract.Invariant(!string.IsNullOrWhiteSpace(this.DatabaseName));
+            Contract.Ensures(Contract.Result<MongoDatabase>() != null);
+
+            var databaseName = mongoClientAccessor.DatabaseName;
+            var server = mongoClientAccessor.MongoClient.GetServer();
+            return server.GetDatabase(databaseName).NullChecked();
         }
     }
 }

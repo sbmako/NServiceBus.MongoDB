@@ -1,8 +1,8 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="DeterministicGuid.cs" company="Carlos Sandoval">
+// <copyright file="MongoSagaStorage.cs" company="Carlos Sandoval">
 //   The MIT License (MIT)
 //   
-//   Copyright (c) 2014 Carlos Sandoval
+//   Copyright (c) 2015 Carlos Sandoval
 //   
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of
 //   this software and associated documentation files (the "Software"), to deal in
@@ -22,35 +22,35 @@
 //   CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // </copyright>
 // <summary>
-//   Defines the DeterministicGuid type.
+//   Defines the MongoSagaStorage type.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace NServiceBus.MongoDB.Utils
+namespace NServiceBus.MongoDB.SagaPersister
 {
-    using System;
-    using System.Diagnostics.Contracts;
-    using System.Security.Cryptography;
-    using System.Text;
+    using NServiceBus.Features;
+    using NServiceBus.MongoDB.Internals;
 
-    internal static class DeterministicGuid
+    /// <summary>
+    /// The MongoDB saga storage.
+    /// </summary>
+    public class MongoSagaStorage : Feature
     {
-        public static Guid Create(params object[] data)
+        internal MongoSagaStorage()
         {
-            Contract.Requires(data != null);
+            this.DependsOn<Sagas>();
+            this.DependsOn<MongoDocumentStore>();
+        }
 
-            // use MD5 hash to get a 16-byte hash of the string
-            using (var provider = new MD5CryptoServiceProvider())
-            {
-                var inputBytes = Encoding.Default.GetBytes(string.Concat(data));
-
-                //// TODO: provide extension method to normalize byte array to 16 length
-                var hashBytes = provider.ComputeHash(inputBytes);
-
-                // generate a guid from the hash:
-                Contract.Assume(hashBytes.Length == 16);
-                return new Guid(hashBytes);
-            }
+        /// <summary>
+        /// Called when the features is activated
+        /// </summary>
+        /// <param name="context">
+        /// The feature configuration context.
+        /// </param>
+        protected override void Setup(FeatureConfigurationContext context)
+        {
+            context.Container.ConfigureComponent<MongoSagaPersister>(DependencyLifecycle.InstancePerCall);
         }
     }
 }

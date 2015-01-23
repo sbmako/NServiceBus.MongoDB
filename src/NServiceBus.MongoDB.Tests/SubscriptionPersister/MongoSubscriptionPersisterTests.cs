@@ -1,8 +1,8 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="MongoSubscriptionStorageTests.cs" company="Carlos Sandoval">
+// <copyright file="MongoSubscriptionPersisterTests.cs" company="Carlos Sandoval">
 //   The MIT License (MIT)
 //   
-//   Copyright (c) 2014 Carlos Sandoval
+//   Copyright (c) 2015 Carlos Sandoval
 //   
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of
 //   this software and associated documentation files (the "Software"), to deal in
@@ -22,39 +22,43 @@
 //   CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // </copyright>
 // <summary>
-//   Defines the MongoSubscriptionStorageTests type.
+//   Defines the MongoSubscriptionPersisterTests type.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace NServiceBus.MongoDB.Tests.SubscriptionStorage
+namespace NServiceBus.MongoDB.Tests.SubscriptionPersister
 {
     using System.Collections.Generic;
     using System.Linq;
+
     using FluentAssertions;
-    using NServiceBus.MongoDB.SubscriptionStorage;
+
+    using NServiceBus.MongoDB.Internals;
+    using NServiceBus.MongoDB.SubscriptionPersister;
     using NServiceBus.MongoDB.Tests.TestingUtilities;
     using NServiceBus.Unicast.Subscriptions;
     using NServiceBus.Unicast.Subscriptions.MessageDrivenSubscriptions;
+
     using Xunit.Extensions;
 
-    public class MongoSubscriptionStorageTests
+    public class MongoSubscriptionPersisterTests
     {
-        public MongoSubscriptionStorageTests()
+        public MongoSubscriptionPersisterTests()
         {
-            ConfigureMongoSubscriptionStorage.ConfigureClassMaps();
+            ConfigureMongoSubscriptionPersistence.ConfigureClassMaps();
         }
 
         [Theory, IntegrationTest]
         [AutoDatabase]
         public void BasicMongoSubscriptionStorageConstruction(MongoDatabaseFactory factory)
         {
-            var sut = new MongoSubscriptionStorage(factory);
+            var sut = new MongoSubscriptionPersister(factory);
         }
 
         [Theory, IntegrationTest]
         [AutoDatabase]
         public void SingleSubscriptionShouldOnlyCreateOneSubscription(
-            MongoSubscriptionStorage storage,
+            MongoSubscriptionPersister storage,
             MongoDatabaseFactory factory,
             Address client,
             string messageTypeString)
@@ -76,7 +80,7 @@ namespace NServiceBus.MongoDB.Tests.SubscriptionStorage
         [Theory, IntegrationTest]
         [AutoDatabase]
         public void SameClientSubscribesTwiceShouldOnlyCreateOneSubscribtion(
-            MongoSubscriptionStorage storage,
+            MongoSubscriptionPersister storage,
             MongoDatabaseFactory factory,
             string messageTypeString)
         {
@@ -99,7 +103,7 @@ namespace NServiceBus.MongoDB.Tests.SubscriptionStorage
         [Theory, IntegrationTest]
         [AutoDatabase]
         public void SubscribeTwoMessageTypesShouldCreateTwoSubscriptions(
-            MongoSubscriptionStorage storage,
+            MongoSubscriptionPersister storage,
             MongoDatabaseFactory factory,
             Address client,
             string messageTypeString1,
@@ -127,7 +131,7 @@ namespace NServiceBus.MongoDB.Tests.SubscriptionStorage
         [Theory, IntegrationTest]
         [AutoDatabase]
         public void SubscribeTwoClientsOneMessageTypeShouldCreateOneSubscriptionWithMultipleAddresses(
-            MongoSubscriptionStorage storage,
+            MongoSubscriptionPersister storage,
             MongoDatabaseFactory factory,
             Address client1,
             Address client2,
@@ -151,7 +155,7 @@ namespace NServiceBus.MongoDB.Tests.SubscriptionStorage
         [Theory, IntegrationTest]
         [AutoDatabase]
         public void UnsubscribeWhenThereIsNoSubscriptionShouldNotCreateSubscription(
-            MongoSubscriptionStorage storage,
+            MongoSubscriptionPersister storage,
             MongoDatabaseFactory factory,
             Address client,
             string messageTypeString1)
@@ -169,7 +173,7 @@ namespace NServiceBus.MongoDB.Tests.SubscriptionStorage
         [Theory, IntegrationTest]
         [AutoDatabase]
         public void UnsubscribeFromAllMessages(
-            MongoSubscriptionStorage storage,
+            MongoSubscriptionPersister storage,
             MongoDatabaseFactory factory,
             Address client,
             string messageTypeString1,
@@ -194,7 +198,7 @@ namespace NServiceBus.MongoDB.Tests.SubscriptionStorage
         [Theory, IntegrationTest]
         [AutoDatabase]
         public void UnsubscribeWhenClientSubscriptionIsTheOnlyOneShouldRemoveOnlyClient(
-            MongoSubscriptionStorage storage,
+            MongoSubscriptionPersister storage,
             MongoDatabaseFactory factory,
             Address client,
             string messageTypeString1)
@@ -218,7 +222,7 @@ namespace NServiceBus.MongoDB.Tests.SubscriptionStorage
         [Theory, IntegrationTest]
         [AutoDatabase]
         public void UnsubscribeWhenThereAreSubscriptionsButNotClientsShouldNotChangeAnything(
-            MongoSubscriptionStorage storage,
+            MongoSubscriptionPersister storage,
             MongoDatabaseFactory factory,
             Address client,
             Address otherClient1,
@@ -245,7 +249,7 @@ namespace NServiceBus.MongoDB.Tests.SubscriptionStorage
         [Theory, IntegrationTest]
         [AutoDatabase]
         public void UnsubscribeWhenThereAreSubscriptionsShouldRemoveClientsAddress(
-            MongoSubscriptionStorage storage,
+            MongoSubscriptionPersister storage,
             MongoDatabaseFactory factory,
             Address client,
             Address otherClient1,

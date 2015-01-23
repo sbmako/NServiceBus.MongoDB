@@ -8,6 +8,7 @@
       <Word>persister</Word>
       <Word>Utils</Word>
       <Word>IHaveDocumentVersion</Word>
+      <Word>DB</Word>
     </Recognized>
     <Deprecated>
       <!--<Term PreferredAlternate=""></Term>-->
@@ -23,6 +24,7 @@
   <Acronyms>
     <CasingExceptions>
       <!--<Acronym>DB</Acronym>-->
+      <Acronym>DB</Acronym>
     </CasingExceptions>
   </Acronyms>
 </Dictionary>

@@ -1,8 +1,8 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="MongoSubscriptionStorage.cs" company="Carlos Sandoval">
+// <copyright file="MongoSubscriptionPersister.cs" company="Carlos Sandoval">
 //   The MIT License (MIT)
 //   
-//   Copyright (c) 2014 Carlos Sandoval
+//   Copyright (c) 2015 Carlos Sandoval
 //   
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of
 //   this software and associated documentation files (the "Software"), to deal in
@@ -22,39 +22,42 @@
 //   CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // </copyright>
 // <summary>
-//   The mongo subscription storage.
+//   The MongoDB subscription persister.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace NServiceBus.MongoDB.SubscriptionStorage
+namespace NServiceBus.MongoDB.SubscriptionPersister
 {
     using System;
     using System.Collections.Generic;
     using System.Diagnostics.Contracts;
     using System.Linq;
+
     using global::MongoDB.Driver;
     using global::MongoDB.Driver.Builders;
+
     using NServiceBus.MongoDB.Extensions;
-    using NServiceBus.MongoDB.Utils;
+    using NServiceBus.MongoDB.Internals;
     using NServiceBus.Unicast.Subscriptions;
     using NServiceBus.Unicast.Subscriptions.MessageDrivenSubscriptions;
 
     /// <summary>
-    /// The mongo subscription storage.
+    /// The MongoDB subscription persister.
     /// </summary>
-    public sealed class MongoSubscriptionStorage : ISubscriptionStorage
+    public sealed class MongoSubscriptionPersister : ISubscriptionStorage
     {
         private static readonly string SubscriptionName = typeof(Subscription).Name;
 
         private readonly MongoDatabase mongoDatabase;
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="MongoSubscriptionPersister"/> class. 
         /// Initializes a new instance of the <see cref="MongoSubscriptionStorage"/> class.
         /// </summary>
         /// <param name="mongoFactory">
-        /// The mongo factory.
+        /// The MongoDB factory.
         /// </param>
-        public MongoSubscriptionStorage(MongoDatabaseFactory mongoFactory)
+        public MongoSubscriptionPersister(MongoDatabaseFactory mongoFactory)
         {
             Contract.Requires<ArgumentNullException>(mongoFactory != null);
             this.mongoDatabase = mongoFactory.GetDatabase();
@@ -162,7 +165,7 @@ namespace NServiceBus.MongoDB.SubscriptionStorage
         /// The message types.
         /// </param>
         /// <returns>
-        /// The <see cref="IEnumerable"/>.
+        /// The <see cref="IEnumerable{T}"/>.
         /// </returns>
         IEnumerable<Address> ISubscriptionStorage.GetSubscriberAddressesForMessage(IEnumerable<MessageType> messageTypes)
         {

@@ -11,7 +11,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{DC6A98
 	ProjectSection(SolutionItems) = preProject
 		.nuget\NuGet.Config = .nuget\NuGet.Config
 		.nuget\NuGet.exe = .nuget\NuGet.exe
-		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
 EndProject
 Global
@@ -28,6 +27,7 @@ Global
 		{2435C610-8C7A-4330-8275-6AB85E63C0A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2435C610-8C7A-4330-8275-6AB85E63C0A3}.Release|Any CPU.Build.0 = Release|Any CPU
 		{02524712-C2B5-482F-A475-0C1EAF78B6FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{02524712-C2B5-482F-A475-0C1EAF78B6FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{02524712-C2B5-482F-A475-0C1EAF78B6FC}.DebugContracts|Any CPU.ActiveCfg = DebugContracts|Any CPU
 		{02524712-C2B5-482F-A475-0C1EAF78B6FC}.DebugContracts|Any CPU.Build.0 = DebugContracts|Any CPU
 		{02524712-C2B5-482F-A475-0C1EAF78B6FC}.Release|Any CPU.ActiveCfg = Release|Any CPU

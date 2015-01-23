@@ -1,8 +1,8 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="DeterministicGuidTests.cs" company="Carlos Sandoval">
+// <copyright file="MongoPersistenceConstants.cs" company="Carlos Sandoval">
 //   The MIT License (MIT)
 //   
-//   Copyright (c) 2014 Carlos Sandoval
+//   Copyright (c) 2015 Carlos Sandoval
 //   
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of
 //   this software and associated documentation files (the "Software"), to deal in
@@ -22,40 +22,36 @@
 //   CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // </copyright>
 // <summary>
-//   Defines the DeterministicGuidTests type.
+//   Defines the MongoPersistenceConstants type.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace NServiceBus.MongoDB.Tests.Utils
+namespace NServiceBus.MongoDB.Internals
 {
-    using System.Collections.Generic;
-    using FluentAssertions;
+    using System.Diagnostics.Contracts;
 
-    using NServiceBus.MongoDB.Tests.TestingUtilities;
-    using NServiceBus.MongoDB.Utils;
-    using Ploeh.AutoFixture.Xunit;
-    using Xunit.Extensions;
-
-    public class DeterministicGuidTests
+    internal static class MongoPersistenceConstants
     {
-        [Theory, UnitTest]
-        [AutoData]
-        public void SameProducesSameGuid(KeyValuePair<string, int> testObject)
+        public const int DefaultNextTimeoutIncrementMinutes = 10;
+
+        public const string VersionPropertyName = "DocumentVersion";
+
+        public const string OwningTimeoutManagerAndTimeName = "OwningTimeoutManagerAndTime";
+
+        public const string OwningTimeoutManagerAndSagaIdAndTimeName = "OwningTimeoutManagerAndSagaIdAndTime";
+        
+        public const int DefaultPort = 27017;
+
+        public const string DefaultHost = "localhost";
+
+        public static string DefaultConnectionString
         {
-            var first = DeterministicGuid.Create(testObject);
-            var second = DeterministicGuid.Create(testObject);
-
-            first.Should().Be(second);
-        }
-
-        [Theory, UnitTest]
-        [AutoData]
-        public void DifferntProduceDifferentGuids(KeyValuePair<string, int> firstObject, KeyValuePair<string, int> secondObject)
-        {
-            var first = DeterministicGuid.Create(firstObject);
-            var second = DeterministicGuid.Create(secondObject);
-
-            first.Should().NotBe(second);
+            get
+            {
+                Contract.Ensures(!string.IsNullOrWhiteSpace(Contract.Result<string>()));
+                var connectionString = string.Format("mongodb://{0}:{1}", DefaultHost, DefaultPort);
+                return connectionString.NullOrWhiteSpaceChecked();
+            }
         }
     }
 }

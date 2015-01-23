@@ -2,7 +2,7 @@
 // <copyright file="Startup.cs" company="Carlos Sandoval">
 //   The MIT License (MIT)
 //   
-//   Copyright (c) 2014 Carlos Sandoval
+//   Copyright (c) 2015 Carlos Sandoval
 //   
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of
 //   this software and associated documentation files (the "Software"), to deal in
@@ -28,7 +28,6 @@
 
 namespace Sample
 {
-    using System;
     using System.Threading;
 
     using NServiceBus;
@@ -68,8 +67,7 @@ namespace Sample
             var initMessage = new MyMessage { SomeId = "carlos" };
             var anotherMessage = new AnotherSagaCommand { SomeId = initMessage.SomeId, SleepHowLong = 2000 };
 
-            ////Thread.Sleep(5000);
-
+            Thread.Sleep(5000);
             this.bus.Send(initMessage);
 
             ////Thread.Sleep(1000);

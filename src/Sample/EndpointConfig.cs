@@ -2,7 +2,7 @@
 // <copyright file="EndpointConfig.cs" company="Carlos Sandoval">
 //   The MIT License (MIT)
 //   
-//   Copyright (c) 2014 Carlos Sandoval
+//   Copyright (c) 2015 Carlos Sandoval
 //   
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of
 //   this software and associated documentation files (the "Software"), to deal in
@@ -31,20 +31,19 @@ namespace Sample
     using NServiceBus;
     using NServiceBus.Features;
     using NServiceBus.MongoDB;
-    using NServiceBus.MongoDB.SagaPersister;
-    using NServiceBus.MongoDB.SubscriptionStorage;
-    using NServiceBus.MongoDB.TimeoutPersister;
 
     /// <summary>
     /// The endpoint config.
     /// </summary>
     public class EndpointConfig : IConfigureThisEndpoint, AsA_Server
     {
-        void IConfigureThisEndpoint.Customize(BusConfiguration configuration)
+        public void Customize(BusConfiguration configuration)
         {
-            configuration.DisableFeature<Audit>();
-            configuration.UseSerialization<JsonSerializer>();
+            ////configuration.DisableFeature<Audit>();
             configuration.UsePersistence<MongoDBPersistence>();
+            configuration.UseSerialization<JsonSerializer>();
+
+            ////configuration.EnableInstallers();
         }
     }
 }

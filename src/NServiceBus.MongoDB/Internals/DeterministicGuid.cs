@@ -1,8 +1,8 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ConfigureMongoSagaPersister.cs" company="Carlos Sandoval">
+// <copyright file="DeterministicGUID.cs" company="Carlos Sandoval">
 //   The MIT License (MIT)
 //   
-//   Copyright (c) 2014 Carlos Sandoval
+//   Copyright (c) 2015 Carlos Sandoval
 //   
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of
 //   this software and associated documentation files (the "Software"), to deal in
@@ -22,42 +22,35 @@
 //   CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // </copyright>
 // <summary>
-//   The configure mongo saga persister.
+//   Defines the DeterministicGUID type.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace NServiceBus.MongoDB.SagaPersister
+namespace NServiceBus.MongoDB.Internals
 {
     using System;
     using System.Diagnostics.Contracts;
+    using System.Security.Cryptography;
+    using System.Text;
 
-    /// <summary>
-    /// The configure mongo saga persister.
-    /// </summary>
-    public static class ConfigureMongoSagaPersister
+    internal static class DeterministicGuid
     {
-        /// <summary>
-        /// The mongo saga persister.
-        /// </summary>
-        /// <param name="config">
-        /// The config.
-        /// </param>
-        /// <returns>
-        /// The <see cref="Configure"/>.
-        /// </returns>
-        public static Configure MongoSagaPersister(this Configure config)
+        public static Guid Create(params object[] data)
         {
-            Contract.Requires<ArgumentNullException>(config != null);
-            Contract.Ensures(Contract.Result<Configure>() != null);
+            Contract.Requires(data != null);
 
-            ////if (!config.Configurer.HasComponent<MongoClientAccessor>())
-            ////{
-            ////    config.MongoPersistence();
-            ////}
+            // use MD5 hash to get a 16-byte hash of the string
+            using (var provider = new MD5CryptoServiceProvider())
+            {
+                var inputBytes = Encoding.Default.GetBytes(string.Concat(data));
 
-            ////config.Configurer.ConfigureComponent<MongoSagaPersister>(DependencyLifecycle.SingleInstance);
+                //// TODO: provide extension method to normalize byte array to 16 length
+                var hashBytes = provider.ComputeHash(inputBytes);
 
-            return config;
+                // generate a GUID from the hash:
+                Contract.Assume(hashBytes.Length == 16);
+                return new Guid(hashBytes);
+            }
         }
     }
 }

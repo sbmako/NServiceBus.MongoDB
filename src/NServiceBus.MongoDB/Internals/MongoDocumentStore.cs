@@ -1,8 +1,8 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="MongoPersistenceConstants.cs" company="Carlos Sandoval">
+// <copyright file="MongoDocumentStore.cs" company="Carlos Sandoval">
 //   The MIT License (MIT)
 //   
-//   Copyright (c) 2014 Carlos Sandoval
+//   Copyright (c) 2015 Carlos Sandoval
 //   
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of
 //   this software and associated documentation files (the "Software"), to deal in
@@ -22,37 +22,39 @@
 //   CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // </copyright>
 // <summary>
-//   Defines the MongoPersistenceConstants type.
+//   
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace NServiceBus.MongoDB
+namespace NServiceBus.MongoDB.Internals
 {
-    using System.Diagnostics.Contracts;
-    using NServiceBus.MongoDB.Utils;
+    using NServiceBus.Features;
 
-    internal static class MongoPersistenceConstants
+    /// <summary>
+    /// The MongoDB document store.
+    /// </summary>
+    public class MongoDocumentStore : Feature
     {
-        public const int DefaultNextTimeoutIncrementMinutes = 10;
-
-        public const string VersionPropertyName = "DocumentVersion";
-
-        public const string OwningTimeoutManagerAndTimeName = "OwningTimeoutManagerAndTime";
-
-        public const string OwningTimeoutManagerAndSagaIdAndTimeName = "OwningTimeoutManagerAndSagaIdAndTime";
-        
-        public const int DefaultPort = 27017;
-
-        public const string DefaultHost = "localhost";
-
-        public static string DefaultConnectionString
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MongoDocumentStore"/> class.
+        /// </summary>
+        public MongoDocumentStore()
         {
-            get
-            {
-                Contract.Ensures(!string.IsNullOrWhiteSpace(Contract.Result<string>()));
-                var connectionString = string.Format("mongodb://{0}:{1}", DefaultHost, DefaultPort);
-                return connectionString.NullOrWhiteSpaceChecked();
-            }
+            this.Defaults(s => s.Set<MongoClientAccessor>(s.GetDefaultClientAccessor()));
+        }
+
+        /// <summary>
+        /// The setup.
+        /// </summary>
+        /// <param name="context">
+        /// The context.
+        /// </param>
+        protected override void Setup(FeatureConfigurationContext context)
+        {
+            var clientAccessor = context.Settings.Get<MongoClientAccessor>();
+
+            context.Container.ConfigureComponent(() => clientAccessor, DependencyLifecycle.SingleInstance);
+            context.Container.ConfigureComponent<MongoDatabaseFactory>(DependencyLifecycle.SingleInstance);
         }
     }
 }

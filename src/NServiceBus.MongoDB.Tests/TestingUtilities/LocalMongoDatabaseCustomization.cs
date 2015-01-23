@@ -2,7 +2,7 @@
 // <copyright file="LocalMongoDatabaseCustomization.cs" company="Carlos Sandoval">
 //   The MIT License (MIT)
 //   
-//   Copyright (c) 2014 Carlos Sandoval
+//   Copyright (c) 2015 Carlos Sandoval
 //   
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of
 //   this software and associated documentation files (the "Software"), to deal in
@@ -29,11 +29,14 @@
 namespace NServiceBus.MongoDB.Tests.TestingUtilities
 {
     using System;
-
-    using NServiceBus.MongoDB.TimeoutPersister;
+    using System.Runtime.InteropServices;
 
     using global::MongoDB.Driver;
+
+    using NServiceBus.MongoDB.Internals;
+    using NServiceBus.MongoDB.TimeoutPersister;
     using NServiceBus.Timeout.Core;
+
     using Ploeh.AutoFixture;
 
     public class LocalMongoDatabaseCustomization : ICustomization
@@ -49,7 +52,9 @@ namespace NServiceBus.MongoDB.Tests.TestingUtilities
             fixture.Register(() => databaseFactory);
 
             fixture.Customize<TimeoutData>(
-                c => c.With(t => t.OwningTimeoutManager, Configure.EndpointName).With(t => t.Time, DateTime.UtcNow));
+                c => c.With(t => t.OwningTimeoutManager, "UnitTests").With(t => t.Time, DateTime.UtcNow));
+
+            fixture.Customize<MongoTimeoutPersister>(c => c.With(t => t.EndpointName, "UnitTests"));
 
             ConfigureMongoTimeoutPersister.ConfigureClassMaps();
         }

@@ -2,7 +2,7 @@
 // <copyright file="DatabaseNameExtensions.cs" company="Carlos Sandoval">
 //   The MIT License (MIT)
 //   
-//   Copyright (c) 2014 Carlos Sandoval
+//   Copyright (c) 2015 Carlos Sandoval
 //   
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of
 //   this software and associated documentation files (the "Software"), to deal in
@@ -30,7 +30,7 @@ namespace NServiceBus.MongoDB.Extensions
 {
     using System.Diagnostics.Contracts;
 
-    using NServiceBus.MongoDB.Utils;
+    using NServiceBus.MongoDB.Internals;
 
     internal static class DatabaseNameExtensions
     {

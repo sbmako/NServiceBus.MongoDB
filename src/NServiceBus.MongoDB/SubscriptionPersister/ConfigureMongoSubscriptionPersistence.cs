@@ -1,8 +1,8 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ConfigureMongoSubscriptionStorage.cs" company="Carlos Sandoval">
+// <copyright file="ConfigureMongoSubscriptionPersistence.cs" company="Carlos Sandoval">
 //   The MIT License (MIT)
 //   
-//   Copyright (c) 2014 Carlos Sandoval
+//   Copyright (c) 2015 Carlos Sandoval
 //   
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of
 //   this software and associated documentation files (the "Software"), to deal in
@@ -22,48 +22,20 @@
 //   CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // </copyright>
 // <summary>
-//   The configure mongo subscription storage.
+//   
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace NServiceBus.MongoDB.SubscriptionStorage
+namespace NServiceBus.MongoDB.SubscriptionPersister
 {
-    using System;
-    using System.Diagnostics.Contracts;
     using global::MongoDB.Bson.Serialization;
     using NServiceBus.Unicast.Subscriptions;
 
     /// <summary>
-    /// The configure mongo subscription storage.
+    /// The configure MongoDB subscription storage.
     /// </summary>
-    public static class ConfigureMongoSubscriptionStorage
+    public static class ConfigureMongoSubscriptionPersistence
     {
-        /// <summary>
-        /// The mongo subscription storage.
-        /// </summary>
-        /// <param name="config">
-        /// The config.
-        /// </param>
-        /// <returns>
-        /// The <see cref="Configure"/>.
-        /// </returns>
-        public static Configure MongoSubscriptionStorage(this Configure config)
-        {
-            Contract.Requires<ArgumentNullException>(config != null);
-            Contract.Ensures(Contract.Result<Configure>() != null);
-
-            ////if (!config.Configurer.HasComponent<MongoClientAccessor>())
-            ////{
-            ////    config.MongoPersistence();
-            ////}
-
-            ////config.Configurer.ConfigureComponent<MongoSubscriptionStorage>(DependencyLifecycle.SingleInstance);
-
-            ////ConfigureClassMaps();
-
-            return config;
-        }
-
         internal static void ConfigureClassMaps()
         {
             if (!BsonClassMap.IsClassMapRegistered(typeof(MessageType)))

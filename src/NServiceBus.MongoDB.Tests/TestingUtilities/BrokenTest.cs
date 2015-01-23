@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ConfigErrorQueue.cs" company="Carlos Sandoval">
+// <copyright file="BrokenTest.cs" company="Carlos Sandoval">
 //   The MIT License (MIT)
 //   
 //   Copyright (c) 2014 Carlos Sandoval
@@ -22,29 +22,19 @@
 //   CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // </copyright>
 // <summary>
-//   The config error queue.
+//   Defines the BrokenTest type.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-using NServiceBus.Config;
-using NServiceBus.Config.ConfigurationSource;
-
-/// <summary>
-/// The config error queue.
-/// </summary>
-public class ConfigErrorQueue : IProvideConfiguration<MessageForwardingInCaseOfFaultConfig>
+namespace NServiceBus.MongoDB.Tests.TestingUtilities
 {
-    /// <summary>
-    /// The get configuration.
-    /// </summary>
-    /// <returns>
-    /// The <see cref="MessageForwardingInCaseOfFaultConfig"/>.
-    /// </returns>
-    public MessageForwardingInCaseOfFaultConfig GetConfiguration()
+    using Xunit;
+
+    public class BrokenTest : TraitAttribute
     {
-        return new MessageForwardingInCaseOfFaultConfig
-               {
-                   ErrorQueue = "error"
-               };
+        public BrokenTest()
+            : base("Category", "Broken")
+        {
+        }
     }
 }

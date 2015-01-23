@@ -1,8 +1,8 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="MongoDBTimeoutStorage.cs" company="Carlos Sandoval">
+// <copyright file="MongoSubscriptionStorage.cs" company="Carlos Sandoval">
 //   The MIT License (MIT)
 //   
-//   Copyright (c) 2014 Carlos Sandoval
+//   Copyright (c) 2015 Carlos Sandoval
 //   
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of
 //   this software and associated documentation files (the "Software"), to deal in
@@ -22,23 +22,27 @@
 //   CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // </copyright>
 // <summary>
-//   Defines the MongoDBTimeoutStorage type.
+//   
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace NServiceBus.MongoDB.TimeoutPersister
+namespace NServiceBus.MongoDB.SubscriptionPersister
 {
     using NServiceBus.Features;
+    using NServiceBus.MongoDB.Internals;
 
     /// <summary>
-    /// The mongo DB timeout storage.
+    /// The MongoDB subscription storage.
     /// </summary>
-    public class MongoDBTimeoutStorage : Feature
+    public class MongoSubscriptionStorage : Feature
     {
-        internal MongoDBTimeoutStorage()
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MongoSubscriptionStorage"/> class.
+        /// </summary>
+        public MongoSubscriptionStorage()
         {
-            this.DependsOn<TimeoutManager>();
-            ////this.DependsOn<SharedDocumentStore>();
+            this.DependsOn<StorageDrivenPublishing>();
+            this.DependsOn<MongoDocumentStore>();
         }
 
         /// <summary>
@@ -49,6 +53,7 @@ namespace NServiceBus.MongoDB.TimeoutPersister
         /// </param>
         protected override void Setup(FeatureConfigurationContext context)
         {
+            context.Container.ConfigureComponent<MongoSubscriptionPersister>(DependencyLifecycle.InstancePerCall);
         }
     }
 }

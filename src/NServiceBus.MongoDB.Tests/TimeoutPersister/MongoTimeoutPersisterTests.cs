@@ -2,7 +2,7 @@
 // <copyright file="MongoTimeoutPersisterTests.cs" company="Carlos Sandoval">
 //   The MIT License (MIT)
 //   
-//   Copyright (c) 2014 Carlos Sandoval
+//   Copyright (c) 2015 Carlos Sandoval
 //   
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of
 //   this software and associated documentation files (the "Software"), to deal in
@@ -31,9 +31,10 @@ namespace NServiceBus.MongoDB.Tests.TimeoutPersister
     using System;
     using System.Linq;
     using FluentAssertions;
+
+    using NServiceBus.MongoDB.Internals;
     using NServiceBus.MongoDB.Tests.TestingUtilities;
     using NServiceBus.MongoDB.TimeoutPersister;
-    using NServiceBus.Timeout.Core;
     using Xunit.Extensions;
 
     public class MongoTimeoutPersisterTests
@@ -68,7 +69,7 @@ namespace NServiceBus.MongoDB.Tests.TimeoutPersister
         public void GetNextChunkReturnsOneTimeoutWhenCollectionHasOneTimeout(
             MongoTimeoutPersister sut,
             MongoDatabaseFactory factory,
-            TimeoutData timeoutData)
+            Timeout.Core.TimeoutData timeoutData)
         {
             factory.ResetTimeoutCollection();
 
@@ -88,7 +89,7 @@ namespace NServiceBus.MongoDB.Tests.TimeoutPersister
         public void GetNextChunkReturnsOneTimeoutWhenCollectionHasOneTimeoutBetweenStartSliceAndUtcNowAndOneAfterUtcNow(
             MongoTimeoutPersister sut,
             MongoDatabaseFactory factory,
-            TimeoutData timeoutData)
+            Timeout.Core.TimeoutData timeoutData)
         {
             factory.ResetTimeoutCollection();
 
@@ -110,7 +111,7 @@ namespace NServiceBus.MongoDB.Tests.TimeoutPersister
         public void GetNextChunkReturnsEmptyListWhenCollectionHasTwoTimeoutsAfterUtcNow(
             MongoTimeoutPersister sut,
             MongoDatabaseFactory factory,
-            TimeoutData timeoutData)
+            Timeout.Core.TimeoutData timeoutData)
         {
             factory.ResetTimeoutCollection();
 
@@ -131,7 +132,7 @@ namespace NServiceBus.MongoDB.Tests.TimeoutPersister
         public void AddOneTimeout(
             MongoTimeoutPersister sut,
             MongoDatabaseFactory factory,
-            TimeoutData timeoutData)
+            Timeout.Core.TimeoutData timeoutData)
         {
             factory.ResetTimeoutCollection();
 
@@ -147,8 +148,8 @@ namespace NServiceBus.MongoDB.Tests.TimeoutPersister
         public void AddTwoDifferentTimeouts(
             MongoTimeoutPersister sut,
             MongoDatabaseFactory factory,
-            TimeoutData timeout1,
-            TimeoutData timeout2)
+            Timeout.Core.TimeoutData timeout1,
+            Timeout.Core.TimeoutData timeout2)
         {
             factory.ResetTimeoutCollection();
 
@@ -165,12 +166,12 @@ namespace NServiceBus.MongoDB.Tests.TimeoutPersister
         public void TryRemoveShouldSucceedAndReturnData(
             MongoTimeoutPersister sut,
             MongoDatabaseFactory factory,
-            TimeoutData timeoutData)
+            Timeout.Core.TimeoutData timeoutData)
         {
             factory.ResetTimeoutCollection();
 
             sut.Add(timeoutData);
-            TimeoutData returnedTimeoutData;
+            Timeout.Core.TimeoutData returnedTimeoutData;
 
             var timeouts = factory.RetrieveAllTimeouts();
 
@@ -191,7 +192,7 @@ namespace NServiceBus.MongoDB.Tests.TimeoutPersister
         {
             factory.ResetTimeoutCollection();
 
-            TimeoutData timeoutData;
+            Timeout.Core.TimeoutData timeoutData;
 
             var result = sut.TryRemove(timeoutId, out timeoutData);
 
@@ -206,14 +207,14 @@ namespace NServiceBus.MongoDB.Tests.TimeoutPersister
         public void TryRemoveShouldSucceedAndReturnDataForOneTimeoutAndLeaveTheOther(
             MongoTimeoutPersister sut,
             MongoDatabaseFactory factory,
-            TimeoutData timeoutData1,
-            TimeoutData timeoutData2)
+            Timeout.Core.TimeoutData timeoutData1,
+            Timeout.Core.TimeoutData timeoutData2)
         {
             factory.ResetTimeoutCollection();
 
             sut.Add(timeoutData1);
             sut.Add(timeoutData2);
-            TimeoutData returnedTimeoutData;
+            Timeout.Core.TimeoutData returnedTimeoutData;
 
             var timeouts = factory.RetrieveAllTimeouts();
 
@@ -232,7 +233,7 @@ namespace NServiceBus.MongoDB.Tests.TimeoutPersister
         public void RemoveTimeoutByIdRemovesTimeout(
             MongoTimeoutPersister sut,
             MongoDatabaseFactory factory,
-            TimeoutData timeoutData)
+            Timeout.Core.TimeoutData timeoutData)
         {
             factory.ResetTimeoutCollection();
             
@@ -248,7 +249,7 @@ namespace NServiceBus.MongoDB.Tests.TimeoutPersister
         public void RemoveTimeoutByIdOnEmptyTimeoutCollection(
             MongoTimeoutPersister sut,
             MongoDatabaseFactory factory,
-            TimeoutData timeoutData)
+            Timeout.Core.TimeoutData timeoutData)
         {
             factory.ResetTimeoutCollection();
 
@@ -262,7 +263,7 @@ namespace NServiceBus.MongoDB.Tests.TimeoutPersister
         public void RemoveTimeoutByIdOnNonExistantIdDoesNotRemoveOtherTimeout(
             MongoTimeoutPersister sut,
             MongoDatabaseFactory factory,
-            TimeoutData timeoutData)
+            Timeout.Core.TimeoutData timeoutData)
         {
             factory.ResetTimeoutCollection();
 
@@ -278,8 +279,8 @@ namespace NServiceBus.MongoDB.Tests.TimeoutPersister
         public void RemoveTimeoutByIdRemovesCorrectTimeoutAndDoesNotRemoveOtherTimeout(
             MongoTimeoutPersister sut,
             MongoDatabaseFactory factory,
-            TimeoutData timeoutData1,
-            TimeoutData timeoutData2)
+            Timeout.Core.TimeoutData timeoutData1,
+            Timeout.Core.TimeoutData timeoutData2)
         {
             factory.ResetTimeoutCollection();
 

@@ -2,7 +2,7 @@
 // <copyright file="ConfigureCustomization.cs" company="Carlos Sandoval">
 //   The MIT License (MIT)
 //   
-//   Copyright (c) 2014 Carlos Sandoval
+//   Copyright (c) 2015 Carlos Sandoval
 //   
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of
 //   this software and associated documentation files (the "Software"), to deal in
@@ -26,28 +26,25 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
+using NServiceBus.Timeout.Core;
+using Ploeh.AutoFixture;
+using Ploeh.AutoFixture.Kernel;
+
 namespace NServiceBus.MongoDB.Tests.TestingUtilities
 {
-    using System;
-
-    using NServiceBus.Timeout.Core;
-
-    using Ploeh.AutoFixture;
-    using Ploeh.AutoFixture.Kernel;
-
     public class ConfigureCustomization : ICustomization
     {
         public void Customize(IFixture fixture)
         {
-            var config = Configure.With(new[] { GetType().Assembly })
-                                  .DefineEndpointName("UnitTests")
-                                  .DefaultBuilder();
+            ////var config = Configure.With(new[] { GetType().Assembly })
+            ////                      .DefineEndpointName("UnitTests")
+            ////                      .DefaultBuilder();
 
-            fixture.Register(() => config);
+            ////fixture.Register(() => config);
 
-            fixture.Customize<Address>(c => c.FromFactory(new MethodInvoker(new GreedyConstructorQuery())));
+            ////fixture.Customize<Address>(c => c.FromFactory(new MethodInvoker(new GreedyConstructorQuery())));
 
-            fixture.Customize<TimeoutData>(c => c.With(t => t.OwningTimeoutManager, Configure.EndpointName));
+            ////fixture.Customize<TimeoutData>(c => c.With(t => t.OwningTimeoutManager, Configure.EndpointName));
         }
     }
 }
