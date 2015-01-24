@@ -31,9 +31,7 @@ namespace NServiceBus.MongoDB
     using System;
     using System.Configuration;
     using System.Diagnostics.Contracts;
-
     using global::MongoDB.Driver;
-
     using NServiceBus.Configuration.AdvanceExtensibility;
     using NServiceBus.MongoDB.Extensions;
     using NServiceBus.MongoDB.Internals;
@@ -60,7 +58,9 @@ namespace NServiceBus.MongoDB
             Contract.Ensures(Contract.Result<PersistenceExtentions<MongoDBPersistence>>() != null);
 
             config.GetSettings()
-                .Set<MongoClientAccessor>(InternalMongoPersistence(config.GetSettings().GetDefaultClientAccessor()));
+                .Set<MongoClientAccessor>(
+                    ConnectionVerifier.VerifyMongoConnection(
+                        config.GetSettings().NullChecked().GetDefaultClientAccessor()));
 
             return config;
         }
@@ -88,9 +88,12 @@ namespace NServiceBus.MongoDB
 
             var connectionString = GetConnectionString(connectionStringName);
             var client = new MongoClient(connectionString);
-            var clientAccessor = new MongoClientAccessor(client, config.GetSettings().EndpointNameAsDatabaseName());
 
-            config.GetSettings().Set<MongoClientAccessor>(InternalMongoPersistence(clientAccessor));
+            var clientAccessor = new MongoClientAccessor(
+                client,
+                config.GetSettings().NullChecked().DatabaseNameFromEndpointName());
+
+            config.GetSettings().Set<MongoClientAccessor>(ConnectionVerifier.VerifyMongoConnection(clientAccessor));
 
             return config;
         }
@@ -128,8 +131,8 @@ namespace NServiceBus.MongoDB
 
             var client = new MongoClient(connectionString);
             var clientAccessor = new MongoClientAccessor(client, databaseName);
-            
-            config.GetSettings().Set<MongoClientAccessor>(InternalMongoPersistence(clientAccessor));
+
+            config.GetSettings().Set<MongoClientAccessor>(ConnectionVerifier.VerifyMongoConnection(clientAccessor));
 
             return config;
         }
@@ -156,24 +159,7 @@ namespace NServiceBus.MongoDB
                                        : MongoPersistenceConstants.DefaultConnectionString;
 
             var client = new MongoClient(connectionString);
-            return new MongoClientAccessor(client, settings.EndpointNameAsDatabaseName());
-        }
-
-        internal static MongoClientAccessor InternalMongoPersistence(MongoClientAccessor clientAccessor)
-        {
-            Contract.Requires(clientAccessor != null);
-            Contract.Ensures(Contract.Result<MongoClientAccessor>() != null);
-
-            ConnectionVerifier.VerifyConnectionToMongoServer(clientAccessor);
-            return clientAccessor;
-        }
-
-        internal static string EndpointNameAsDatabaseName(this SettingsHolder settings)
-        {
-            Contract.Requires(settings != null);
-            Contract.Ensures(!string.IsNullOrWhiteSpace(Contract.Result<string>()));
-
-            return settings.EndpointName().NullOrWhiteSpaceChecked().EndpointNameAsDatabaseName();
+            return new MongoClientAccessor(client, settings.DatabaseNameFromEndpointName());
         }
 
         private static ConnectionStringSettings GetConnectionString()

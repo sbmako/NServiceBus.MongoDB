@@ -40,7 +40,12 @@ namespace NServiceBus.MongoDB.Internals
         /// </summary>
         public MongoDocumentStore()
         {
-            this.Defaults(s => s.Set<MongoClientAccessor>(s.GetDefaultClientAccessor()));
+            this.Defaults(
+                s =>
+                    {
+                        var accessor = s.GetDefaultClientAccessor();
+                        s.Set<MongoClientAccessor>(ConnectionVerifier.VerifyMongoConnection(accessor));
+                    });
         }
 
         /// <summary>

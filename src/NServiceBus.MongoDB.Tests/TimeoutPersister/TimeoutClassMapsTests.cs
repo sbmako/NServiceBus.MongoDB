@@ -33,7 +33,7 @@ namespace NServiceBus.MongoDB.Tests.TimeoutPersister
     using NServiceBus.MongoDB.TimeoutPersister;
     using Xunit.Extensions;
 
-    public class ConfigureMongoTimeoutPersisterTests
+    public class TimeoutClassMapsTests
     {
         [Theory, UnitTest]
         [AutoConfigureData]

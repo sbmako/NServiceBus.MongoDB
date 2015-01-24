@@ -48,7 +48,7 @@ namespace NServiceBus.MongoDB.Internals
         /// </param>
         public MongoDatabaseFactory(MongoClientAccessor clientAccessor)
         {
-            Contract.Requires<ArgumentNullException>(clientAccessor != null, "clientAccessor");
+            Contract.Requires<ArgumentNullException>(clientAccessor != null, "clientAccessor != null");
             mongoClientAccessor = clientAccessor;
         }
 

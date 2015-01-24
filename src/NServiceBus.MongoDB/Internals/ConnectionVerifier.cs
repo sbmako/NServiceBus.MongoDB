@@ -30,16 +30,23 @@ namespace NServiceBus.MongoDB.Internals
     using System.Diagnostics.Contracts;
     using System.Linq;
     using System.Text;
-
     using global::MongoDB.Driver;
-
     using NServiceBus.Logging;
 
     internal static class ConnectionVerifier
     {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(ConnectionVerifier));
 
-        internal static void VerifyConnectionToMongoServer(MongoClientAccessor mongoClientAccessor)
+        public static MongoClientAccessor VerifyMongoConnection(MongoClientAccessor clientAccessor)
+        {
+            Contract.Requires(clientAccessor != null);
+            Contract.Ensures(Contract.Result<MongoClientAccessor>() != null);
+
+            VerifyConnectionToMongoServer(clientAccessor);
+            return clientAccessor;
+        }
+
+        public static void VerifyConnectionToMongoServer(MongoClientAccessor mongoClientAccessor)
         {
             Contract.Requires(mongoClientAccessor != null);
 
@@ -55,7 +62,9 @@ namespace NServiceBus.MongoDB.Internals
                 return;
             }
 
-            Logger.InfoFormat("Connection to MongoDB at {0} verified.", string.Join(", ", GetMongoServers(mongoClientAccessor.MongoClient)));
+            Logger.InfoFormat(
+                "Connection to MongoDB at {0} verified.",
+                string.Join(", ", GetMongoServers(mongoClientAccessor.MongoClient)));
         }
 
         internal static void ShowUncontactableMongoWarning(MongoClient mongoClient, Exception exception)

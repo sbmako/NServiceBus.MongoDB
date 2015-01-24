@@ -50,6 +50,8 @@ namespace NServiceBus.MongoDB.TimeoutPersister
         /// </param>
         protected override void Setup(FeatureConfigurationContext context)
         {
+            TimeoutClassMaps.ConfigureClassMaps();
+
             context.Container.ConfigureComponent<MongoTimeoutPersister>(DependencyLifecycle.SingleInstance)
                 .ConfigureProperty(x => x.EndpointName, context.Settings.EndpointName());
         }

@@ -197,11 +197,11 @@
     <Compile Include="ContainMongoSagaData.cs" />
     <Compile Include="SagaPersister\MongoSagaStorage.cs" />
     <Compile Include="SagaPersister\MongoSagaPersister.cs" />
-    <Compile Include="SubscriptionPersister\ConfigureMongoSubscriptionPersistence.cs" />
+    <Compile Include="SubscriptionPersister\SubscriptionClassMaps.cs" />
     <Compile Include="SubscriptionPersister\MongoSubscriptionPersister.cs" />
     <Compile Include="SubscriptionPersister\MongoSubscriptionStorage.cs" />
     <Compile Include="SubscriptionPersister\Subscription.cs" />
-    <Compile Include="TimeoutPersister\ConfigureMongoTimeoutPersister.cs" />
+    <Compile Include="TimeoutPersister\TimeoutClassMaps.cs" />
     <Compile Include="TimeoutPersister\MongoTimeoutStorage.cs" />
     <Compile Include="TimeoutPersister\MongoTimeoutPersister.cs" />
     <Compile Include="Internals\ContractHelper.cs" />

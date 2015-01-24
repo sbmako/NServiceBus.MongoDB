@@ -53,6 +53,7 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
         /// </param>
         protected override void Setup(FeatureConfigurationContext context)
         {
+            SubscriptionClassMaps.ConfigureClassMaps();
             context.Container.ConfigureComponent<MongoSubscriptionPersister>(DependencyLifecycle.InstancePerCall);
         }
     }

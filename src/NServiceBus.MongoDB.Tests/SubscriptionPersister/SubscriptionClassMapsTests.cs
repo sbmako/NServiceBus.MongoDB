@@ -32,7 +32,7 @@ namespace NServiceBus.MongoDB.Tests.SubscriptionPersister
 
     using Xunit.Extensions;
 
-    public class ConfigureMongoSubscriptionPersistenceTests
+    public class SubscriptionClassMapsTests
     {
         [Theory, UnitTest]
         [AutoConfigureData]

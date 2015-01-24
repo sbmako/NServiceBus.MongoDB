@@ -109,7 +109,7 @@
     <Compile Include="Sample\SagaWithoutDocumentVersion.cs" />
     <Compile Include="Sample\SagaWithoutUniqueProperties.cs" />
     <Compile Include="Sample\SagaWithUniqueProperty.cs" />
-    <Compile Include="SubscriptionPersister\ConfigureMongoSubscriptionPersistenceTests.cs" />
+    <Compile Include="SubscriptionPersister\SubscriptionClassMapsTests.cs" />
     <Compile Include="SubscriptionPersister\MongoSubscriptionPersisterTests.cs" />
     <Compile Include="TestingUtilities\AutoConfigureData.cs" />
     <Compile Include="TestingUtilities\AutoDatabaseAttribute.cs" />
@@ -118,7 +118,7 @@
     <Compile Include="TestingUtilities\LocalMongoDatabaseCustomization.cs" />
     <Compile Include="TestingUtilities\MongoDatabaseFactoryExtensions.cs" />
     <Compile Include="TestingUtilities\UnitTestAttribute.cs" />
-    <Compile Include="TimeoutPersister\ConfigureMongoTimeoutPersisterTests.cs" />
+    <Compile Include="TimeoutPersister\TimeoutClassMapsTests.cs" />
     <Compile Include="TimeoutPersister\MongoTimeoutPersisterTests.cs" />
     <Compile Include="Internals\DeterministicGuidTests.cs" />
   </ItemGroup>

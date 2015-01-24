@@ -56,7 +56,7 @@ namespace NServiceBus.MongoDB.TimeoutPersister
         /// </param>
         public MongoTimeoutPersister(MongoDatabaseFactory mongoFactory)
         {
-            Contract.Requires<ArgumentNullException>(mongoFactory != null);
+            Contract.Requires<ArgumentNullException>(mongoFactory != null, "mongoFactory != null");
             this.mongoDatabase = mongoFactory.GetDatabase();
             this.EnsureTimeoutIndexes();
         }

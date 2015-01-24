@@ -33,7 +33,7 @@ namespace NServiceBus.MongoDB
     using NServiceBus.Saga;
 
     /// <summary>
-    /// The contain mongo saga data.
+    /// The contain MongoDB saga data.
     /// </summary>
     public abstract class ContainMongoSagaData : IContainSagaData, IHaveDocumentVersion
     {

@@ -45,7 +45,7 @@ namespace NServiceBus.MongoDB.Tests.SubscriptionPersister
     {
         public MongoSubscriptionPersisterTests()
         {
-            ConfigureMongoSubscriptionPersistence.ConfigureClassMaps();
+            SubscriptionClassMaps.ConfigureClassMaps();
         }
 
         [Theory, IntegrationTest]

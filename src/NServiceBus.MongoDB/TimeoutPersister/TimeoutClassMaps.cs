@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ConfigureMongoSubscriptionPersistence.cs" company="Carlos Sandoval">
+// <copyright file="TimeoutClassMaps.cs" company="Carlos Sandoval">
 //   The MIT License (MIT)
 //   
 //   Copyright (c) 2015 Carlos Sandoval
@@ -22,50 +22,39 @@
 //   CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // </copyright>
 // <summary>
-//   
+//   The configure mongo timeout persister.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace NServiceBus.MongoDB.SubscriptionPersister
+namespace NServiceBus.MongoDB.TimeoutPersister
 {
+    using System;
+    using System.Diagnostics.Contracts;
+    using global::MongoDB.Bson;
     using global::MongoDB.Bson.Serialization;
-    using NServiceBus.Unicast.Subscriptions;
+    using global::MongoDB.Bson.Serialization.Options;
+    using NServiceBus.Timeout.Core;
 
     /// <summary>
-    /// The configure MongoDB subscription storage.
+    /// The configure mongo timeout persister.
     /// </summary>
-    public static class ConfigureMongoSubscriptionPersistence
+    public static class TimeoutClassMaps
     {
         internal static void ConfigureClassMaps()
         {
-            if (!BsonClassMap.IsClassMapRegistered(typeof(MessageType)))
+            if (BsonClassMap.IsClassMapRegistered(typeof(TimeoutData)))
             {
-                ConfigureMessageTypeClassMap();
+                return;
             }
 
-            if (!BsonClassMap.IsClassMapRegistered(typeof(Address)))
-            {
-                ConfigureAddressClassMap();
-            }
-        }
-
-        private static void ConfigureAddressClassMap()
-        {
-            BsonClassMap.RegisterClassMap<Address>(
+            BsonClassMap.RegisterClassMap<TimeoutData>(
                 cm =>
                     {
                         cm.AutoMap();
-                        cm.MapCreator(a => new Address(a.Queue, a.Machine));
+                        cm.GetMemberMap(mm => mm.Time)
+                          .SetSerializationOptions(
+                              new DateTimeSerializationOptions(DateTimeKind.Utc, BsonType.Document));
                     });
-        }
-
-        private static void ConfigureMessageTypeClassMap()
-        {
-            BsonClassMap.RegisterClassMap<MessageType>(cm =>
-            {
-                cm.AutoMap();
-                cm.MapCreator(m => new MessageType(m.TypeName, m.Version));
-            });            
         }
     }
 }

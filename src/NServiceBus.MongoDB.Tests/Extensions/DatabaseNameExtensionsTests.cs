@@ -40,7 +40,7 @@ namespace NServiceBus.MongoDB.Tests.Extensions
         {
             const string EndpointName = "test.endpoint.name";
 
-            var databaseName = EndpointName.EndpointNameAsDatabaseName();
+            var databaseName = EndpointName.AsValidDatabaseName();
 
             databaseName.Should().Be("test_endpoint_name");
         }

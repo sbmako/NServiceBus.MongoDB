@@ -22,24 +22,50 @@
 //   CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // </copyright>
 // <summary>
-//   Defines the DatabaseNameExtensions type.
+//   
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace NServiceBus.MongoDB.Extensions
 {
     using System.Diagnostics.Contracts;
-
     using NServiceBus.MongoDB.Internals;
+    using NServiceBus.Settings;
 
     internal static class DatabaseNameExtensions
     {
-        public static string EndpointNameAsDatabaseName(this string endpointName)
+        /// <summary>
+        /// The endpoint name as database name.
+        /// </summary>
+        /// <param name="endpointName">
+        /// The endpoint name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
+        public static string AsValidDatabaseName(this string endpointName)
         {
             Contract.Requires(!string.IsNullOrWhiteSpace(endpointName));
             Contract.Ensures(!string.IsNullOrWhiteSpace(Contract.Result<string>()));
 
             return endpointName.Replace('.', '_').NullOrWhiteSpaceChecked();
+        }
+
+        /// <summary>
+        /// The database name from endpoint name.
+        /// </summary>
+        /// <param name="settings">
+        /// The settings.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
+        public static string DatabaseNameFromEndpointName(this SettingsHolder settings)
+        {
+            Contract.Requires(settings != null);
+            Contract.Ensures(!string.IsNullOrWhiteSpace(Contract.Result<string>()));
+
+            return settings.EndpointName().NullOrWhiteSpaceChecked().AsValidDatabaseName();
         }
     }
 }

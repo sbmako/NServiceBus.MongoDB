@@ -70,18 +70,18 @@ namespace Sample
             Thread.Sleep(5000);
             this.bus.Send(initMessage);
 
-            ////Thread.Sleep(1000);
+            Thread.Sleep(1000);
 
-            ////for (int i = 0; i < 2000; i++)
-            ////{
-            ////    anotherMessage.SleepHowLong = i;
-            ////    this.bus.SendLocal(anotherMessage);
-            ////}
+            for (var i = 0; i < 5; i++)
+            {
+                anotherMessage.SleepHowLong = i;
+                this.bus.SendLocal(anotherMessage);
+            }
 
-            ////anotherMessage.SleepHowLong = 0;
-            ////this.bus.SendLocal(anotherMessage);
-            ////this.bus.SendLocal(anotherMessage);
-            ////this.bus.SendLocal(anotherMessage);
+            anotherMessage.SleepHowLong = 0;
+            this.bus.SendLocal(anotherMessage);
+            this.bus.SendLocal(anotherMessage);
+            this.bus.SendLocal(anotherMessage);
         }
     }
 }

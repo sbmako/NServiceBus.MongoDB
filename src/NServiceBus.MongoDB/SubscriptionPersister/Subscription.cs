@@ -63,8 +63,8 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
         /// </param>
         public Subscription(MessageType messageType, IEnumerable<Address> clients)
         {
-            Contract.Requires<ArgumentNullException>(messageType != null);
-            Contract.Requires<ArgumentNullException>(clients != null);
+            Contract.Requires<ArgumentNullException>(messageType != null, "messageType != null");
+            Contract.Requires<ArgumentNullException>(clients != null, "clients != null");
 
             this.Id = FormatId(messageType);
             this.MessageType = messageType;
@@ -102,7 +102,7 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
         /// </returns>
         public static string FormatId(MessageType messageType)
         {
-            Contract.Requires<ArgumentNullException>(messageType != null);
+            Contract.Requires<ArgumentNullException>(messageType != null, "messageType != null");
             Contract.Ensures(Contract.Result<string>() != null);
 
             var id = DeterministicGuid.Create(messageType.TypeName, "/", messageType.Version.Major);
