@@ -6,8 +6,8 @@
     <Recognized>
       <Word>Mongo</Word>
       <Word>persister</Word>
-      <Word>Utils</Word>
       <Word>IHaveDocumentVersion</Word>
+      <Word>DB</Word>
     </Recognized>
     <Deprecated>
       <!--<Term PreferredAlternate=""></Term>-->
@@ -22,7 +22,8 @@
   </Words>
   <Acronyms>
     <CasingExceptions>
-      <!--<Acronym></Acronym>-->
+      <!--<Acronym>DB</Acronym>-->
+      <Acronym>DB</Acronym>
     </CasingExceptions>
   </Acronyms>
 </Dictionary>

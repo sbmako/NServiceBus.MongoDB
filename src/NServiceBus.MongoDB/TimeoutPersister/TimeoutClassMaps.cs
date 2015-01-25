@@ -1,8 +1,8 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ConfigureMongoTimeoutPersister.cs" company="Carlos Sandoval">
+// <copyright file="TimeoutClassMaps.cs" company="Carlos Sandoval">
 //   The MIT License (MIT)
 //   
-//   Copyright (c) 2014 Carlos Sandoval
+//   Copyright (c) 2015 Carlos Sandoval
 //   
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of
 //   this software and associated documentation files (the "Software"), to deal in
@@ -38,34 +38,8 @@ namespace NServiceBus.MongoDB.TimeoutPersister
     /// <summary>
     /// The configure mongo timeout persister.
     /// </summary>
-    public static class ConfigureMongoTimeoutPersister
+    public static class TimeoutClassMaps
     {
-        /// <summary>
-        /// The mongo timeout persister.
-        /// </summary>
-        /// <param name="config">
-        /// The config.
-        /// </param>
-        /// <returns>
-        /// The <see cref="Configure"/>.
-        /// </returns>
-        public static Configure MongoTimeoutPersister(this Configure config)
-        {
-            Contract.Requires<ArgumentNullException>(config != null);
-            Contract.Ensures(Contract.Result<Configure>() != null);
-
-            if (!config.Configurer.HasComponent<MongoClientAccessor>())
-            {
-                config.MongoPersistence();
-            }
-
-            config.Configurer.ConfigureComponent<MongoTimeoutPersister>(DependencyLifecycle.SingleInstance);
-
-            ConfigureClassMaps();
-
-            return config;
-        }
-
         internal static void ConfigureClassMaps()
         {
             if (BsonClassMap.IsClassMapRegistered(typeof(TimeoutData)))

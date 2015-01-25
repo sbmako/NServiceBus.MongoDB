@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ContainMongoSagaData.cs" company="Carlos Sandoval">
+// <copyright file="MongoDatabaseFactory.cs" company="Carlos Sandoval">
 //   The MIT License (MIT)
 //   
 //   Copyright (c) 2015 Carlos Sandoval
@@ -22,39 +22,51 @@
 //   CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // </copyright>
 // <summary>
-//   Defines the ContainMongoSagaData type.
+//   The mongo database factory.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace NServiceBus.MongoDB
+namespace NServiceBus.MongoDB.Internals
 {
     using System;
+    using System.Diagnostics.Contracts;
 
-    using NServiceBus.Saga;
+    using global::MongoDB.Driver;
 
     /// <summary>
-    /// The contain MongoDB saga data.
+    /// The MongoDB database factory.
     /// </summary>
-    public abstract class ContainMongoSagaData : IContainSagaData, IHaveDocumentVersion
+    public class MongoDatabaseFactory
     {
-        /// <summary>
-        /// Gets or sets the id.
-        /// </summary>
-        public virtual Guid Id { get; set; }
+        private static MongoClientAccessor mongoClientAccessor;
 
         /// <summary>
-        /// Gets or sets the originator.
+        /// Initializes a new instance of the <see cref="MongoDatabaseFactory"/> class.
         /// </summary>
-        public virtual string Originator { get; set; }
+        /// <param name="clientAccessor">
+        /// The clientAccessor.
+        /// </param>
+        public MongoDatabaseFactory(MongoClientAccessor clientAccessor)
+        {
+            Contract.Requires<ArgumentNullException>(clientAccessor != null, "clientAccessor != null");
+            mongoClientAccessor = clientAccessor;
+        }
 
         /// <summary>
-        /// Gets or sets the original message id.
+        /// The get database.
         /// </summary>
-        public virtual string OriginalMessageId { get; set; }
+        /// <returns>
+        /// The <see cref="MongoDatabase"/>.
+        /// </returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Reviewed")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate", Justification = "Ok here")]
+        public MongoDatabase GetDatabase()
+        {
+            Contract.Ensures(Contract.Result<MongoDatabase>() != null);
 
-        /// <summary>
-        /// Gets or sets the document version.
-        /// </summary>
-        public int DocumentVersion { get; set; }
+            var databaseName = mongoClientAccessor.DatabaseName;
+            var server = mongoClientAccessor.MongoClient.GetServer();
+            return server.GetDatabase(databaseName).AssumedNotNull();
+        }
     }
 }

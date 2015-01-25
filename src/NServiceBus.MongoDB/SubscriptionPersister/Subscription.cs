@@ -2,7 +2,7 @@
 // <copyright file="Subscription.cs" company="Carlos Sandoval">
 //   The MIT License (MIT)
 //   
-//   Copyright (c) 2014 Carlos Sandoval
+//   Copyright (c) 2015 Carlos Sandoval
 //   
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of
 //   this software and associated documentation files (the "Software"), to deal in
@@ -26,14 +26,14 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace NServiceBus.MongoDB.SubscriptionStorage
+namespace NServiceBus.MongoDB.SubscriptionPersister
 {
     using System;
     using System.Collections.Generic;
     using System.Diagnostics.Contracts;
     using System.Linq;
 
-    using NServiceBus.MongoDB.Utils;
+    using NServiceBus.MongoDB.Internals;
     using NServiceBus.Unicast.Subscriptions;
 
     /// <summary>
@@ -63,8 +63,8 @@ namespace NServiceBus.MongoDB.SubscriptionStorage
         /// </param>
         public Subscription(MessageType messageType, IEnumerable<Address> clients)
         {
-            Contract.Requires<ArgumentNullException>(messageType != null);
-            Contract.Requires<ArgumentNullException>(clients != null);
+            Contract.Requires<ArgumentNullException>(messageType != null, "messageType != null");
+            Contract.Requires<ArgumentNullException>(clients != null, "clients != null");
 
             this.Id = FormatId(messageType);
             this.MessageType = messageType;
@@ -102,7 +102,7 @@ namespace NServiceBus.MongoDB.SubscriptionStorage
         /// </returns>
         public static string FormatId(MessageType messageType)
         {
-            Contract.Requires<ArgumentNullException>(messageType != null);
+            Contract.Requires<ArgumentNullException>(messageType != null, "messageType != null");
             Contract.Ensures(Contract.Result<string>() != null);
 
             var id = DeterministicGuid.Create(messageType.TypeName, "/", messageType.Version.Major);

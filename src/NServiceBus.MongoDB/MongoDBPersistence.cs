@@ -1,8 +1,8 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ConfigErrorQueue.cs" company="Carlos Sandoval">
+// <copyright file="MongoDBPersistence.cs" company="Carlos Sandoval">
 //   The MIT License (MIT)
 //   
-//   Copyright (c) 2014 Carlos Sandoval
+//   Copyright (c) 2015 Carlos Sandoval
 //   
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of
 //   this software and associated documentation files (the "Software"), to deal in
@@ -22,29 +22,38 @@
 //   CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // </copyright>
 // <summary>
-//   The config error queue.
+//   
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-using NServiceBus.Config;
-using NServiceBus.Config.ConfigurationSource;
-
-/// <summary>
-/// The config error queue.
-/// </summary>
-public class ConfigErrorQueue : IProvideConfiguration<MessageForwardingInCaseOfFaultConfig>
+namespace NServiceBus.MongoDB
 {
+    using NServiceBus.Features;
+    using NServiceBus.MongoDB.Internals;
+    using NServiceBus.MongoDB.SagaPersister;
+    using NServiceBus.MongoDB.SubscriptionPersister;
+    using NServiceBus.MongoDB.TimeoutPersister;
+    using NServiceBus.Persistence;
+
     /// <summary>
-    /// The get configuration.
+    /// The MongoDB persistence.
     /// </summary>
-    /// <returns>
-    /// The <see cref="MessageForwardingInCaseOfFaultConfig"/>.
-    /// </returns>
-    public MessageForwardingInCaseOfFaultConfig GetConfiguration()
+    public class MongoDBPersistence : PersistenceDefinition
     {
-        return new MessageForwardingInCaseOfFaultConfig
-               {
-                   ErrorQueue = "error"
-               };
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MongoDBPersistence"/> class.
+        /// </summary>
+        public MongoDBPersistence()
+        {
+            this.Defaults(
+                s =>
+                    {
+                        s.EnableFeatureByDefault<MongoDocumentStore>();
+                    });
+
+            this.Supports(Storage.Sagas, s => s.EnableFeatureByDefault<MongoSagaStorage>()); 
+            this.Supports(Storage.Timeouts, s => s.EnableFeatureByDefault<MongoTimeoutStorage>());
+            this.Supports(Storage.Subscriptions, s => s.EnableFeatureByDefault<MongoSubscriptionStorage>());
+        }
     }
 }

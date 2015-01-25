@@ -1,8 +1,8 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="MongoPersistenceConstants.cs" company="Carlos Sandoval">
+// <copyright file="MongoTimeoutStorage.cs" company="Carlos Sandoval">
 //   The MIT License (MIT)
 //   
-//   Copyright (c) 2014 Carlos Sandoval
+//   Copyright (c) 2015 Carlos Sandoval
 //   
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of
 //   this software and associated documentation files (the "Software"), to deal in
@@ -22,37 +22,38 @@
 //   CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // </copyright>
 // <summary>
-//   Defines the MongoPersistenceConstants type.
+//   Defines the MongoTimeoutStorage type.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace NServiceBus.MongoDB
+namespace NServiceBus.MongoDB.TimeoutPersister
 {
-    using System.Diagnostics.Contracts;
-    using NServiceBus.MongoDB.Utils;
+    using NServiceBus.Features;
+    using NServiceBus.MongoDB.Internals;
 
-    internal static class MongoPersistenceConstants
+    /// <summary>
+    /// The mongo DB timeout storage.
+    /// </summary>
+    public class MongoTimeoutStorage : Feature
     {
-        public const int DefaultNextTimeoutIncrementMinutes = 10;
-
-        public const string VersionPropertyName = "DocumentVersion";
-
-        public const string OwningTimeoutManagerAndTimeName = "OwningTimeoutManagerAndTime";
-
-        public const string OwningTimeoutManagerAndSagaIdAndTimeName = "OwningTimeoutManagerAndSagaIdAndTime";
-        
-        public const int DefaultPort = 27017;
-
-        public const string DefaultHost = "localhost";
-
-        public static string DefaultConnectionString
+        internal MongoTimeoutStorage()
         {
-            get
-            {
-                Contract.Ensures(!string.IsNullOrWhiteSpace(Contract.Result<string>()));
-                var connectionString = string.Format("mongodb://{0}:{1}", DefaultHost, DefaultPort);
-                return connectionString.AssumedNotNullOrWhiteSpace();
-            }
+            this.DependsOn<TimeoutManager>();
+            this.DependsOn<MongoDocumentStore>();
+        }
+
+        /// <summary>
+        /// Called when the features is activated
+        /// </summary>
+        /// <param name="context">
+        /// The context.
+        /// </param>
+        protected override void Setup(FeatureConfigurationContext context)
+        {
+            TimeoutClassMaps.ConfigureClassMaps();
+
+            context.Container.ConfigureComponent<MongoTimeoutPersister>(DependencyLifecycle.SingleInstance)
+                .ConfigureProperty(x => x.EndpointName, context.Settings.EndpointName());
         }
     }
 }

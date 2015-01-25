@@ -1,8 +1,8 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="DeterministicGuidTests.cs" company="Carlos Sandoval">
+// <copyright file="MongoSubscriptionStorage.cs" company="Carlos Sandoval">
 //   The MIT License (MIT)
 //   
-//   Copyright (c) 2014 Carlos Sandoval
+//   Copyright (c) 2015 Carlos Sandoval
 //   
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of
 //   this software and associated documentation files (the "Software"), to deal in
@@ -22,40 +22,39 @@
 //   CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // </copyright>
 // <summary>
-//   Defines the DeterministicGuidTests type.
+//   
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace NServiceBus.MongoDB.Tests.Utils
+namespace NServiceBus.MongoDB.SubscriptionPersister
 {
-    using System.Collections.Generic;
-    using FluentAssertions;
+    using NServiceBus.Features;
+    using NServiceBus.MongoDB.Internals;
 
-    using NServiceBus.MongoDB.Tests.TestingUtilities;
-    using NServiceBus.MongoDB.Utils;
-    using Ploeh.AutoFixture.Xunit;
-    using Xunit.Extensions;
-
-    public class DeterministicGuidTests
+    /// <summary>
+    /// The MongoDB subscription storage.
+    /// </summary>
+    public class MongoSubscriptionStorage : Feature
     {
-        [Theory, UnitTest]
-        [AutoData]
-        public void SameProducesSameGuid(KeyValuePair<string, int> testObject)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MongoSubscriptionStorage"/> class.
+        /// </summary>
+        public MongoSubscriptionStorage()
         {
-            var first = DeterministicGuid.Create(testObject);
-            var second = DeterministicGuid.Create(testObject);
-
-            first.Should().Be(second);
+            this.DependsOn<StorageDrivenPublishing>();
+            this.DependsOn<MongoDocumentStore>();
         }
 
-        [Theory, UnitTest]
-        [AutoData]
-        public void DifferntProduceDifferentGuids(KeyValuePair<string, int> firstObject, KeyValuePair<string, int> secondObject)
+        /// <summary>
+        /// Called when the features is activated
+        /// </summary>
+        /// <param name="context">
+        /// The context.
+        /// </param>
+        protected override void Setup(FeatureConfigurationContext context)
         {
-            var first = DeterministicGuid.Create(firstObject);
-            var second = DeterministicGuid.Create(secondObject);
-
-            first.Should().NotBe(second);
+            SubscriptionClassMaps.ConfigureClassMaps();
+            context.Container.ConfigureComponent<MongoSubscriptionPersister>(DependencyLifecycle.InstancePerCall);
         }
     }
 }

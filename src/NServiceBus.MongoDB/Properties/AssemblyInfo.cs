@@ -2,7 +2,7 @@
 // <copyright file="AssemblyInfo.cs" company="Carlos Sandoval">
 //   The MIT License (MIT)
 //   
-//   Copyright (c) 2014 Carlos Sandoval
+//   Copyright (c) 2015 Carlos Sandoval
 //   
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of
 //   this software and associated documentation files (the "Software"), to deal in
@@ -35,7 +35,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("NServiceBus.MongoDB")]
-[assembly: AssemblyDescription("MongoDB persistence for NServiceBus")]
+[assembly: AssemblyDescription("MongoDB persistence for NServiceBus v5.x")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Carlos Sandoval")]
 [assembly: AssemblyProduct("NServiceBus.MongoDB")]
@@ -63,7 +63,7 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.0.3.0")]
-[assembly: AssemblyFileVersion("1.0.3.0")]
+[assembly: AssemblyVersion("2.0.0.0")]
+[assembly: AssemblyFileVersion("2.0.0.0")]
 
 [assembly: InternalsVisibleTo("NServiceBus.MongoDB.Tests")]

@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="MySagaData.cs" company="Carlos Sandoval">
+// <copyright file="MongoDocumentStore.cs" company="Carlos Sandoval">
 //   The MIT License (MIT)
 //   
 //   Copyright (c) 2015 Carlos Sandoval
@@ -22,23 +22,44 @@
 //   CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // </copyright>
 // <summary>
-//   Defines the MySagaData type.
+//   
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Sample
+namespace NServiceBus.MongoDB.Internals
 {
-    using NServiceBus.MongoDB;
-    using NServiceBus.Saga;
+    using NServiceBus.Features;
 
     /// <summary>
-    /// The my saga data.
+    /// The MongoDB document store.
     /// </summary>
-    public class MySagaData : ContainMongoSagaData
+    public class MongoDocumentStore : Feature
     {
-        [Unique]
-        public string SomeId { get; set; }
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MongoDocumentStore"/> class.
+        /// </summary>
+        public MongoDocumentStore()
+        {
+            this.Defaults(
+                s =>
+                    {
+                        var accessor = s.GetDefaultClientAccessor();
+                        s.Set<MongoClientAccessor>(ConnectionVerifier.VerifyMongoConnection(accessor));
+                    });
+        }
 
-        public int Count { get; set; }
+        /// <summary>
+        /// The setup.
+        /// </summary>
+        /// <param name="context">
+        /// The context.
+        /// </param>
+        protected override void Setup(FeatureConfigurationContext context)
+        {
+            var clientAccessor = context.Settings.Get<MongoClientAccessor>();
+
+            context.Container.ConfigureComponent(() => clientAccessor, DependencyLifecycle.SingleInstance);
+            context.Container.ConfigureComponent<MongoDatabaseFactory>(DependencyLifecycle.SingleInstance);
+        }
     }
 }

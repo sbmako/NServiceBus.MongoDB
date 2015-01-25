@@ -2,7 +2,7 @@
 // <copyright file="MongoSagaPersister.cs" company="Carlos Sandoval">
 //   The MIT License (MIT)
 //   
-//   Copyright (c) 2014 Carlos Sandoval
+//   Copyright (c) 2015 Carlos Sandoval
 //   
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of
 //   this software and associated documentation files (the "Software"), to deal in
@@ -34,7 +34,7 @@ namespace NServiceBus.MongoDB.SagaPersister
     using global::MongoDB.Driver;
     using global::MongoDB.Driver.Builders;
     using NServiceBus.MongoDB.Extensions;
-    using NServiceBus.MongoDB.Utils;
+    using NServiceBus.MongoDB.Internals;
     using NServiceBus.Saga;
 
     /// <summary>
@@ -54,7 +54,7 @@ namespace NServiceBus.MongoDB.SagaPersister
         /// </param>
         public MongoSagaPersister(MongoDatabaseFactory mongoFactory)
         {
-            Contract.Requires<ArgumentNullException>(mongoFactory != null);
+            Contract.Requires<ArgumentNullException>(mongoFactory != null, "mongoFactory != null");
             this.mongoDatabase = mongoFactory.GetDatabase();
         }
 
@@ -126,23 +126,23 @@ namespace NServiceBus.MongoDB.SagaPersister
         }
 
         /// <summary>
-        /// Looks up a saga entity by a given property.
+        /// Looks up a saga entity by a given propertyName.
         /// </summary>
         /// <typeparam name="T">
         /// The return type.
         /// </typeparam>
-        /// <param name="property">
-        /// The property.
+        /// <param name="propertyName">
+        /// The propertyName.
         /// </param>
-        /// <param name="value">
-        /// The value.
+        /// <param name="propertyValue">
+        /// The propertyValue.
         /// </param>
         /// <returns>
         /// The <see cref="T"/>.
         /// </returns>
-        public T Get<T>(string property, object value) where T : IContainSagaData
+        public T Get<T>(string propertyName, object propertyValue) where T : IContainSagaData
         {
-            return this.GetByUniqueProperty<T>(property.AssumedNotNullOrWhiteSpace(), value.AssumedNotNull());
+            return this.GetByUniqueProperty<T>(propertyName.AssumedNotNull(), propertyValue.AssumedNotNull());
         }
 
         /// <summary>
@@ -168,7 +168,7 @@ namespace NServiceBus.MongoDB.SagaPersister
 
             if (uniqueProperty.Value == null)
             {
-                throw new ArgumentNullException("uniqueProperty", string.Format("Property {0} is marked with the [Unique] attribute on {1} but contains a null value.", uniqueProperty.Key, sagaData.GetType().Name));
+                throw new ArgumentNullException("uniqueProperty", string.Format("Property {0} is marked with the [Unique] attribute on {1} but contains a null propertyValue.", uniqueProperty.Key, sagaData.GetType().Name));
             }
         }
 

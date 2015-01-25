@@ -1,8 +1,8 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="DeterministicGuid.cs" company="Carlos Sandoval">
+// <copyright file="DeterministicGuidTests.cs" company="Carlos Sandoval">
 //   The MIT License (MIT)
 //   
-//   Copyright (c) 2014 Carlos Sandoval
+//   Copyright (c) 2015 Carlos Sandoval
 //   
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of
 //   this software and associated documentation files (the "Software"), to deal in
@@ -22,35 +22,43 @@
 //   CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // </copyright>
 // <summary>
-//   Defines the DeterministicGuid type.
+//   Defines the DeterministicGuidTests type.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace NServiceBus.MongoDB.Utils
+namespace NServiceBus.MongoDB.Tests.Internals
 {
-    using System;
-    using System.Diagnostics.Contracts;
-    using System.Security.Cryptography;
-    using System.Text;
+    using System.Collections.Generic;
 
-    internal static class DeterministicGuid
+    using FluentAssertions;
+
+    using NServiceBus.MongoDB.Internals;
+    using NServiceBus.MongoDB.Tests.TestingUtilities;
+
+    using Ploeh.AutoFixture.Xunit;
+
+    using Xunit.Extensions;
+
+    public class DeterministicGuidTests
     {
-        public static Guid Create(params object[] data)
+        [Theory, UnitTest]
+        [AutoData]
+        public void SameProducesSameGuid(KeyValuePair<string, int> testObject)
         {
-            Contract.Requires(data != null);
+            var first = DeterministicGuid.Create(testObject);
+            var second = DeterministicGuid.Create(testObject);
 
-            // use MD5 hash to get a 16-byte hash of the string
-            using (var provider = new MD5CryptoServiceProvider())
-            {
-                var inputBytes = Encoding.Default.GetBytes(string.Concat(data));
+            first.Should().Be(second);
+        }
 
-                //// TODO: provide extension method to normalize byte array to 16 length
-                var hashBytes = provider.ComputeHash(inputBytes);
+        [Theory, UnitTest]
+        [AutoData]
+        public void DifferntProduceDifferentGuids(KeyValuePair<string, int> firstObject, KeyValuePair<string, int> secondObject)
+        {
+            var first = DeterministicGuid.Create(firstObject);
+            var second = DeterministicGuid.Create(secondObject);
 
-                // generate a guid from the hash:
-                Contract.Assume(hashBytes.Length == 16);
-                return new Guid(hashBytes);
-            }
+            first.Should().NotBe(second);
         }
     }
 }

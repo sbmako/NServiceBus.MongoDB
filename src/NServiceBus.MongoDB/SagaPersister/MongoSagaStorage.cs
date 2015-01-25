@@ -1,8 +1,8 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ConfigureMongoSagaPersister.cs" company="Carlos Sandoval">
+// <copyright file="MongoSagaStorage.cs" company="Carlos Sandoval">
 //   The MIT License (MIT)
 //   
-//   Copyright (c) 2014 Carlos Sandoval
+//   Copyright (c) 2015 Carlos Sandoval
 //   
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of
 //   this software and associated documentation files (the "Software"), to deal in
@@ -22,42 +22,35 @@
 //   CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // </copyright>
 // <summary>
-//   The configure mongo saga persister.
+//   Defines the MongoSagaStorage type.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace NServiceBus.MongoDB.SagaPersister
 {
-    using System;
-    using System.Diagnostics.Contracts;
+    using NServiceBus.Features;
+    using NServiceBus.MongoDB.Internals;
 
     /// <summary>
-    /// The configure mongo saga persister.
+    /// The MongoDB saga storage.
     /// </summary>
-    public static class ConfigureMongoSagaPersister
+    public class MongoSagaStorage : Feature
     {
-        /// <summary>
-        /// The mongo saga persister.
-        /// </summary>
-        /// <param name="config">
-        /// The config.
-        /// </param>
-        /// <returns>
-        /// The <see cref="Configure"/>.
-        /// </returns>
-        public static Configure MongoSagaPersister(this Configure config)
+        internal MongoSagaStorage()
         {
-            Contract.Requires<ArgumentNullException>(config != null);
-            Contract.Ensures(Contract.Result<Configure>() != null);
+            this.DependsOn<Sagas>();
+            this.DependsOn<MongoDocumentStore>();
+        }
 
-            if (!config.Configurer.HasComponent<MongoClientAccessor>())
-            {
-                config.MongoPersistence();
-            }
-
-            config.Configurer.ConfigureComponent<MongoSagaPersister>(DependencyLifecycle.SingleInstance);
-
-            return config;
+        /// <summary>
+        /// Called when the features is activated
+        /// </summary>
+        /// <param name="context">
+        /// The feature configuration context.
+        /// </param>
+        protected override void Setup(FeatureConfigurationContext context)
+        {
+            context.Container.ConfigureComponent<MongoSagaPersister>(DependencyLifecycle.InstancePerCall);
         }
     }
 }

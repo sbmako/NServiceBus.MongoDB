@@ -2,7 +2,7 @@
 // <copyright file="MongoTimeoutPersister.cs" company="Carlos Sandoval">
 //   The MIT License (MIT)
 //   
-//   Copyright (c) 2014 Carlos Sandoval
+//   Copyright (c) 2015 Carlos Sandoval
 //   
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of
 //   this software and associated documentation files (the "Software"), to deal in
@@ -22,7 +22,7 @@
 //   CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // </copyright>
 // <summary>
-//   The mongo timeout persister.
+//   The MongoDB timeout persister.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -35,7 +35,8 @@ namespace NServiceBus.MongoDB.TimeoutPersister
     using global::MongoDB.Driver;
     using global::MongoDB.Driver.Builders;
     using global::MongoDB.Driver.Linq;
-    using NServiceBus.MongoDB.Utils;
+
+    using NServiceBus.MongoDB.Internals;
     using NServiceBus.Timeout.Core;
 
     /// <summary>
@@ -56,10 +57,14 @@ namespace NServiceBus.MongoDB.TimeoutPersister
         public MongoTimeoutPersister(MongoDatabaseFactory mongoFactory)
         {
             Contract.Requires<ArgumentNullException>(mongoFactory != null);
-
             this.collection = mongoFactory.GetDatabase().GetCollection<TimeoutData>(TimeoutDataName);
             this.EnsureTimeoutIndexes();
         }
+
+        /// <summary>
+        /// Gets or sets the endpoint name.
+        /// </summary>
+        public string EndpointName { get; set; }
 
         /// <summary>
         /// Retrieves the next range of timeouts that are due.
@@ -70,13 +75,13 @@ namespace NServiceBus.MongoDB.TimeoutPersister
         /// Returns the next range of timeouts that are due.
         /// </returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1002:DoNotExposeGenericLists", Justification = "Ok here.")]
-        public List<Tuple<string, DateTime>> GetNextChunk(DateTime startSlice, out DateTime nextTimeToRunQuery)
+        public IEnumerable<Tuple<string, DateTime>> GetNextChunk(DateTime startSlice, out DateTime nextTimeToRunQuery)
         {
             var results = from data in this.collection.AsQueryable().AssumedNotNull()
                           where data.Time > startSlice && data.Time <= DateTime.UtcNow
                           where
                               data.OwningTimeoutManager == string.Empty
-                              || data.OwningTimeoutManager == Configure.EndpointName
+                              || data.OwningTimeoutManager == this.EndpointName
                           orderby data.Time
                           select new Tuple<string, DateTime>(data.Id, data.Time);
 
@@ -97,6 +102,9 @@ namespace NServiceBus.MongoDB.TimeoutPersister
         /// Adds a new timeout.
         /// </summary>
         /// <param name="timeout">Timeout data.</param>
+        /// <exception cref="InvalidOperationException">
+        /// Throws exception if timeout is not saved.
+        /// </exception>
         public void Add(TimeoutData timeout)
         {
             timeout.Id = Guid.NewGuid().ToString();

@@ -2,7 +2,7 @@
 // <copyright file="MongoDatabaseFactoryExtensions.cs" company="Carlos Sandoval">
 //   The MIT License (MIT)
 //   
-//   Copyright (c) 2014 Carlos Sandoval
+//   Copyright (c) 2015 Carlos Sandoval
 //   
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of
 //   this software and associated documentation files (the "Software"), to deal in
@@ -30,11 +30,10 @@ namespace NServiceBus.MongoDB.Tests.TestingUtilities
 {
     using System.Collections.Generic;
     using System.Linq;
-
     using global::MongoDB.Driver.Builders;
-
     using global::MongoDB.Driver.Linq;
 
+    using NServiceBus.MongoDB.Internals;
     using NServiceBus.MongoDB.TimeoutPersister;
     using NServiceBus.Saga;
     using NServiceBus.Timeout.Core;
