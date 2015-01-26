@@ -48,8 +48,6 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
     {
         private static readonly string SubscriptionName = typeof(Subscription).Name;
 
-        private readonly MongoDatabase mongoDatabase;
-
         private readonly MongoCollection collection;
 
         /// <summary>
@@ -62,8 +60,7 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
         public MongoSubscriptionPersister(MongoDatabaseFactory mongoFactory)
         {
             Contract.Requires<ArgumentNullException>(mongoFactory != null);
-            this.mongoDatabase = mongoFactory.GetDatabase();
-            this.collection = this.mongoDatabase.GetCollection(SubscriptionName).AssumedNotNull();
+            this.collection = mongoFactory.GetDatabase().GetCollection(SubscriptionName).AssumedNotNull();
         }
 
         /// <summary>
@@ -180,7 +177,7 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
 
             var ids = messageTypes.Select(Subscription.FormatId);
             var query = Query<Subscription>.In(p => p.Id, ids);
-            var result = this.mongoDatabase.GetCollection<Subscription>(SubscriptionName).Find(query);
+            var result = this.collection.FindAs<Subscription>(query);
 
             return result.AssumedNotNull();
         }
@@ -188,7 +185,6 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
         [ContractInvariantMethod]
         private void ObjectInvariants()
         {
-            Contract.Invariant(this.mongoDatabase != null);
             Contract.Invariant(this.collection != null);
         }
     }
