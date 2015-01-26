@@ -32,7 +32,7 @@ namespace NServiceBus.MongoDB.SagaPersister
     using NServiceBus.MongoDB.Internals;
 
     /// <summary>
-    /// The MongoDB saga storage.
+    /// The MongoDB saga storage feature.
     /// </summary>
     public class MongoSagaStorage : Feature
     {

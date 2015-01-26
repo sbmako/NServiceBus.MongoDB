@@ -31,7 +31,10 @@ namespace NServiceBus.MongoDB.Tests.Extensions
     using FluentAssertions;
     using NServiceBus.MongoDB.Extensions;
     using NServiceBus.MongoDB.Tests.TestingUtilities;
+    using NServiceBus.Settings;
+
     using Xunit;
+    using Xunit.Extensions;
 
     public class DatabaseNameExtensionsTests
     {
@@ -43,6 +46,14 @@ namespace NServiceBus.MongoDB.Tests.Extensions
             var databaseName = EndpointName.AsValidDatabaseName();
 
             databaseName.Should().Be("test_endpoint_name");
+        }
+
+        [Theory]
+        [UnitTest]
+        [AutoConfigureData]
+        public void VerifyGettingEndpointNameFromSettings(SettingsHolder settings)
+        {
+            settings.DatabaseNameFromEndpointName().Should().Be("UnitTests");
         }
     }
 }

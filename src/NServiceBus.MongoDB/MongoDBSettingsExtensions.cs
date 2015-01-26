@@ -29,13 +29,10 @@
 namespace NServiceBus.MongoDB
 {
     using System;
-    using System.Configuration;
     using System.Diagnostics.Contracts;
-    using global::MongoDB.Driver;
+
     using NServiceBus.Configuration.AdvanceExtensibility;
-    using NServiceBus.MongoDB.Extensions;
     using NServiceBus.MongoDB.Internals;
-    using NServiceBus.Settings;
 
     /// <summary>
     /// The MongoDB settings extensions.
@@ -43,63 +40,7 @@ namespace NServiceBus.MongoDB
     public static class MongoDBSettingsExtensions
     {
         /// <summary>
-        /// The MongoDB persistence.
-        /// </summary>
-        /// <param name="config">
-        /// The config.
-        /// </param>
-        /// <returns>
-        /// The <see cref="PersistenceExtentions"/>.
-        /// </returns>
-        public static PersistenceExtentions<MongoDBPersistence> SetDefaultMongoPersistence(
-            this PersistenceExtentions<MongoDBPersistence> config)
-        {
-            Contract.Requires<ArgumentNullException>(config != null, "config != null");
-            Contract.Ensures(Contract.Result<PersistenceExtentions<MongoDBPersistence>>() != null);
-
-            config.GetSettings()
-                .Set<MongoClientAccessor>(
-                    ConnectionVerifier.VerifyMongoConnection(
-                        config.GetSettings().AssumedNotNull().GetDefaultClientAccessor()));
-
-            return config;
-        }
-
-        /// <summary>
-        /// The mongo persistence.
-        /// </summary>
-        /// <param name="config">
-        /// The config.
-        /// </param>
-        /// <param name="connectionStringName">
-        /// The connection string.
-        /// </param>
-        /// <returns>
-        /// The <see cref="Configure"/>.
-        /// </returns>
-        public static PersistenceExtentions<MongoDBPersistence> MongoPersistence(
-            this PersistenceExtentions<MongoDBPersistence> config, string connectionStringName)
-        {
-            Contract.Requires<ArgumentNullException>(config != null, "config != null");
-            Contract.Requires<ArgumentNullException>(
-                !string.IsNullOrWhiteSpace(connectionStringName),
-                "!string.IsNullOrWhiteSpace(connectionStringName)");
-            Contract.Ensures(Contract.Result<PersistenceExtentions<MongoDBPersistence>>() != null);
-
-            var connectionString = GetConnectionString(connectionStringName);
-            var client = new MongoClient(connectionString);
-
-            var clientAccessor = new MongoClientAccessor(
-                client,
-                config.GetSettings().AssumedNotNull().DatabaseNameFromEndpointName());
-
-            config.GetSettings().Set<MongoClientAccessor>(ConnectionVerifier.VerifyMongoConnection(clientAccessor));
-
-            return config;
-        }
-
-        /// <summary>
-        /// The MongoDB persistence.
+        /// The set connection string name.
         /// </summary>
         /// <param name="config">
         /// The config.
@@ -107,85 +48,48 @@ namespace NServiceBus.MongoDB
         /// <param name="connectionStringName">
         /// The connection string name.
         /// </param>
+        /// <returns>
+        /// The <see cref="PersistenceExtentions"/>.
+        /// </returns>
+        public static PersistenceExtentions<MongoDBPersistence> SetConnectionStringName(
+            this PersistenceExtentions<MongoDBPersistence> config, string connectionStringName)
+        {
+            Contract.Requires<ArgumentNullException>(config != null, "config != null");
+            Contract.Requires<ArgumentNullException>(
+                !string.IsNullOrWhiteSpace(connectionStringName), 
+                "!string.IsNullOrWhiteSpace(connectionStringName)");
+            Contract.Ensures(Contract.Result<PersistenceExtentions<MongoDBPersistence>>() != null);
+
+            config.GetSettings().Set(MongoPersistenceConstants.ConnectionStringNameKey, connectionStringName);
+
+            return config;
+        }
+
+        /// <summary>
+        /// The set database name.
+        /// </summary>
+        /// <param name="config">
+        /// The config.
+        /// </param>
         /// <param name="databaseName">
         /// The database name.
         /// </param>
         /// <returns>
         /// The <see cref="PersistenceExtentions"/>.
         /// </returns>
-        public static PersistenceExtentions<MongoDBPersistence> MongoPersistence(
-            this PersistenceExtentions<MongoDBPersistence> config,
-            string connectionStringName,
+        public static PersistenceExtentions<MongoDBPersistence> SetDatabaseName(
+            this PersistenceExtentions<MongoDBPersistence> config, 
             string databaseName)
         {
             Contract.Requires<ArgumentNullException>(config != null, "config != null");
             Contract.Requires<ArgumentNullException>(
-                !string.IsNullOrWhiteSpace(connectionStringName),
-                "!string.IsNullOrWhiteSpace(connectionStringName)");
-            Contract.Requires<ArgumentNullException>(
-                !string.IsNullOrWhiteSpace(databaseName),
+                !string.IsNullOrWhiteSpace(databaseName), 
                 "!string.IsNullOrWhiteSpace(databaseName)");
             Contract.Ensures(Contract.Result<PersistenceExtentions<MongoDBPersistence>>() != null);
 
-            var connectionString = GetConnectionString(connectionStringName);
-
-            var client = new MongoClient(connectionString);
-            var clientAccessor = new MongoClientAccessor(client, databaseName);
-
-            config.GetSettings().Set<MongoClientAccessor>(ConnectionVerifier.VerifyMongoConnection(clientAccessor));
+            config.GetSettings().Set(MongoPersistenceConstants.DatabaseNameKey, databaseName);
 
             return config;
-        }
-
-        /// <summary>
-        /// The get default client accessor.
-        /// </summary>
-        /// <param name="settings">
-        /// The settings.
-        /// </param>
-        /// <returns>
-        /// The <see cref="MongoClientAccessor"/>.
-        /// </returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters", Justification = "Reviewed")]
-        public static MongoClientAccessor GetDefaultClientAccessor(this SettingsHolder settings)
-        {
-            Contract.Requires<ArgumentNullException>(settings != null, "settings != null");
-            Contract.Ensures(Contract.Result<MongoClientAccessor>() != null);
-
-            var connectionStringSettings = GetConnectionString();
-
-            var connectionString = connectionStringSettings != null
-                                       ? connectionStringSettings.ConnectionString
-                                       : MongoPersistenceConstants.DefaultConnectionString;
-
-            var client = new MongoClient(connectionString);
-            return new MongoClientAccessor(client, settings.DatabaseNameFromEndpointName());
-        }
-
-        private static ConnectionStringSettings GetConnectionString()
-        {
-            return ConfigurationManager.ConnectionStrings["NServiceBus.Persistence"]
-                   ?? ConfigurationManager.ConnectionStrings["NServiceBus/Persistence"];
-        }
-
-        private static string GetConnectionString(string connectionStringName)
-        {
-            Contract.Requires(!string.IsNullOrWhiteSpace(connectionStringName));
-            Contract.Ensures(Contract.Result<string>() != null);
-
-            var connectionStringSettings = ConfigurationManager.ConnectionStrings[connectionStringName];
-
-            if (connectionStringSettings == null)
-            {
-                throw new ConfigurationErrorsException(
-                    string.Format(
-                        "Cannot configure Mongo Persister. No connection string named {0} was found",
-                        connectionStringName));
-            }
-
-            return !string.IsNullOrWhiteSpace(connectionStringSettings.ConnectionString)
-                       ? connectionStringSettings.ConnectionString
-                       : string.Empty;
         }
     }
 }

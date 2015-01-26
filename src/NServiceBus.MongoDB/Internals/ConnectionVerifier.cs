@@ -37,15 +37,6 @@ namespace NServiceBus.MongoDB.Internals
     {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(ConnectionVerifier));
 
-        public static MongoClientAccessor VerifyMongoConnection(MongoClientAccessor clientAccessor)
-        {
-            Contract.Requires(clientAccessor != null);
-            Contract.Ensures(Contract.Result<MongoClientAccessor>() != null);
-
-            VerifyConnectionToMongoServer(clientAccessor);
-            return clientAccessor;
-        }
-
         public static void VerifyConnectionToMongoServer(MongoClientAccessor mongoClientAccessor)
         {
             Contract.Requires(mongoClientAccessor != null);

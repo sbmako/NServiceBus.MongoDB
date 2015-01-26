@@ -28,7 +28,13 @@
 
 namespace NServiceBus.MongoDB.Internals
 {
+    using System.Configuration;
+    using System.Diagnostics.Contracts;
+
+    using global::MongoDB.Driver;
+
     using NServiceBus.Features;
+    using NServiceBus.MongoDB.Extensions;
 
     /// <summary>
     /// The MongoDB document store.
@@ -43,8 +49,10 @@ namespace NServiceBus.MongoDB.Internals
             this.Defaults(
                 s =>
                     {
-                        var accessor = s.GetDefaultClientAccessor();
-                        s.Set<MongoClientAccessor>(ConnectionVerifier.VerifyMongoConnection(accessor));
+                        s.SetDefault(
+                            MongoPersistenceConstants.ConnectionStringNameKey,
+                            MongoPersistenceConstants.DefaultConnectionStringName);
+                        s.SetDefault(MongoPersistenceConstants.DatabaseNameKey, s.DatabaseNameFromEndpointName());
                     });
         }
 
@@ -56,10 +64,52 @@ namespace NServiceBus.MongoDB.Internals
         /// </param>
         protected override void Setup(FeatureConfigurationContext context)
         {
-            var clientAccessor = context.Settings.Get<MongoClientAccessor>();
+            var connectionStringName = context.Settings.Get<string>(MongoPersistenceConstants.ConnectionStringNameKey);
+            var databaseName = context.Settings.Get<string>(MongoPersistenceConstants.DatabaseNameKey);
 
-            context.Container.ConfigureComponent(() => clientAccessor, DependencyLifecycle.SingleInstance);
+            context.Container.ConfigureComponent(
+                () => InternalMongoClientAccessorFactory(connectionStringName, databaseName), 
+                DependencyLifecycle.SingleInstance);
+
             context.Container.ConfigureComponent<MongoDatabaseFactory>(DependencyLifecycle.SingleInstance);
+        }
+
+        private static MongoClientAccessor InternalMongoClientAccessorFactory(
+            string connectionStringName, 
+            string databaseName)
+        {
+            Contract.Requires(!string.IsNullOrWhiteSpace(connectionStringName));
+            Contract.Requires(!string.IsNullOrWhiteSpace(databaseName));
+            Contract.Ensures(Contract.Result<MongoClientAccessor>() != null);
+
+            var connectionString = GetConnectionString(connectionStringName);
+
+            var client = new MongoClient(connectionString);
+            var clientAccessor = new MongoClientAccessor(client, databaseName);
+
+            ConnectionVerifier.VerifyConnectionToMongoServer(clientAccessor);
+
+            return clientAccessor;
+        }
+
+        private static string GetConnectionString(string connectionStringName)
+        {
+            Contract.Requires(!string.IsNullOrWhiteSpace(connectionStringName));
+            Contract.Ensures(Contract.Result<string>() != null);
+
+            var connectionStringSettings = ConfigurationManager.ConnectionStrings[connectionStringName];
+
+            if (connectionStringSettings == null)
+            {
+                throw new ConfigurationErrorsException(
+                    string.Format(
+                        "Cannot configure Mongo Persister. No connection string named {0} was found", 
+                        connectionStringName));
+            }
+
+            return !string.IsNullOrWhiteSpace(connectionStringSettings.ConnectionString)
+                       ? connectionStringSettings.ConnectionString
+                       : string.Empty;
         }
     }
 }

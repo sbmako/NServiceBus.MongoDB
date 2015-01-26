@@ -29,11 +29,10 @@
 namespace NServiceBus.MongoDB
 {
     using System;
-
     using NServiceBus.Saga;
 
     /// <summary>
-    /// The contain MongoDB saga data.
+    /// Base Helper class for MongoDB saga data
     /// </summary>
     public abstract class ContainMongoSagaData : IContainSagaData, IHaveDocumentVersion
     {

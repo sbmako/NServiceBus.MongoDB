@@ -38,7 +38,7 @@ namespace NServiceBus.MongoDB.Internals
     /// </summary>
     public class MongoDatabaseFactory
     {
-        private static MongoClientAccessor mongoClientAccessor;
+        private readonly MongoClientAccessor mongoClientAccessor;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MongoDatabaseFactory"/> class.
@@ -49,7 +49,7 @@ namespace NServiceBus.MongoDB.Internals
         public MongoDatabaseFactory(MongoClientAccessor clientAccessor)
         {
             Contract.Requires<ArgumentNullException>(clientAccessor != null, "clientAccessor != null");
-            mongoClientAccessor = clientAccessor;
+            this.mongoClientAccessor = clientAccessor;
         }
 
         /// <summary>
@@ -58,15 +58,20 @@ namespace NServiceBus.MongoDB.Internals
         /// <returns>
         /// The <see cref="MongoDatabase"/>.
         /// </returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Reviewed")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate", Justification = "Ok here")]
         public MongoDatabase GetDatabase()
         {
             Contract.Ensures(Contract.Result<MongoDatabase>() != null);
 
-            var databaseName = mongoClientAccessor.DatabaseName;
-            var server = mongoClientAccessor.MongoClient.GetServer();
+            var databaseName = this.mongoClientAccessor.DatabaseName;
+            var server = this.mongoClientAccessor.MongoClient.GetServer();
             return server.GetDatabase(databaseName).AssumedNotNull();
+        }
+
+        [ContractInvariantMethod]
+        private void ObjectInvariants()
+        {
+            Contract.Invariant(this.mongoClientAccessor != null);
         }
     }
 }

@@ -38,7 +38,10 @@ namespace Sample
     {
         public void Customize(BusConfiguration configuration)
         {
-            configuration.UsePersistence<MongoDBPersistence>();
+            configuration.UseSerialization<JsonSerializer>();
+            configuration.UsePersistence<MongoDBPersistence>()
+                .SetConnectionStringName("My.Persistence")
+                .SetDatabaseName("MyDatabase");
         }
     }
 }

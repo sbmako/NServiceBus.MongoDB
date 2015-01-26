@@ -21,22 +21,20 @@
 //   IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 //   CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // </copyright>
-// <summary>
-//   The configure mongo timeout persister.
-// </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace NServiceBus.MongoDB.TimeoutPersister
 {
     using System;
-    using System.Diagnostics.Contracts;
+
     using global::MongoDB.Bson;
     using global::MongoDB.Bson.Serialization;
     using global::MongoDB.Bson.Serialization.Options;
+
     using NServiceBus.Timeout.Core;
 
     /// <summary>
-    /// The configure mongo timeout persister.
+    /// Configures timeout MongoDB class maps
     /// </summary>
     public static class TimeoutClassMaps
     {
