@@ -1,98 +1,66 @@
 # psake script for NServiceBus.MongoDB
 
+#Requires -Version 2.0
+Set-StrictMode -Version Latest
+
 Framework "4.0"
 FormatTaskName (("-"*25) + "[{0}]" + ("-"*25))
 
 Properties {
     $baseDir = resolve-path .\.
     $sourceDir = "$baseDir\src"
-
-    $packageDir = "$buildDir\package"
-    
     $companyName = "SharkByte Software Inc."
 	$projectName = "NServiceBus.MongoDB"
     $solutionName = "NServiceBus.MongoDB"
     $configurations = @("Debug","Release","DebugContracts")
 	$projectConfig = $configurations[0]
-    
-
-    # if not provided, default to 1.0.0.0
-    if(!$version)
-    {
-        $version = "1.0.0.0"
-    }
-    # tools
-    # change testExecutable as needed, defaults to mstest
-    $testExecutable = "C:\Program Files (x86)\Microsoft Visual Studio 11.0\Common7\IDE\mstest.exe"
-    
+	$allSolution = "$sourceDir\$solutionName.sln"
     $unitTestProject = "NServiceBus.MongoDB.Tests"
-    
     $nugetExecutable = "$sourceDir\.nuget\nuget.exe"
 	$nuspecFile = "packaging\nuget\NServiceBus.MongoDB.nuspec"
 	$nugetOutDir = "packaging\"
+    $msbuildCommand = "MSBuild.exe"
+    $msbuildVerbosity = 'minimal'
 }
 
 # default task
 task default -Depends Build
 
-task Compile {
-    Write-Host "Building main solution ($projectConfig)" -ForegroundColor Green
-    exec { msbuild /nologo /m /nr:false /v:m "/p:Configuration=$projectConfig;StyleCopEnabled=True;StyleCopTreatErrorsAsWarnings=False" $sourceDir\$solutionName.sln }
-}
+task All -Depends BuildDebug, BuildRelease, BuildContracts {}
 
-task UnitTest {
-    Write-Host "Executing unit tests ($projectConfig)"
-    
-    $unitTestAssembly = "$sourceDir\$unitTestProject\bin\$projectConfig\$unitTestProject.dll"
-    exec { & "$testExecutable" /testcontainer:$unitTestAssembly }
-}
+Task BuildDebug { BuildSolution $allSolution '/property:Configuration=Debug' }
 
-task Clean {
-    Write-Host "Cleaning main solution" -ForegroundColor Green
-    foreach ($c in $configurations)
-    {
-        Write-Host "Cleaning ($c)"
-        exec { msbuild /t:Clean /nologo /m /nr:false /v:m /p:Configuration=$c $sourceDir\$solutionName.sln }
-    }
-}
+Task BuildRelease { BuildSolution $allSolution '/property:Configuration=Release' }
 
-task CleanAll -Depends Clean {
-	Write-Host "Removing nuget packages"
-	Remove-Item $sourceDir\packages\* -exclude repositories.config -recurse
-	Remove-Item $baseDir\packaging\*.nupkg
-    
-    Write-Host "Deleting the test directories"
-	if (Test-Path $testDir)
-    {
-		Remove-Item $testDir -recurse -force
-	}
-}
+Task BuildContracts { BuildSolution $allSolution '/property:Configuration=DebugContracts' }
 
-task All {
-    foreach ($config in $configurations)
-    {
-        Write-Host "invoking for $config"
-        Invoke-psake -nologo -properties @{"projectConfig"=$config} Compile
-    }
-    
-    Invoke-psake -nologo UnitTest
-}
+task Build -depends BuildDebug {}
 
-task Build -depends Compile, UnitTest {}
-
-task BuildPackage -Depends Release{
+task BuildPackage -Depends BuildRelease {
 	Remove-Item $baseDir\packaging\*.nupkg
 	exec { & "$nugetExecutable" pack $nuspecFile -OutputDirectory $nugetOutDir }
 }
 
-task Release {
-    Invoke-psake -nologo -properties @{"projectConfig"="Release"} Compile
-}
+Task CleanSolution { BuildSolution $allSolution -Target Clean }
 
-task Analysis {
-    Invoke-psake -nologo -properties @{"projectConfig"="DebugAnalysis"} Compile
-}
+Task Clean -Depends CleanTestResults, CleanCode, CleanStyleCop
 
-task Contracts {
-    Invoke-psake -nologo -properties @{"projectConfig"="DebugContracts"} Compile
+Task CleanTestResults {	Remove-Item $sourceDir/../TestResults -Force -Recurse -ErrorAction SilentlyContinue }
+
+Task CleanCode -Depends CleanSolution { Get-ChildItem $sourceDir -Include ('bin', 'obj') -Recurse | Where { !$_.FullName.Contains('dependencies') } | ForEach { try { Remove-Item $_.FullName -Force -Recurse  -ErrorAction SilentlyContinue } catch {} } }
+
+Task CleanStyleCop { Get-ChildItem $sourceDir -Include StyleCop.Cache -Recurse -Force | ForEach { Remove-Item $_.FullName -Force } }
+
+Task CleanAll -Depends Clean
+
+#region Helper Functions
+function BuildSolution([ValidateScript( { Test-Path $_ -PathType Leaf } )][string]$solutionFile, [string[]] $msbuildArguments = @(), [string] $target = 'Build')
+{
+    $private:commonMsbuildArguments = $solutionFile, "/target:$target", "/verbosity:$msbuildVerbosity", '/maxcpucount', '/nodeReuse:false',
+        '/fileLogger', '/property:WarningLevel=4;TreatWarningsAsErrors=True'
+
+    $arguments = $commonMsbuildArguments + $msbuildArguments
+    Write-Output "$msbuildCommand $arguments"
+    Exec { & $msbuildCommand $arguments }
 }
+#endregion
