@@ -51,7 +51,7 @@ namespace NServiceBus.MongoDB.DataBus
         public MongoGridFSDataBus(MongoDatabaseFactory mongoFactory)
         {
             Contract.Requires<ArgumentNullException>(mongoFactory != null, "mongoFactory != null");
-            this.gridFS = mongoFactory.GetDatabase().GridFS;
+            this.gridFS = mongoFactory.GetDatabase().GridFS.AssumedNotNull();
         }
 
         /// <summary>
@@ -89,7 +89,7 @@ namespace NServiceBus.MongoDB.DataBus
             var key = Guid.NewGuid().ToString();
             this.gridFS.Upload(stream, key);
 
-            return key;
+            return key.AssumedNotNullOrWhiteSpace();
         }
 
         /// <summary>
