@@ -28,6 +28,7 @@
 
 namespace Sample
 {
+    using System;
     using System.Threading;
 
     using NServiceBus;
@@ -64,7 +65,11 @@ namespace Sample
         {
             Logger.Info("Statup.Run()");
 
-            var initMessage = new MyMessage { SomeId = "carlos" };
+            var initMessage = new MyMessage
+                                  {
+                                      SomeId = "carlos",
+                                      LargeBlob = new DataBusProperty<byte[]>(Guid.NewGuid().ToByteArray())
+                                  };
             var anotherMessage = new AnotherSagaCommand { SomeId = initMessage.SomeId, SleepHowLong = 2000 };
 
             Thread.Sleep(5000);

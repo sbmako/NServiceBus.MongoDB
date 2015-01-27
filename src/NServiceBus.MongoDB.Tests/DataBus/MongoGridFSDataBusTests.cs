@@ -1,5 +1,5 @@
-// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="EndpointConfig.cs" company="Carlos Sandoval">
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="MongoGridFSDataBusTests.cs" company="Carlos Sandoval">
 //   The MIT License (MIT)
 //   
 //   Copyright (c) 2015 Carlos Sandoval
@@ -21,30 +21,33 @@
 //   IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 //   CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // </copyright>
-// <summary>
-//   The endpoint config.
-// </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Sample
+namespace NServiceBus.MongoDB.Tests.DataBus
 {
-    using NServiceBus;
-    using NServiceBus.MongoDB;
+    using System;
+    using System.IO;
+    using System.Text;
+
+    using FluentAssertions;
+
     using NServiceBus.MongoDB.DataBus;
+    using NServiceBus.MongoDB.Internals;
+    using NServiceBus.MongoDB.Tests.TestingUtilities;
 
-    /// <summary>
-    /// The endpoint config.
-    /// </summary>
-    public class EndpointConfig : IConfigureThisEndpoint, AsA_Server
+    using Xunit.Extensions;
+
+    public class MongoGridFsDataBusTests
     {
-        public void Customize(BusConfiguration configuration)
+        [Theory, UnitTest]
+        [AutoConfigureData]
+        public void PutTest(MongoGridFSDataBus sut, byte[] data)
         {
-            configuration.UseSerialization<JsonSerializer>();
-            configuration.UsePersistence<MongoDBPersistence>()
-                .SetConnectionStringName("My.Persistence")
-                .SetDatabaseName("MyDatabase");
+            var input = new MemoryStream(data);
+            var key = sut.Put(input, TimeSpan.FromDays(1));
 
-            configuration.UseDataBus<MongoDBDataBus>();
+            var result = sut.Get(key);
+            result.Length.Should().Be(input.Length);
         }
     }
 }

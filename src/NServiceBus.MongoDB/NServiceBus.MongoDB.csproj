@@ -182,6 +182,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataBus\MongoDataBusPersistence.cs" />
+    <Compile Include="DataBus\MongoDBDataBus.cs" />
+    <Compile Include="DataBus\MongoGridFSDataBus.cs" />
     <Compile Include="Extensions\DatabaseNameExtensions.cs" />
     <Compile Include="Extensions\DocumentVersionExtensions.cs" />
     <Compile Include="GlobalSuppressions.cs" />

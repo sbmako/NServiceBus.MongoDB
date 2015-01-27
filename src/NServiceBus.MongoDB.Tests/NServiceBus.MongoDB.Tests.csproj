@@ -96,6 +96,7 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
+    <Compile Include="DataBus\MongoGridFSDataBusTests.cs" />
     <Compile Include="Extensions\DatabaseNameExtensionsTests.cs" />
     <Compile Include="Extensions\DocumentVersionExtensionsTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

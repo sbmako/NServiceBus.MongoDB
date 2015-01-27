@@ -1,5 +1,5 @@
-// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="EndpointConfig.cs" company="Carlos Sandoval">
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="MongoDBDataBus.cs" company="Carlos Sandoval">
 //   The MIT License (MIT)
 //   
 //   Copyright (c) 2015 Carlos Sandoval
@@ -21,30 +21,27 @@
 //   IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 //   CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // </copyright>
-// <summary>
-//   The endpoint config.
-// </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Sample
+namespace NServiceBus.MongoDB.DataBus
 {
-    using NServiceBus;
-    using NServiceBus.MongoDB;
-    using NServiceBus.MongoDB.DataBus;
+    using System;
+    using NServiceBus.DataBus;
 
     /// <summary>
-    /// The endpoint config.
+    /// The MongoDB data bus definition
     /// </summary>
-    public class EndpointConfig : IConfigureThisEndpoint, AsA_Server
+    public class MongoDBDataBus : DataBusDefinition
     {
-        public void Customize(BusConfiguration configuration)
+        /// <summary>
+        /// The provided by feature.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="Type"/>.
+        /// </returns>
+        protected override Type ProvidedByFeature()
         {
-            configuration.UseSerialization<JsonSerializer>();
-            configuration.UsePersistence<MongoDBPersistence>()
-                .SetConnectionStringName("My.Persistence")
-                .SetDatabaseName("MyDatabase");
-
-            configuration.UseDataBus<MongoDBDataBus>();
+            return typeof(MongoDataBusPersistence);
         }
     }
 }

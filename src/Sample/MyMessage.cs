@@ -33,5 +33,7 @@ namespace Sample
     public class MyMessage : IMessage
     {
         public string SomeId { get; set; }
+
+        public DataBusProperty<byte[]> LargeBlob { get; set; }
     }
 }
