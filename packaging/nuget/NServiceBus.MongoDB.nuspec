@@ -16,11 +16,11 @@
     <tags>nservicebus mongodb persistence servicebus msmq cqrs publish subscribe</tags>
     <language>en-US</language>
     <dependencies>
-		<dependency id="mongocsharpdriver" version="1.9.2" />	
-		<dependency id="NServiceBus" version="[5.0,6.0)" />	
-	</dependencies>
+      <dependency id="mongocsharpdriver" version="1.9.2" />
+      <dependency id="NServiceBus" version="[5.0,6.0)" />
+    </dependencies>
     <references>
-	  <reference file="NServiceBus.MongoDB.dll" />
+      <reference file="NServiceBus.MongoDB.dll" />
     </references>
   </metadata>
   <files>
