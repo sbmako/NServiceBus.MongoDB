@@ -33,6 +33,7 @@ namespace NServiceBus.MongoDB
 
     using NServiceBus.Configuration.AdvanceExtensibility;
     using NServiceBus.MongoDB.Internals;
+    using NServiceBus.Persistence;
 
     /// <summary>
     /// The MongoDB settings extensions.
@@ -89,6 +90,33 @@ namespace NServiceBus.MongoDB
 
             config.GetSettings().Set(MongoPersistenceConstants.DatabaseNameKey, databaseName);
 
+            return config;
+        }
+
+        /// <summary>
+        /// The set connection string.
+        /// </summary>
+        /// <param name="config">
+        /// The config.
+        /// </param>
+        /// <param name="connectionString">
+        /// The database name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="PersistenceExtentions"/>.
+        /// </returns>
+        public static PersistenceExtentions<MongoDBPersistence> SetConnectionString(
+            this PersistenceExtentions<MongoDBPersistence> config,
+            string connectionString)
+        {
+            Contract.Requires<ArgumentNullException>(config != null, "config != null");
+            Contract.Requires<ArgumentNullException>(
+                !string.IsNullOrWhiteSpace(connectionString),
+                "!string.IsNullOrWhiteSpace(connectionString)");
+            Contract.Ensures(Contract.Result<PersistenceExtentions<MongoDBPersistence>>() != null);
+
+            config.GetSettings().Set(MongoPersistenceConstants.ConnectionStringKey, connectionString);
+            
             return config;
         }
     }

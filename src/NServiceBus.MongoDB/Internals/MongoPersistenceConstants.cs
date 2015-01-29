@@ -48,6 +48,8 @@ namespace NServiceBus.MongoDB.Internals
 
         public const string ConnectionStringNameKey = "MongoConnectionStringNameKey";
 
+        public const string ConnectionStringKey = "MongoConnectionStringKey";
+
         public const string DatabaseNameKey = "MongoDatabaseNameKey";
 
         public static string DefaultConnectionString

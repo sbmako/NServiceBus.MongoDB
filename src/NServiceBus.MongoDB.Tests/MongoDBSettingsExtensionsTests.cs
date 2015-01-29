@@ -48,7 +48,9 @@ namespace NServiceBus.MongoDB.Tests
                 .Get<string>(MongoPersistenceConstants.ConnectionStringNameKey)
                 .Should()
                 .Be("My.Connection");
+
             config.GetSettings().HasSetting(MongoPersistenceConstants.DatabaseNameKey).Should().BeFalse();
+            config.GetSettings().HasSetting(MongoPersistenceConstants.ConnectionStringKey).Should().BeFalse();
         }
 
         [Theory, UnitTest]
@@ -61,7 +63,9 @@ namespace NServiceBus.MongoDB.Tests
                 .Get<string>(MongoPersistenceConstants.DatabaseNameKey)
                 .Should()
                 .Be("MyDatabase");
+
             config.GetSettings().HasSetting(MongoPersistenceConstants.ConnectionStringNameKey).Should().BeFalse();
+            config.GetSettings().HasSetting(MongoPersistenceConstants.ConnectionStringKey).Should().BeFalse();
         }
 
         [Theory, UnitTest]
@@ -76,11 +80,46 @@ namespace NServiceBus.MongoDB.Tests
                 .Should()
                 .Be("My.Connection");
 
+            config.GetSettings()
+                .Get<string>(MongoPersistenceConstants.DatabaseNameKey)
+                .Should()
+                .Be("MyDatabase");
+
+            config.GetSettings().HasSetting(MongoPersistenceConstants.ConnectionStringKey).Should().BeFalse();
+        }
+
+        [Theory, UnitTest]
+        [AutoConfigureData]
+        public void SetConnectionString(PersistenceExtentions<MongoDBPersistence> config)
+        {
+            config.SetConnectionString("mongodb://ultratinef:27017");
+
+            config.GetSettings()
+                .Get<string>(MongoPersistenceConstants.ConnectionStringKey)
+                .Should()
+                .Be("mongodb://ultratinef:27017");
+            config.GetSettings().HasSetting(MongoPersistenceConstants.ConnectionStringNameKey).Should().BeFalse();
+            config.GetSettings().HasSetting(MongoPersistenceConstants.DatabaseNameKey).Should().BeFalse();
+        }
+
+        [Theory, UnitTest]
+        [AutoConfigureData]
+        public void SetConnectionStringAndDatabaseName(PersistenceExtentions<MongoDBPersistence> config)
+        {
+            config.SetConnectionString("mongodb://ultratinef:27017");
+            config.SetDatabaseName("MyDatabase");
+
+            config.GetSettings()
+                .Get<string>(MongoPersistenceConstants.ConnectionStringKey)
+                .Should()
+                .Be("mongodb://ultratinef:27017");
 
             config.GetSettings()
                 .Get<string>(MongoPersistenceConstants.DatabaseNameKey)
                 .Should()
                 .Be("MyDatabase");
+
+            config.GetSettings().HasSetting(MongoPersistenceConstants.ConnectionStringNameKey).Should().BeFalse();
         }
     }
 }

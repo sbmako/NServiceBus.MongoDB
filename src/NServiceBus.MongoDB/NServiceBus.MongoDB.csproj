@@ -189,7 +189,7 @@
     <Compile Include="Extensions\DocumentVersionExtensions.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="IHaveDocumentVersion.cs" />
-    <Compile Include="Internals\ConnectionVerifier.cs" />
+    <Compile Include="Internals\MongoHelpers.cs" />
     <Compile Include="Internals\MongoClientAccessor.cs" />
     <Compile Include="Internals\MongoDatabaseFactory.cs" />
     <Compile Include="Internals\MongoDocumentStore.cs" />

@@ -9,6 +9,8 @@
       <Word>IHaveDocumentVersion</Word>
       <Word>DB</Word>
       <Word>FS</Word>
+      <Word>GridFS</Word>
+      <Word>MongoDB</Word>
     </Recognized>
     <Deprecated>
       <!--<Term PreferredAlternate=""></Term>-->

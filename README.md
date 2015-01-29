@@ -12,7 +12,7 @@ Installation
 -
 * Get the source and build locally
 
- 	 or
+or
 
 * Install the [`NServiceBus.MongoDB`](https://www.nuget.org/packages/NServiceBus.MongoDB/) NuGet package using the Visual Studio NuGet Package Manager
 
