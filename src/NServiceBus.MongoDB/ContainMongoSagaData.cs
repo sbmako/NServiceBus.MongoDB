@@ -28,29 +28,13 @@
 
 namespace NServiceBus.MongoDB
 {
-    using System;
     using NServiceBus.Saga;
 
     /// <summary>
     /// Base Helper class for MongoDB saga data
     /// </summary>
-    public abstract class ContainMongoSagaData : IContainSagaData, IHaveDocumentVersion
+    public abstract class ContainMongoSagaData : ContainSagaData, IHaveDocumentVersion
     {
-        /// <summary>
-        /// Gets or sets the id.
-        /// </summary>
-        public virtual Guid Id { get; set; }
-
-        /// <summary>
-        /// Gets or sets the originator.
-        /// </summary>
-        public virtual string Originator { get; set; }
-
-        /// <summary>
-        /// Gets or sets the original message id.
-        /// </summary>
-        public virtual string OriginalMessageId { get; set; }
-
         /// <summary>
         /// Gets or sets the document version.
         /// </summary>
