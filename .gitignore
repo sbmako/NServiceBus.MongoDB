@@ -23,6 +23,8 @@ src/packages/xunit.*
 src/packages/AutoFixture.*
 src/packages/FluentAssertions.*
 src/packages/psake.*
+src/packages/NUnit*
+src/packages/Rx*
 
 # MSTest test Results
 [Tt]est[Rr]esult*/

@@ -67,3 +67,4 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyFileVersion("2.0.0.0")]
 
 [assembly: InternalsVisibleTo("NServiceBus.MongoDB.Tests")]
+[assembly: InternalsVisibleTo("NServiceBus.MongoDB.Acceptance.Tests")]
