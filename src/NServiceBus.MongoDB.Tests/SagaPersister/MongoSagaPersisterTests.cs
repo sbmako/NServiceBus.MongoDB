@@ -233,5 +233,47 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
         {
             sut.Invoking(s => s.Update(sagaData)).ShouldThrow<InvalidOperationException>();
         }
+
+        [Theory]
+        [IntegrationTest]
+        [AutoDatabase]
+        public void RetrievingSagaUsingId(
+            MongoSagaPersister sut,
+            SagaWithoutUniqueProperties sagaData)
+        {
+            sut.Save(sagaData);
+
+            var result = sut.Get<SagaWithoutUniqueProperties>(sagaData.Id);
+
+            result.ShouldBeEquivalentTo(sagaData);
+        }
+
+        [Theory]
+        [IntegrationTest]
+        [AutoDatabase]
+        public void RetrievingSagaUsingGuidUniqueId(
+            MongoSagaPersister sut,
+            SagaWithUniqueGuidProperty sagaData)
+        {
+            sut.Save(sagaData);
+
+            var result = sut.Get<SagaWithUniqueGuidProperty>("SomeId", sagaData.SomeId);
+
+            result.ShouldBeEquivalentTo(sagaData);
+        }
+
+        [Theory]
+        [IntegrationTest]
+        [AutoDatabase]
+        public void RetrievingSagaUsingStringUniqueId(
+            MongoSagaPersister sut,
+            SagaWithUniqueProperty sagaData)
+        {
+            sut.Save(sagaData);
+
+            var result = sut.Get<SagaWithUniqueProperty>("UniqueProperty", sagaData.UniqueProperty);
+
+            result.ShouldBeEquivalentTo(sagaData);
+        }
     }
 }
