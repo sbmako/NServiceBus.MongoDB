@@ -17,7 +17,7 @@
     <language>en-US</language>
     <dependencies>
       <dependency id="mongocsharpdriver" version="1.10.0" />
-      <dependency id="NServiceBus" version="[5.0,6.0)" />
+      <dependency id="NServiceBus" version="[5.1.0,6.0)" />
     </dependencies>
     <references>
       <reference file="NServiceBus.MongoDB.dll" />
