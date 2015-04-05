@@ -48,7 +48,7 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
     {
         private static readonly string SubscriptionName = typeof(Subscription).Name;
 
-        private readonly MongoCollection collection;
+        private readonly MongoDatabase mongoDatabase;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MongoSubscriptionPersister"/> class. 
@@ -60,7 +60,7 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
         public MongoSubscriptionPersister(MongoDatabaseFactory mongoFactory)
         {
             Contract.Requires<ArgumentNullException>(mongoFactory != null);
-            this.collection = mongoFactory.GetDatabase().GetCollection(SubscriptionName).AssumedNotNull();
+            this.mongoDatabase = mongoFactory.GetDatabase();
         }
 
         /// <summary>
@@ -104,12 +104,13 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
                         }
                     });
 
+            var collection = this.mongoDatabase.GetCollection(SubscriptionName).AssumedNotNull();
             existingSubscriptions.Values.ToList().ForEach(
                 s =>
                     {
                         var query = s.MongoUpdateQuery();
                         var update = s.MongoUpdate();
-                        var updateResult = this.collection.Update(query, update, UpdateFlags.None);
+                        var updateResult = collection.Update(query, update, UpdateFlags.None);
                         if (!updateResult.UpdatedExisting)
                         {
                             throw new InvalidOperationException(
@@ -122,7 +123,7 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
                 return;
             }
 
-            var insertResult = this.collection.InsertBatch(newSubscriptions);
+            var insertResult = collection.InsertBatch(newSubscriptions);
             if (!insertResult.Any(r => r.Ok))
             {
                 throw new InvalidOperationException(string.Format("Unable to save {0} subscription", client));
@@ -146,7 +147,8 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
                             .ToList();
             var update = Update<Subscription>.Pull(subscription => subscription.Clients, client);
 
-            var results = queries.Select(q => this.collection.Update(q, update)).Where(result => !result.Ok);
+            var collection = this.mongoDatabase.GetCollection(SubscriptionName).AssumedNotNull();
+            var results = queries.Select(q => collection.Update(q, update)).Where(result => !result.Ok);
 
             if (results.Any())
             {
@@ -175,9 +177,11 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
             Contract.Requires(messageTypes != null);
             Contract.Ensures(Contract.Result<IEnumerable<Subscription>>() != null);
 
+            var collection = this.mongoDatabase.GetCollection(SubscriptionName).AssumedNotNull();
+
             var ids = messageTypes.Select(Subscription.FormatId);
             var query = Query<Subscription>.In(p => p.Id, ids);
-            var result = this.collection.FindAs<Subscription>(query);
+            var result = collection.FindAs<Subscription>(query);
 
             return result.AssumedNotNull();
         }
@@ -185,7 +189,7 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
         [ContractInvariantMethod]
         private void ObjectInvariants()
         {
-            Contract.Invariant(this.collection != null);
+            Contract.Invariant(this.mongoDatabase != null);
         }
     }
 }
