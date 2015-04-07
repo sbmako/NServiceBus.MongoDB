@@ -51,9 +51,9 @@ namespace NServiceBus.MongoDB
                         s.EnableFeatureByDefault<MongoDocumentStore>();
                     });
 
-            this.Supports(Storage.Sagas, s => s.EnableFeatureByDefault<MongoSagaStorage>()); 
-            this.Supports(Storage.Timeouts, s => s.EnableFeatureByDefault<MongoTimeoutStorage>());
-            this.Supports(Storage.Subscriptions, s => s.EnableFeatureByDefault<MongoSubscriptionStorage>());
+            this.Supports<StorageType.Sagas>(s => s.EnableFeatureByDefault<MongoSagaStorage>());
+            this.Supports<StorageType.Timeouts>(s => s.EnableFeatureByDefault<MongoTimeoutStorage>());
+            this.Supports<StorageType.Subscriptions>(s => s.EnableFeatureByDefault<MongoSubscriptionStorage>());
         }
     }
 }
