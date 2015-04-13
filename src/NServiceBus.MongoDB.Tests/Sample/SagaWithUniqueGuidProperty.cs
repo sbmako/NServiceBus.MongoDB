@@ -1,5 +1,5 @@
-// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SagaWithUniqueProperty.cs" company="Carlos Sandoval">
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="SagaWithUniqueGuidProperty.cs" company="Carlos Sandoval">
 //   The MIT License (MIT)
 //   
 //   Copyright (c) 2014 Carlos Sandoval
@@ -22,7 +22,7 @@
 //   CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // </copyright>
 // <summary>
-//   Defines the SagaWithUniqueProperty type.
+//   Defines the SagaWithUniqueGuidProperty type.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -32,10 +32,10 @@ namespace NServiceBus.MongoDB.Tests.Sample
 
     using NServiceBus.Saga;
 
-    public class SagaWithUniqueProperty : ContainMongoSagaData
+    public class SagaWithUniqueGuidProperty : ContainMongoSagaData
     {
         [Unique]
-        public virtual string UniqueProperty { get; set; }
+        public virtual Guid UniqueProperty { get; set; }
 
         public string NonUniqueProperty { get; set; }
     }

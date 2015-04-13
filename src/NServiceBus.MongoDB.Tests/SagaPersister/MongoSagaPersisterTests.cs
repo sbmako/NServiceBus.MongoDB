@@ -78,6 +78,22 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
 
         [Theory, IntegrationTest]
         [AutoDatabase]
+        public void SavingSagaWithUniqueGuidProperty(
+            MongoSagaPersister sut,
+            MongoDatabaseFactory factory,
+            SagaWithUniqueGuidProperty sagaData)
+        {
+            sut.Save(sagaData);
+
+            var entity = factory.RetrieveSagaDataByUniqueId(sagaData);
+
+            entity.Id.Should().Be(sagaData.Id);
+            entity.UniqueProperty.Should().Be(sagaData.UniqueProperty);
+            entity.NonUniqueProperty.Should().Be(sagaData.NonUniqueProperty);
+        }
+
+        [Theory, IntegrationTest]
+        [AutoDatabase]
         public void SavingSagaWithNullUniquePropertyShouldThrowException(
             MongoSagaPersister sut,
             MongoDatabaseFactory factory,
