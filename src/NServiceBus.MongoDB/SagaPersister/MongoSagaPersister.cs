@@ -31,6 +31,8 @@ namespace NServiceBus.MongoDB.SagaPersister
     using System;
     using System.Collections.Generic;
     using System.Diagnostics.Contracts;
+
+    using global::MongoDB.Bson;
     using global::MongoDB.Driver;
     using global::MongoDB.Driver.Builders;
     using NServiceBus.MongoDB.Extensions;
@@ -177,7 +179,7 @@ namespace NServiceBus.MongoDB.SagaPersister
             Contract.Requires(!string.IsNullOrWhiteSpace(property));
             Contract.Requires(value != null);
 
-            var query = Query.EQ(property, value.ToString());
+            var query = Query.EQ(property, BsonValue.Create(value));
 
             var entity = this.mongoDatabase.GetCollection<T>(typeof(T).Name).FindOne(query);
 

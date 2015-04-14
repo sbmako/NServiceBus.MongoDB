@@ -114,6 +114,7 @@
     <Compile Include="Sample\SagaWithoutDocumentVersion.cs" />
     <Compile Include="Sample\SagaWithoutUniqueProperties.cs" />
     <Compile Include="Sample\SagaWithUniqueProperty.cs" />
+    <Compile Include="Sample\SagaWithUniquePropertyAsGuid.cs" />
     <Compile Include="SubscriptionStorage\ConfigureMongoSubscriptionStorageTests.cs" />
     <Compile Include="SubscriptionStorage\MongoSubscriptionStorageTests.cs" />
     <Compile Include="TestingUtilities\AutoConfigureData.cs" />
