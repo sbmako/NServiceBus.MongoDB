@@ -23,7 +23,7 @@ Properties {
     }
     # tools
     # change testExecutable as needed, defaults to mstest
-    $testExecutable = "C:\Program Files (x86)\Microsoft Visual Studio 11.0\Common7\IDE\mstest.exe"
+    $testExecutable = "C:\Program Files (x86)\Microsoft Visual Studio 12.0\Common7\IDE\mstest.exe"
     
     $unitTestProject = "NServiceBus.MongoDB.Tests"
     
