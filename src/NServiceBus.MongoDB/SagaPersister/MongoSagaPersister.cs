@@ -84,7 +84,7 @@ namespace NServiceBus.MongoDB.SagaPersister
             var collection = this.mongoDatabase.GetCollection(sagaTypeName);
             var result = collection.Insert(saga);
 
-            if (!result.Ok)
+            if (result.HasLastErrorMessage)
             {
                 throw new InvalidOperationException(string.Format("Unable to save with id {0}", saga.Id));
             }
@@ -159,7 +159,7 @@ namespace NServiceBus.MongoDB.SagaPersister
             var query = Query.EQ("_id", saga.Id);
             var result = this.mongoDatabase.GetCollection(saga.GetType().Name).Remove(query);
 
-            if (!result.Ok)
+            if (result.HasLastErrorMessage)
             {
                 throw new InvalidOperationException(
                     string.Format("Unable to find and remove saga with id {0}", saga.Id));
@@ -196,7 +196,7 @@ namespace NServiceBus.MongoDB.SagaPersister
             var indexOptions = IndexOptions.SetName(uniqueProperty.Key).SetUnique(true);
             var result = collection.CreateIndex(IndexKeys.Ascending(uniqueProperty.Key), indexOptions);
 
-            if (!result.Ok)
+            if (result.HasLastErrorMessage)
             {
                 throw new InvalidOperationException(
                     string.Format(

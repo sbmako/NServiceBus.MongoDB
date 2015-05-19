@@ -115,7 +115,7 @@ namespace NServiceBus.MongoDB.TimeoutPersister
             var collection = this.mongoDatabase.GetCollection<TimeoutData>(TimeoutDataName);
             var result = collection.Save(timeout);
 
-            if (!result.Ok)
+            if (result.HasLastErrorMessage)
             {
                 throw new InvalidOperationException(string.Format("Unable to save timeout [{0}]", timeout));
             }
@@ -156,7 +156,7 @@ namespace NServiceBus.MongoDB.TimeoutPersister
             var query = Query<TimeoutData>.EQ(t => t.SagaId, sagaId);
             var result = collection.Remove(query);
 
-            if (!result.Ok)
+            if (result.HasLastErrorMessage)
             {
                 throw new InvalidOperationException(string.Format("Unable to remove timeouts for saga id {0}", sagaId));
             }
@@ -172,7 +172,7 @@ namespace NServiceBus.MongoDB.TimeoutPersister
                     IndexKeys<TimeoutData>.Ascending(t => t.OwningTimeoutManager, t => t.Time),
                     indexOptions);
 
-            if (!result.Ok)
+            if (result.HasLastErrorMessage)
             {
                 throw new InvalidOperationException(
                     string.Format(
@@ -185,7 +185,7 @@ namespace NServiceBus.MongoDB.TimeoutPersister
                     IndexKeys<TimeoutData>.Ascending(t => t.OwningTimeoutManager, t => t.SagaId, t => t.Time),
                     indexOptions);
 
-            if (!result.Ok)
+            if (result.HasLastErrorMessage)
             {
                 throw new InvalidOperationException(
                     string.Format(

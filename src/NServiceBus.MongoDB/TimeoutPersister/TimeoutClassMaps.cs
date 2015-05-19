@@ -30,6 +30,7 @@ namespace NServiceBus.MongoDB.TimeoutPersister
     using global::MongoDB.Bson;
     using global::MongoDB.Bson.Serialization;
     using global::MongoDB.Bson.Serialization.Options;
+    using global::MongoDB.Bson.Serialization.Serializers;
 
     using NServiceBus.Timeout.Core;
 
@@ -49,9 +50,7 @@ namespace NServiceBus.MongoDB.TimeoutPersister
                 cm =>
                     {
                         cm.AutoMap();
-                        cm.GetMemberMap(mm => mm.Time)
-                          .SetSerializationOptions(
-                              new DateTimeSerializationOptions(DateTimeKind.Utc, BsonType.Document));
+                        cm.MapMember(mm => mm.Time).SetSerializer(new DateTimeOffsetSerializer(BsonType.DateTime));
                     });
         }
     }
