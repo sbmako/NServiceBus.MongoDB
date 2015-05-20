@@ -124,7 +124,7 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
             }
 
             var insertResult = collection.InsertBatch(newSubscriptions);
-            if (!insertResult.Any(r => r.HasLastErrorMessage))
+            if (insertResult.Any(r => r.HasLastErrorMessage))
             {
                 throw new InvalidOperationException(string.Format("Unable to save {0} subscription", client));
             }
