@@ -11,7 +11,6 @@
     <iconUrl>https://raw.githubusercontent.com/sbmako/NServiceBus.MongoDB/master/packaging/NServiceBus_mongo_32.png</iconUrl>
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
     <description>MongoDB persistence for  NServiceBus 5.x</description>
-    <!--<releaseNotes>Note: this is a beta release and should not be used for production</releaseNotes>-->
     <copyright>Copyright 2015 Carlos Sandoval. All rights reserved.</copyright>
     <tags>nservicebus mongodb persistence servicebus msmq cqrs publish subscribe</tags>
     <language>en-US</language>
