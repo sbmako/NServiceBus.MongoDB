@@ -21,6 +21,9 @@
 //   IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 //   CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // </copyright>
+// <summary>
+//   
+// </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace NServiceBus.MongoDB.TimeoutPersister
@@ -29,7 +32,6 @@ namespace NServiceBus.MongoDB.TimeoutPersister
 
     using global::MongoDB.Bson;
     using global::MongoDB.Bson.Serialization;
-    using global::MongoDB.Bson.Serialization.Options;
     using global::MongoDB.Bson.Serialization.Serializers;
 
     using NServiceBus.Timeout.Core;

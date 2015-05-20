@@ -79,7 +79,7 @@ namespace NServiceBus.MongoDB.TimeoutPersister
         public IEnumerable<Tuple<string, DateTime>> GetNextChunk(DateTime startSlice, out DateTime nextTimeToRunQuery)
         {
             var collection = this.mongoDatabase.GetCollection<TimeoutData>(TimeoutDataName);
-            
+
             var results = from data in collection.AsQueryable().AssumedNotNull()
                           where data.Time > startSlice && data.Time <= DateTime.UtcNow
                           where
