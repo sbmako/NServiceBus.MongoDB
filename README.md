@@ -19,9 +19,6 @@ After adding a reference to it from your project, specify `MongoDBPersistence` t
 using NServiceBus;
 using NServiceBus.MongoDB;
 
-/// <summary>
-/// The endpoint config.
-/// </summary>
 public class EndpointConfig : IConfigureThisEndpoint, AsA_Server
 {
   public void Customize(BusConfiguration configuration)
@@ -45,9 +42,6 @@ Alternatively, you can specify the connection string name to use as follows:
 using NServiceBus;
 using NServiceBus.MongoDB;
 
-/// <summary>
-/// The endpoint config.
-/// </summary>
 public class EndpointConfig : IConfigureThisEndpoint, AsA_Server
 {
   public void Customize(BusConfiguration configuration)
@@ -64,9 +58,6 @@ or specify the connection string to use:
 using NServiceBus;
 using NServiceBus.MongoDB;
 
-/// <summary>
-/// The endpoint config.
-/// </summary>
 public class EndpointConfig : IConfigureThisEndpoint, AsA_Server
 {
   public void Customize(BusConfiguration configuration)
@@ -85,9 +76,6 @@ To configure NServiceBus to use MongoDB GridFS as the persistence for DataBus us
 using NServiceBus;
 using NServiceBus.MongoDB;
 
-/// <summary>
-/// The endpoint config.
-/// </summary>
 public class EndpointConfig : IConfigureThisEndpoint, AsA_Server
 {
   public void Customize(BusConfiguration configuration)
