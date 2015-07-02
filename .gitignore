@@ -17,14 +17,7 @@ build/
 
 # Enable "build/" folder in the NuGet Packages folder since NuGet packages use it for MSBuild targets
 packaging/*.nupkg
-src/packages/NServiceBus.*
-src/packages/mongocsharpdriver.*
-src/packages/xunit.*
-src/packages/AutoFixture.*
-src/packages/FluentAssertions.*
-src/packages/psake.*
-src/packages/NUnit*
-src/packages/Rx*
+src/packages/*
 
 # MSTest test Results
 [Tt]est[Rr]esult*/
