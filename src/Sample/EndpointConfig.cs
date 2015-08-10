@@ -41,7 +41,6 @@ namespace Sample
         {
             configuration.UseSerialization<JsonSerializer>();
             configuration.UsePersistence<MongoDBPersistence>()
-                .SetConnectionString("mongodb://ultratinef:27017/MyDatabase")
                 .SetDatabaseName("MyDatabase");
 
             configuration.UseDataBus<MongoDBDataBus>();

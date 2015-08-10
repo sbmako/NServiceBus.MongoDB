@@ -107,7 +107,7 @@ namespace NServiceBus.MongoDB.Internals
                 return connectionString;
             }
 
-            if (ConfigurationManager.AppSettings[MongoPersistenceConstants.DefaultConnectionStringName] != null)
+            if (ConfigurationManager.ConnectionStrings[MongoPersistenceConstants.DefaultConnectionStringName] != null)
             {
                 Logger.InfoFormat(
                     "Using connection string from {0}",
