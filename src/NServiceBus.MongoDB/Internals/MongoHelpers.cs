@@ -97,14 +97,27 @@ namespace NServiceBus.MongoDB.Internals
             Contract.Requires(settings != null);
             Contract.Ensures(!string.IsNullOrWhiteSpace(Contract.Result<string>()));
 
-            var result = settings.HasSetting(MongoPersistenceConstants.ConnectionStringKey)
-                             ? settings.Get<string>(MongoPersistenceConstants.ConnectionStringKey)
-                                   .AssumedNotNullOrWhiteSpace()
-                             : GetConnectionStringFromConfig(
-                                 settings.Get<string>(MongoPersistenceConstants.ConnectionStringNameKey)
-                                   .AssumedNotNullOrWhiteSpace());
+            if (settings.HasSetting(MongoPersistenceConstants.ConnectionStringKey))
+            {
+                var connectionString =
+                    settings.Get<string>(MongoPersistenceConstants.ConnectionStringKey).AssumedNotNullOrWhiteSpace();
 
-            return result;
+                Logger.InfoFormat("Using connection string specified using .SetConnectionString: {0}", connectionString);
+
+                return connectionString;
+            }
+
+            if (ConfigurationManager.AppSettings[MongoPersistenceConstants.DefaultConnectionStringName] != null)
+            {
+                Logger.InfoFormat(
+                    "Using connection string from {0}",
+                    MongoPersistenceConstants.DefaultConnectionStringName);
+                return GetConnectionStringFromConfig(MongoPersistenceConstants.DefaultConnectionStringName);    
+            }
+
+            Logger.InfoFormat("Using connection string from {0}", MongoPersistenceConstants.FallbackConnectionStringName);
+
+            return GetConnectionStringFromConfig(MongoPersistenceConstants.FallbackConnectionStringName);
         }
 
         public static string GetConnectionStringFromConfig(string connectionStringName)

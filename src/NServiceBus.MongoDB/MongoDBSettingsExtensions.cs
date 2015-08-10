@@ -41,32 +41,6 @@ namespace NServiceBus.MongoDB
     public static class MongoDBSettingsExtensions
     {
         /// <summary>
-        /// The set connection string name.
-        /// </summary>
-        /// <param name="config">
-        /// The config.
-        /// </param>
-        /// <param name="connectionStringName">
-        /// The connection string name.
-        /// </param>
-        /// <returns>
-        /// The <see cref="PersistenceExtentions"/>.
-        /// </returns>
-        public static PersistenceExtentions<MongoDBPersistence> SetConnectionStringName(
-            this PersistenceExtentions<MongoDBPersistence> config, string connectionStringName)
-        {
-            Contract.Requires<ArgumentNullException>(config != null, "config != null");
-            Contract.Requires<ArgumentNullException>(
-                !string.IsNullOrWhiteSpace(connectionStringName), 
-                "!string.IsNullOrWhiteSpace(connectionStringName)");
-            Contract.Ensures(Contract.Result<PersistenceExtentions<MongoDBPersistence>>() != null);
-
-            config.GetSettings().Set(MongoPersistenceConstants.ConnectionStringNameKey, connectionStringName);
-
-            return config;
-        }
-
-        /// <summary>
         /// The set database name.
         /// </summary>
         /// <param name="config">

@@ -43,8 +43,8 @@ namespace NServiceBus.MongoDB.Tests.Internals
         [Fact, UnitTest]
         public void GetConnectionStringFromConfigUsingValidConnectionString()
         {
-            var result = MongoHelpers.GetConnectionStringFromConfig("My.Persistence");
-            result.Should().Be("mongodb://ultratinef:27017");
+            var result = MongoHelpers.GetConnectionStringFromConfig("NServiceBus/Persistence/MongoDB");
+            result.Should().Be("mongodb://localhost:27017");
         }
 
         [Fact, UnitTest]
@@ -55,46 +55,10 @@ namespace NServiceBus.MongoDB.Tests.Internals
         }
 
         [Fact, UnitTest]
-        public void GetConnectionUsingSettingsFromConnectionStringName()
-        {
-            var settings = new SettingsHolder();
-            settings.Set(MongoPersistenceConstants.ConnectionStringNameKey, "My.Persistence");
-            var readonlySettings = (ReadOnlySettings)settings;
-
-            var result = MongoHelpers.GetConnectionString(readonlySettings);
-            result.Should().Be("mongodb://ultratinef:27017");
-        }
-
-
-        [Fact, UnitTest]
         public void GetConnectionUsingSettingsFromConnectionString()
         {
             var settings = new SettingsHolder();
             settings.Set(MongoPersistenceConstants.ConnectionStringKey, "mongodb://ultratinef:27017");
-            var readonlySettings = (ReadOnlySettings)settings;
-
-            var result = MongoHelpers.GetConnectionString(readonlySettings);
-            result.Should().Be("mongodb://ultratinef:27017");
-        }
-
-        [Fact, UnitTest]
-        public void GetConnectionUsingSettingsWithInvalidConnectionStringName()
-        {
-            var settings = new SettingsHolder();
-            settings.Set(MongoPersistenceConstants.ConnectionStringNameKey, "My.MissingPersistence");
-            var readonlySettings = (ReadOnlySettings)settings;
-
-            Action sut = () => MongoHelpers.GetConnectionString(readonlySettings);
-            sut.ShouldThrow<ConfigurationErrorsException>();
-        }
-
-        [Fact, UnitTest]
-        public void GetConnectionStringUsingSettingsWhenBothConnectionStringAndConnectionStringNameExist()
-        {
-            var settings = new SettingsHolder();
-            settings.Set(MongoPersistenceConstants.ConnectionStringNameKey, "NServiceBus.Persistence");
-            settings.Set(MongoPersistenceConstants.ConnectionStringKey, "mongodb://ultratinef:27017");
-
             var readonlySettings = (ReadOnlySettings)settings;
 
             var result = MongoHelpers.GetConnectionString(readonlySettings);

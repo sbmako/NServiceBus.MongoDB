@@ -48,9 +48,6 @@ namespace NServiceBus.MongoDB.Internals
             this.Defaults(
                 s =>
                     {
-                        s.SetDefault(
-                            MongoPersistenceConstants.ConnectionStringNameKey, 
-                            MongoPersistenceConstants.DefaultConnectionStringName);
                         s.SetDefault(MongoPersistenceConstants.DatabaseNameKey, s.DatabaseNameFromEndpointName());
                     });
         }

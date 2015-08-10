@@ -40,45 +40,9 @@ namespace NServiceBus.MongoDB.Tests
     {
         [Theory, UnitTest]
         [AutoConfigureData]
-        public void SetConnectionStringName(PersistenceExtentions<MongoDBPersistence> config)
-        {
-            config.SetConnectionStringName("My.Connection");
-
-            config.GetSettings()
-                .Get<string>(MongoPersistenceConstants.ConnectionStringNameKey)
-                .Should()
-                .Be("My.Connection");
-
-            config.GetSettings().HasSetting(MongoPersistenceConstants.DatabaseNameKey).Should().BeFalse();
-            config.GetSettings().HasSetting(MongoPersistenceConstants.ConnectionStringKey).Should().BeFalse();
-        }
-
-        [Theory, UnitTest]
-        [AutoConfigureData]
         public void SetDatabaseName(PersistenceExtentions<MongoDBPersistence> config)
         {
             config.SetDatabaseName("MyDatabase");
-
-            config.GetSettings()
-                .Get<string>(MongoPersistenceConstants.DatabaseNameKey)
-                .Should()
-                .Be("MyDatabase");
-
-            config.GetSettings().HasSetting(MongoPersistenceConstants.ConnectionStringNameKey).Should().BeFalse();
-            config.GetSettings().HasSetting(MongoPersistenceConstants.ConnectionStringKey).Should().BeFalse();
-        }
-
-        [Theory, UnitTest]
-        [AutoConfigureData]
-        public void SetConnectionStringNameAndDatabaseName(PersistenceExtentions<MongoDBPersistence> config)
-        {
-            config.SetConnectionStringName("My.Connection");
-            config.SetDatabaseName("MyDatabase");
-
-            config.GetSettings()
-                .Get<string>(MongoPersistenceConstants.ConnectionStringNameKey)
-                .Should()
-                .Be("My.Connection");
 
             config.GetSettings()
                 .Get<string>(MongoPersistenceConstants.DatabaseNameKey)
@@ -98,7 +62,6 @@ namespace NServiceBus.MongoDB.Tests
                 .Get<string>(MongoPersistenceConstants.ConnectionStringKey)
                 .Should()
                 .Be("mongodb://ultratinef:27017");
-            config.GetSettings().HasSetting(MongoPersistenceConstants.ConnectionStringNameKey).Should().BeFalse();
             config.GetSettings().HasSetting(MongoPersistenceConstants.DatabaseNameKey).Should().BeFalse();
         }
 
@@ -118,8 +81,6 @@ namespace NServiceBus.MongoDB.Tests
                 .Get<string>(MongoPersistenceConstants.DatabaseNameKey)
                 .Should()
                 .Be("MyDatabase");
-
-            config.GetSettings().HasSetting(MongoPersistenceConstants.ConnectionStringNameKey).Should().BeFalse();
         }
     }
 }
