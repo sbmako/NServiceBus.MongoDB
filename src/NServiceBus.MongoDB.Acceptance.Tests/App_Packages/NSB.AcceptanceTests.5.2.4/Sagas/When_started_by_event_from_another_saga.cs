@@ -56,7 +56,7 @@
                 }));
             }
 
-            public class Saga1 : Saga<Saga1.Saga1Data>, IAmStartedByMessages<StartSaga>, IHandleTimeouts<Saga1.Timeout1>
+            public class Saga1 : Saga<Saga1.Saga1Data3>, IAmStartedByMessages<StartSaga>, IHandleTimeouts<Saga1.Timeout1>
             {
                 public Context Context { get; set; }
 
@@ -77,7 +77,7 @@
                     Context.DidSaga1Complete = true;
                 }
 
-                public class Saga1Data : ContainMongoSagaData
+                public class Saga1Data3 : ContainMongoSagaData
                 {
                     [Unique]
                     public virtual Guid DataId { get; set; }
@@ -87,7 +87,7 @@
                 {
                 }
 
-                protected override void ConfigureHowToFindSaga(SagaPropertyMapper<Saga1Data> mapper)
+                protected override void ConfigureHowToFindSaga(SagaPropertyMapper<Saga1Data3> mapper)
                 {
                 }
             }
@@ -102,7 +102,7 @@
 
             }
 
-            public class Saga2 : Saga<Saga2.Saga2Data>, IAmStartedByMessages<SomethingHappenedEvent>, IHandleTimeouts<Saga2.Saga2Timeout>
+            public class Saga2 : Saga<Saga2.Saga2Data3>, IAmStartedByMessages<SomethingHappenedEvent>, IHandleTimeouts<Saga2.Saga2Timeout>
             {
                 public Context Context { get; set; }
 
@@ -120,7 +120,7 @@
                     Context.DidSaga2Complete = true;
                 }
 
-                public class Saga2Data : ContainMongoSagaData
+                public class Saga2Data3 : ContainMongoSagaData
                 {
                     [Unique]
                     public virtual Guid DataId { get; set; }
@@ -130,7 +130,7 @@
                 {
                 }
 
-                protected override void ConfigureHowToFindSaga(SagaPropertyMapper<Saga2Data> mapper)
+                protected override void ConfigureHowToFindSaga(SagaPropertyMapper<Saga2Data3> mapper)
                 {
                 }
             }
