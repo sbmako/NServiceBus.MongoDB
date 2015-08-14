@@ -144,6 +144,8 @@ namespace NServiceBus.MongoDB.TimeoutPersister
         /// </returns>
         public bool TryRemove(string timeoutId, out Timeout.Core.TimeoutData timeoutData)
         {
+            timeoutData = null;
+
             var collection = this.mongoDatabase.GetCollection<TimeoutData>(TimeoutDataName);
 
             var findAndRemoveArgs = new FindAndRemoveArgs { Query = Query<TimeoutData>.EQ(t => t.Id, timeoutId) };
@@ -151,25 +153,28 @@ namespace NServiceBus.MongoDB.TimeoutPersister
 
             if (!result.Ok)
             {
-                throw new InvalidOperationException(string.Format("Unable to remove timeout for id {0}: {1}", timeoutId, result.ErrorMessage));
+                throw new InvalidOperationException(
+                    string.Format("Unable to remove timeout for id {0}: {1}", timeoutId, result.ErrorMessage));
             }
 
             var data = result.GetModifiedDocumentAs<TimeoutData>();
 
-            timeoutData = data == null
-                              ? null
-                              : new Timeout.Core.TimeoutData()
-                                    {
-                                        Id = data.Id,
-                                        Destination = data.Destination,
-                                        SagaId = data.SagaId,
-                                        State = data.State,
-                                        Time = data.Time,
-                                        Headers = data.Headers,
-                                        OwningTimeoutManager = data.OwningTimeoutManager
-                                    };
+            if (data != null)
+            {
+                timeoutData = new Timeout.Core.TimeoutData()
+                                  {
+                                      Id = data.Id,
+                                      Destination = data.Destination,
+                                      SagaId = data.SagaId,
+                                      State = data.State,
+                                      Time = data.Time,
+                                      Headers = data.Headers,
+                                      OwningTimeoutManager = data.OwningTimeoutManager
+                                  };
+            }
 
-            return timeoutData != null;
+
+            return data != null;
         }
 
         /// <summary>
