@@ -29,29 +29,21 @@ public class EndpointConfig : IConfigureThisEndpoint, AsA_Server
 }
 ```
 
-This base configuration connects using  `NServiceBus.Persistence` connection string in the app.config and `MyDatabase` as the database.
+This base configuration connects using  `NServiceBus/Persistence/MongoDB` connection string in the app.config and `MyDatabase` as the database.
 
 ```xml
 <connectionStrings>
-  <add name="NServiceBus.Persistence" connectionString="mongodb://localhost:27017" />
+  <add name="NServiceBus/Persistence/MongoDB" connectionString="mongodb://localhost:27017" />
 </connectionStrings>
   ```
-Alternatively, you can specify the connection string name to use as follows:
+If this connection string is not found `NServiceBus/Persistence` is used.
 
-```csharp
-using NServiceBus;
-using NServiceBus.MongoDB;
-
-public class EndpointConfig : IConfigureThisEndpoint, AsA_Server
-{
-  public void Customize(BusConfiguration configuration)
-  {
-    configuration.UsePersistence<MongoDBPersistence>()
-        .SetConnectionStringName("My.ConnectionString")
-        .SetDatabaseName("MyDatabase");
-  }
-}
+```xml
+<connectionStrings>
+  <add name="NServiceBus/Persistence" connectionString="mongodb://localhost:27017" />
+</connectionStrings>
 ```
+
 or specify the connection string to use:
 
 ```csharp
