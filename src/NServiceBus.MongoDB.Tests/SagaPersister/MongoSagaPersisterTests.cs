@@ -40,6 +40,11 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
 
     public class MongoSagaPersisterTests
     {
+        public MongoSagaPersisterTests()
+        {
+            SagaClassMaps.ConfigureClassMaps();    
+        }
+
         [Theory, IntegrationTest]
         [AutoDatabase]
         public void BasicMongoSagaPersisterConstruction(MongoDatabaseFactory factory)

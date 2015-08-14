@@ -25,72 +25,14 @@
 
 namespace NServiceBus.MongoDB.Internals
 {
-    using System;
-    using System.Collections.Generic;
     using System.Configuration;
     using System.Diagnostics.Contracts;
-    using System.Linq;
-    using System.Text;
-    using global::MongoDB.Driver;
     using NServiceBus.Logging;
     using NServiceBus.Settings;
 
     internal static class MongoHelpers
     {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(MongoHelpers));
-
-        public static void VerifyConnectionToMongoServer(MongoClientAccessor mongoClientAccessor)
-        {
-            Contract.Requires(mongoClientAccessor != null);
-
-            var server = mongoClientAccessor.MongoClient.GetServer();
-
-            try
-            {
-                server.Ping();
-            }
-            catch (Exception ex)
-            {
-                ShowUncontactableMongoWarning(mongoClientAccessor.MongoClient, ex);
-                return;
-            }
-
-            Logger.InfoFormat(
-                "Connection to MongoDB at {0} verified.",
-                string.Join(", ", GetMongoServers(mongoClientAccessor.MongoClient)));
-        }
-
-        public static void ShowUncontactableMongoWarning(MongoClient mongoClient, Exception exception)
-        {
-            Contract.Requires(mongoClient != null);
-            Contract.Requires(exception != null);
-
-            var serverSettings = string.Join(", ", GetMongoServers(mongoClient));
-
-            var sb = new StringBuilder();
-            sb.AppendFormat("Mongo could not be contacted using: {0}.", serverSettings);
-            sb.AppendLine();
-            sb.AppendFormat("If you are using a Replica Set, please ensure that all the Mongo instance(s) {0} are available.", serverSettings);
-            sb.AppendLine();
-            sb.AppendLine(
-                @"To configure NServiceBus to use a different connection string add a connection string named ""NServiceBus/Persistence"" in your config file.");
-            sb.AppendLine("Reason: " + exception);
-
-            Logger.Warn(sb.ToString());
-        }
-
-        public static IEnumerable<MongoServerAddress> GetMongoServers(MongoClient mongoClient)
-        {
-            Contract.Requires(mongoClient != null);
-            Contract.Ensures(Contract.Result<IEnumerable<MongoServerAddress>>() != null);
-
-            if (mongoClient.Settings.Servers != null && mongoClient.Settings.Servers.Any())
-            {
-                return mongoClient.Settings.Servers;
-            }
-
-            return new[] { mongoClient.Settings.Server };
-        }
 
         public static string GetConnectionString(ReadOnlySettings settings)
         {

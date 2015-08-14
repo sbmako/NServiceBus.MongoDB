@@ -80,22 +80,24 @@ namespace NServiceBus.MongoDB.TimeoutPersister
         {
             var collection = this.mongoDatabase.GetCollection<TimeoutData>(TimeoutDataName);
 
+            var now = DateTime.UtcNow;
+
             var results = from data in collection.AsQueryable().AssumedNotNull()
-                          where data.Time > startSlice && data.Time <= DateTime.UtcNow
+                          where data.Time >= startSlice && data.Time <= now
                           where
                               data.OwningTimeoutManager == string.Empty
                               || data.OwningTimeoutManager == this.EndpointName
-                          orderby data.Time
-                          select new Tuple<string, DateTime>(data.Id, data.Time);
+                          orderby data.Time ascending 
+                          select new Tuple<string, DateTime>(data.Id.ToString(), data.Time);
 
             var nextTimeout = from data in collection.AsQueryable().AssumedNotNull()
-                              where data.Time > DateTime.UtcNow
-                              orderby data.Time
+                              where data.Time > now
+                              orderby data.Time ascending 
                               select data;
 
             nextTimeToRunQuery = nextTimeout.Any()
                                      ? nextTimeout.First().Time
-                                     : DateTime.UtcNow.AddMinutes(
+                                     : now.AddMinutes(
                                          MongoPersistenceConstants.DefaultNextTimeoutIncrementMinutes);
 
             return results.ToList();
@@ -108,17 +110,28 @@ namespace NServiceBus.MongoDB.TimeoutPersister
         /// <exception cref="InvalidOperationException">
         /// Throws exception if timeout is not saved.
         /// </exception>
-        public void Add(TimeoutData timeout)
+        public void Add(Timeout.Core.TimeoutData timeout)
         {
-            timeout.Id = Guid.NewGuid().ToString();
+            var data = new TimeoutData()
+                                    {
+                                        Id = Guid.NewGuid().ToString(),
+                                        Destination = timeout.Destination,
+                                        SagaId = timeout.SagaId,
+                                        State = timeout.State,
+                                        Time = timeout.Time,
+                                        Headers = timeout.Headers,
+                                        OwningTimeoutManager = timeout.OwningTimeoutManager
+                                    };
 
             var collection = this.mongoDatabase.GetCollection<TimeoutData>(TimeoutDataName);
-            var result = collection.Save(timeout);
+            var result = collection.Save(data);
 
             if (result.HasLastErrorMessage)
             {
                 throw new InvalidOperationException(string.Format("Unable to save timeout [{0}]", timeout));
             }
+
+            timeout.Id = data.Id;
         }
 
         /// <summary>
@@ -129,7 +142,7 @@ namespace NServiceBus.MongoDB.TimeoutPersister
         /// <returns>
         /// <c>true</c> it the timeout was successfully removed.
         /// </returns>
-        public bool TryRemove(string timeoutId, out TimeoutData timeoutData)
+        public bool TryRemove(string timeoutId, out Timeout.Core.TimeoutData timeoutData)
         {
             var collection = this.mongoDatabase.GetCollection<TimeoutData>(TimeoutDataName);
 
@@ -141,7 +154,21 @@ namespace NServiceBus.MongoDB.TimeoutPersister
                 throw new InvalidOperationException(string.Format("Unable to remove timeout for id {0}: {1}", timeoutId, result.ErrorMessage));
             }
 
-            timeoutData = result.GetModifiedDocumentAs<TimeoutData>();
+            var data = result.GetModifiedDocumentAs<TimeoutData>();
+
+            timeoutData = data == null
+                              ? null
+                              : new Timeout.Core.TimeoutData()
+                                    {
+                                        Id = data.Id,
+                                        Destination = data.Destination,
+                                        SagaId = data.SagaId,
+                                        State = data.State,
+                                        Time = data.Time,
+                                        Headers = data.Headers,
+                                        OwningTimeoutManager = data.OwningTimeoutManager
+                                    };
+
             return timeoutData != null;
         }
 
@@ -169,7 +196,7 @@ namespace NServiceBus.MongoDB.TimeoutPersister
             var indexOptions = IndexOptions.SetName(MongoPersistenceConstants.OwningTimeoutManagerAndTimeName);
             var result =
                 collection.CreateIndex(
-                    IndexKeys<TimeoutData>.Ascending(t => t.OwningTimeoutManager, t => t.Time),
+                    IndexKeys<TimeoutData>.Ascending(t => t.Time, t => t.OwningTimeoutManager),
                     indexOptions);
 
             if (result.HasLastErrorMessage)
@@ -177,19 +204,6 @@ namespace NServiceBus.MongoDB.TimeoutPersister
                 throw new InvalidOperationException(
                     string.Format(
                         "Unable to create {0} index", MongoPersistenceConstants.OwningTimeoutManagerAndTimeName));
-            }
-
-            indexOptions.SetName(MongoPersistenceConstants.OwningTimeoutManagerAndSagaIdAndTimeName);
-            result =
-                collection.CreateIndex(
-                    IndexKeys<TimeoutData>.Ascending(t => t.OwningTimeoutManager, t => t.SagaId, t => t.Time),
-                    indexOptions);
-
-            if (result.HasLastErrorMessage)
-            {
-                throw new InvalidOperationException(
-                    string.Format(
-                        "Unable to create {0} index", MongoPersistenceConstants.OwningTimeoutManagerAndSagaIdAndTimeName));
             }
         }
 

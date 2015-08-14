@@ -175,7 +175,7 @@ namespace NServiceBus.MongoDB.Tests.TimeoutPersister
 
             var timeouts = factory.RetrieveAllTimeouts();
 
-            var result = sut.TryRemove(timeouts.First().Id, out returnedTimeoutData);
+            var result = sut.TryRemove(timeouts.First().Id.ToString(), out returnedTimeoutData);
 
             result.Should().BeTrue();
             returnedTimeoutData.ShouldBeEquivalentTo(timeoutData);
@@ -218,7 +218,7 @@ namespace NServiceBus.MongoDB.Tests.TimeoutPersister
 
             var timeouts = factory.RetrieveAllTimeouts();
 
-            var result = sut.TryRemove(timeouts.First().Id, out returnedTimeoutData);
+            var result = sut.TryRemove(timeouts.First().Id.ToString(), out returnedTimeoutData);
 
             result.Should().BeTrue();
             returnedTimeoutData.ShouldBeEquivalentTo(timeoutData1);
@@ -292,7 +292,7 @@ namespace NServiceBus.MongoDB.Tests.TimeoutPersister
             var remainingTimeouts = factory.RetrieveAllTimeouts().ToList();
             remainingTimeouts.Should().HaveCount(1);
 
-            remainingTimeouts.First().ShouldBeEquivalentTo(timeoutData1);
+            remainingTimeouts.First().SagaId.Should().Be(timeoutData1.SagaId);
         }
     }
 }

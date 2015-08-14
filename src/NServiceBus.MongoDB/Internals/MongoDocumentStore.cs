@@ -34,6 +34,7 @@ namespace NServiceBus.MongoDB.Internals
 
     using NServiceBus.Features;
     using NServiceBus.MongoDB.Extensions;
+    using NServiceBus.MongoDB.SagaPersister;
 
     /// <summary>
     /// The MongoDB document store.
@@ -83,8 +84,6 @@ namespace NServiceBus.MongoDB.Internals
 
             var client = new MongoClient(connectionString);
             var clientAccessor = new MongoClientAccessor(client, databaseName);
-
-            MongoHelpers.VerifyConnectionToMongoServer(clientAccessor);
 
             return clientAccessor;
         }

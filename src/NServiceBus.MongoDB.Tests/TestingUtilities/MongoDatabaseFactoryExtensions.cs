@@ -36,7 +36,6 @@ namespace NServiceBus.MongoDB.Tests.TestingUtilities
     using NServiceBus.MongoDB.Internals;
     using NServiceBus.MongoDB.TimeoutPersister;
     using NServiceBus.Saga;
-    using NServiceBus.Timeout.Core;
 
     internal static class MongoDatabaseFactoryExtensions
     {
@@ -61,7 +60,7 @@ namespace NServiceBus.MongoDB.Tests.TestingUtilities
 
         public static void ResetTimeoutCollection(this MongoDatabaseFactory factory)
         {
-            var collection = factory.GetDatabase().GetCollection<TimeoutData>(MongoTimeoutPersister.TimeoutDataName);
+            var collection = factory.GetDatabase().GetCollection<Timeout.Core.TimeoutData>(MongoTimeoutPersister.TimeoutDataName);
             collection.RemoveAll();
         }
     }

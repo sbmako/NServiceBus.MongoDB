@@ -144,9 +144,7 @@ namespace NServiceBus.MongoDB.SagaPersister
         /// </returns>
         public T Get<T>(string propertyName, object propertyValue) where T : IContainSagaData
         {
-            return this.GetByUniqueProperty<T>(
-                propertyName.AssumedNotNullOrWhiteSpace(),
-                propertyValue.AssumedNotNull());
+            return this.GetByUniqueProperty<T>(propertyName.AssumedNotNullOrWhiteSpace(), propertyValue);
         }
 
         /// <summary>
@@ -156,7 +154,7 @@ namespace NServiceBus.MongoDB.SagaPersister
         /// <param name="saga">The saga to complete.</param>
         public void Complete(IContainSagaData saga)
         {
-            var query = Query.EQ("_id", saga.Id);
+            var query = Query.EQ("_id", saga.Id.ToString());
             var result = this.mongoDatabase.GetCollection(saga.GetType().Name).Remove(query);
 
             if (result.HasLastErrorMessage)
@@ -179,7 +177,6 @@ namespace NServiceBus.MongoDB.SagaPersister
         private T GetByUniqueProperty<T>(string property, object value) where T : IContainSagaData
         {
             Contract.Requires(!string.IsNullOrWhiteSpace(property));
-            Contract.Requires(value != null);
 
             var query = Query.EQ(property, BsonValue.Create(value));
 

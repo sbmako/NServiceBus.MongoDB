@@ -29,12 +29,12 @@
 namespace NServiceBus.MongoDB.TimeoutPersister
 {
     using System;
+    using System.Collections.Generic;
 
     using global::MongoDB.Bson;
     using global::MongoDB.Bson.Serialization;
+    using global::MongoDB.Bson.Serialization.Options;
     using global::MongoDB.Bson.Serialization.Serializers;
-
-    using NServiceBus.Timeout.Core;
 
     /// <summary>
     /// Configures timeout MongoDB class maps
@@ -52,8 +52,13 @@ namespace NServiceBus.MongoDB.TimeoutPersister
                 cm =>
                     {
                         cm.AutoMap();
+                        cm.MapMember(mm => mm.SagaId).SetSerializer(new GuidSerializer(BsonType.String));
                         cm.MapMember(mm => mm.Time)
                             .SetSerializer(new DateTimeSerializer(DateTimeKind.Utc, BsonType.Document));
+                        cm.MapMember(mm => mm.Headers)
+                            .SetSerializer(
+                                new DictionaryInterfaceImplementerSerializer<Dictionary<string, string>>(
+                                    DictionaryRepresentation.ArrayOfDocuments));
                     });
         }
     }

@@ -209,6 +209,7 @@
     <Compile Include="ContainMongoSagaData.cs" />
     <Compile Include="SagaPersister\MongoSagaStorage.cs" />
     <Compile Include="SagaPersister\MongoSagaPersister.cs" />
+    <Compile Include="SagaPersister\SagaClassMaps.cs" />
     <Compile Include="SubscriptionPersister\SubscriptionClassMaps.cs" />
     <Compile Include="SubscriptionPersister\MongoSubscriptionPersister.cs" />
     <Compile Include="SubscriptionPersister\MongoSubscriptionStorage.cs" />
@@ -218,6 +219,7 @@
     <Compile Include="TimeoutPersister\MongoTimeoutPersister.cs" />
     <Compile Include="Internals\ContractHelper.cs" />
     <Compile Include="Internals\DeterministicGuid.cs" />
+    <Compile Include="TimeoutPersister\TimeoutData.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config">

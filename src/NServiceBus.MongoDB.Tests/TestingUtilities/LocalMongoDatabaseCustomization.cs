@@ -39,6 +39,8 @@ namespace NServiceBus.MongoDB.Tests.TestingUtilities
 
     using Ploeh.AutoFixture;
 
+    using TimeoutData = NServiceBus.Timeout.Core.TimeoutData;
+
     public class LocalMongoDatabaseCustomization : ICustomization
     {
         public void Customize(IFixture fixture)
