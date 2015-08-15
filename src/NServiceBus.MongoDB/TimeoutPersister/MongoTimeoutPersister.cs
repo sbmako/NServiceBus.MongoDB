@@ -173,7 +173,6 @@ namespace NServiceBus.MongoDB.TimeoutPersister
                                   };
             }
 
-
             return data != null;
         }
 
