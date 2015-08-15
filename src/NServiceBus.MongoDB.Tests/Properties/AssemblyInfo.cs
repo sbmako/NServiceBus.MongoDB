@@ -1,8 +1,8 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="AssemblyInfo.cs" company="Carlos Sandoval">
+// <copyright file="AssemblyInfo.cs" company="SharkByte Software">
 //   The MIT License (MIT)
 //   
-//   Copyright (c) 2015 Carlos Sandoval
+//   Copyright (c) 2015 SharkByte Software
 //   
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of
 //   this software and associated documentation files (the "Software"), to deal in
@@ -35,9 +35,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("NServiceBus.MongoDB.Tests")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Carlos Sandoval")]
+[assembly: AssemblyCompany("SharkByte Software")]
 [assembly: AssemblyProduct("NServiceBus.MongoDB.Tests")]
-[assembly: AssemblyCopyright("Copyright © 2014 Carlos Sandoval")]
+[assembly: AssemblyCopyright("Copyright © 2014 SharkByte Software")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

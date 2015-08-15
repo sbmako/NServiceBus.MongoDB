@@ -5,13 +5,13 @@
     <title>NServiceBus MongoDB</title>
     <version>5.2.0.0</version>
     <authors>Carlos Sandoval</authors>
-    <owners>Carlos Sandoval</owners>
+    <owners>SharkByte Software</owners>
     <licenseUrl>https://github.com/sbmako/NServiceBus.MongoDB/blob/master/LICENSE</licenseUrl>
     <projectUrl>https://github.com/sbmako/NServiceBus.MongoDB</projectUrl>
     <iconUrl>https://raw.githubusercontent.com/sbmako/NServiceBus.MongoDB/master/packaging/NServiceBus_mongo_32.png</iconUrl>
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
     <description>MongoDB persistence for  NServiceBus 5.x</description>
-    <copyright>Copyright 2015 Carlos Sandoval. All rights reserved.</copyright>
+    <copyright>Copyright 2015 SharkByte Software. All rights reserved.</copyright>
     <tags>nservicebus mongodb persistence servicebus msmq cqrs publish subscribe</tags>
     <language>en-US</language>
     <dependencies>
