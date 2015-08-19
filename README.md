@@ -1,9 +1,6 @@
-NServiceBus.MongoDB
+NServiceBus.MongoDB ![Build Status](https://ci.appveyor.com/api/projects/status/github/sbmako/NServiceBus.MongoDB?branch=master&svg=true) [![NuGet Status](http://img.shields.io/nuget/v/NServiceBus.MongoDB.svg)](https://www.nuget.org/packages/NServiceBus.MongoDB/)
 ==
 MongoDB persistence for NServicBus 5.x
-
-### Build Status
-[![Build status](https://ci.appveyor.com/api/projects/status/49hk227un4haesop)](https://ci.appveyor.com/project/sbmako/nservicebus-mongodb)
 
 ### Installation
 * Get the source and build locally
