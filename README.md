@@ -90,5 +90,7 @@ public class MySagaData : ContainMongoSagaData
     public int Count { get; set; }
 }
 ```
-### Sample
-See https://github.com/sbmako/NServiceBus.MongoDB/tree/master/src/Sample
+### Samples
+See [`MongoDB persistence Sample`](http://docs.particular.net/samples/mongodb/)
+
+See [`Simple sample`](https://github.com/sbmako/NServiceBus.MongoDB/tree/master/src/Sample)
