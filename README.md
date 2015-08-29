@@ -91,6 +91,6 @@ public class MySagaData : ContainMongoSagaData
 }
 ```
 ### Samples
-See [`MongoDB persistence Sample`](http://docs.particular.net/samples/mongodb/)
+See [`MongoDB persistence Sample`](http://docs.particular.net/samples/mongodb/) (Special thanks to [`Simon Cropp`](https://github.com/SimonCropp) for the example.)
 
 See [`Simple sample`](https://github.com/sbmako/NServiceBus.MongoDB/tree/master/src/Sample)
