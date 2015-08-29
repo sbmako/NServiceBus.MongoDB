@@ -31,10 +31,7 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
     using global::MongoDB.Bson.Serialization;
     using NServiceBus.Unicast.Subscriptions;
 
-    /// <summary>
-    /// The configure MongoDB subscription storage.
-    /// </summary>
-    public static class SubscriptionClassMaps
+    internal static class SubscriptionClassMaps
     {
         internal static void ConfigureClassMaps()
         {

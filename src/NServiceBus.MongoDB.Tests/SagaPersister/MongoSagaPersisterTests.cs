@@ -40,11 +40,6 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
 
     public class MongoSagaPersisterTests
     {
-        public MongoSagaPersisterTests()
-        {
-            SagaClassMaps.ConfigureClassMaps();    
-        }
-
         [Theory, IntegrationTest]
         [AutoDatabase]
         public void BasicMongoSagaPersisterConstruction(MongoDatabaseFactory factory)
@@ -237,6 +232,19 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
             SagaWithoutUniqueProperties sagaData)
         {
             sut.Invoking(s => s.Update(sagaData)).ShouldThrow<InvalidOperationException>();
+        }
+
+        [Theory, IntegrationTest]
+        [AutoDatabase]
+        public void CompletingSagaShouldRemoveDocument(
+            MongoSagaPersister sut,
+            MongoDatabaseFactory factory,
+            SagaWithoutUniqueProperties sagaData)
+        {
+            sut.Save(sagaData);
+
+            sut.Complete(sagaData);
+            factory.RetrieveSagaData(sagaData).Should().BeNull();
         }
 
         [Theory]

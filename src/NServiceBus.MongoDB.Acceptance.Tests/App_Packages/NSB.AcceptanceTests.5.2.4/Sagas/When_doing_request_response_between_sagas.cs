@@ -135,6 +135,7 @@ namespace NServiceBus.AcceptanceTests.Sagas
                     // also note we don't set the correlation ID since auto correlation happens to work for this special case 
                     // where we reply from the first handler
                     Bus.Reply(new ResponseFromOtherSaga());
+                    this.MarkAsComplete();
                 }
 
                 protected override void ConfigureHowToFindSaga(SagaPropertyMapper<RespondingSagaData> mapper)

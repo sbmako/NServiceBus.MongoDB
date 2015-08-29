@@ -58,6 +58,8 @@ namespace NServiceBus.MongoDB.Tests.TestingUtilities
 
             fixture.Customize<MongoTimeoutPersister>(c => c.With(t => t.EndpointName, "UnitTests"));
 
+            fixture.Customize(new SupportMutableValueTypesCustomization());
+
             TimeoutClassMaps.ConfigureClassMaps();
         }
     }

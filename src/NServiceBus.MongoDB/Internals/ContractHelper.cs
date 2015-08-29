@@ -28,13 +28,12 @@
 
 namespace NServiceBus.MongoDB.Internals
 {
-    using System;
     using System.Diagnostics.Contracts;
 
     /// <summary>
     /// The contract helpers.
     /// </summary>
-    public static class ContractHelper
+    internal static class ContractHelper
     {
         /// <summary>
         /// Helper class to assist with invariant warnings

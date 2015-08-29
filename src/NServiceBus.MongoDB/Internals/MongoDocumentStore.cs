@@ -34,7 +34,6 @@ namespace NServiceBus.MongoDB.Internals
 
     using NServiceBus.Features;
     using NServiceBus.MongoDB.Extensions;
-    using NServiceBus.MongoDB.SagaPersister;
 
     /// <summary>
     /// The MongoDB document store.

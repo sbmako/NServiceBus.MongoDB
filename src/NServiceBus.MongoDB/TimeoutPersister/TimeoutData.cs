@@ -31,10 +31,7 @@ namespace NServiceBus.MongoDB.TimeoutPersister
     using System;
     using System.Collections.Generic;
 
-    /// <summary>
-    /// MongoDB wrapper class for <see cref="Timeout.Core.TimeoutData"/>
-    /// </summary>
-    public class TimeoutData
+    internal class TimeoutData
     {
         /// <summary>
         /// Gets or sets the id.

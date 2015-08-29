@@ -56,7 +56,7 @@ namespace NServiceBus.MongoDB.Extensions
 
             return
                 Query.And(
-                    Query.EQ("_id", saga.Id.ToString()),
+                    Query.EQ("_id", saga.Id),
                     Query.EQ(MongoPersistenceConstants.VersionPropertyName, versionedDocument.DocumentVersion))
                      .AssumedNotNull();
         }

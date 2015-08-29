@@ -72,7 +72,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="NServiceBus.Core, Version=5.0.0.0, Culture=neutral, PublicKeyToken=9fc386479f8a226c, processorArchitecture=MSIL">
-      <HintPath>..\packages\NServiceBus.5.2.4\lib\net45\NServiceBus.Core.dll</HintPath>
+      <HintPath>..\packages\NServiceBus.5.2.5\lib\net45\NServiceBus.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Ploeh.AutoFixture, Version=3.30.5.0, Culture=neutral, PublicKeyToken=b24654c590009d4f, processorArchitecture=MSIL">
@@ -109,6 +109,7 @@
     <Compile Include="Extensions\DatabaseNameExtensionsTests.cs" />
     <Compile Include="Extensions\DocumentVersionExtensionsTests.cs" />
     <Compile Include="Internals\MongoHelpersTests.cs" />
+    <Compile Include="Issues\Issue_16.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="MongoClientAccessorTests.cs" />
     <Compile Include="SagaPersister\MongoSagaPersisterTests.cs" />

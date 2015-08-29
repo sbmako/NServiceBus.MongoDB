@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SagaClassMaps.cs" company="SharkByte Software">
+// <copyright file="Issue_16.cs" company="SharkByte Software">
 //   The MIT License (MIT)
 //   
 //   Copyright (c) 2015 SharkByte Software
@@ -21,34 +21,57 @@
 //   IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 //   CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // </copyright>
-// <summary>
-//   
-// </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace NServiceBus.MongoDB.SagaPersister
+namespace NServiceBus.MongoDB.Tests.Issues
 {
-    using global::MongoDB.Bson;
-    using global::MongoDB.Bson.Serialization;
-    using global::MongoDB.Bson.Serialization.Serializers;
+    using System;
 
+    using NServiceBus.MongoDB.Internals;
+    using NServiceBus.MongoDB.SagaPersister;
+    using NServiceBus.MongoDB.Tests.TestingUtilities;
     using NServiceBus.Saga;
 
-    internal class SagaClassMaps
-    {
-        internal static void ConfigureClassMaps()
-        {
-            if (BsonClassMap.IsClassMapRegistered(typeof(ContainSagaData)))
-            {
-                return;
-            }
+    using Xunit.Extensions;
 
-            BsonClassMap.RegisterClassMap<ContainSagaData>(
-                cm =>
-                {
-                    cm.AutoMap();
-                    cm.MapMember(mm => mm.Id).SetSerializer(new GuidSerializer(BsonType.String));
-                });
+    public class Issue16
+    {
+        [Theory]
+        [IntegrationTest]
+        [AutoDatabase]
+        public void SaveSagaData(
+            MongoSagaPersister sut,
+            MongoDatabaseFactory factory,
+            DeviceCommandSagaState state)
+        {
+            sut.Save(state);
         }
+
+        [Theory]
+        [IntegrationTest]
+        [AutoDatabase]
+        public void UpdateSagaData(
+            MongoSagaPersister sut,
+            MongoDatabaseFactory factory,
+            DeviceCommandSagaState state)
+        {
+            sut.Save(state);
+
+            sut.Update(state);
+        }
+    }
+
+    public sealed class DeviceCommandSagaState : IContainSagaData, IHaveDocumentVersion
+    {
+        [Unique]
+        public string SagaKey { get; set; }
+
+        //IContainSagaData properties
+        public Guid Id { get; set; }
+        public string Originator { get; set; }
+        public string OriginalMessageId { get; set; }
+
+        //IHaveDocumentVersion properties
+        public int DocumentVersion { get; set; }
     }
 }

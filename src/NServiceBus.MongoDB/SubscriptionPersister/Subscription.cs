@@ -36,10 +36,7 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
     using NServiceBus.MongoDB.Internals;
     using NServiceBus.Unicast.Subscriptions;
 
-    /// <summary>
-    /// The subscription.
-    /// </summary>
-    public sealed class Subscription : IHaveDocumentVersion
+    internal sealed class Subscription : IHaveDocumentVersion
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="Subscription"/> class.

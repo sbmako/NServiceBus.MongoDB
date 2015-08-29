@@ -154,7 +154,7 @@ namespace NServiceBus.MongoDB.SagaPersister
         /// <param name="saga">The saga to complete.</param>
         public void Complete(IContainSagaData saga)
         {
-            var query = Query.EQ("_id", saga.Id.ToString());
+            var query = Query.EQ("_id", saga.Id);
             var result = this.mongoDatabase.GetCollection(saga.GetType().Name).Remove(query);
 
             if (result.HasLastErrorMessage)
@@ -190,7 +190,7 @@ namespace NServiceBus.MongoDB.SagaPersister
             Contract.Requires(saga != null);
 
             var collection = this.mongoDatabase.GetCollection(saga.GetType().Name);
-            var indexOptions = IndexOptions.SetName(uniqueProperty.Key).SetUnique(true);
+            var indexOptions = IndexOptions.SetName(uniqueProperty.Key).SetUnique(true).SetSparse(true);
             var result = collection.CreateIndex(IndexKeys.Ascending(uniqueProperty.Key), indexOptions);
 
             if (result.HasLastErrorMessage)

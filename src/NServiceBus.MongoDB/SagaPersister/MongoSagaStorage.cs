@@ -50,7 +50,6 @@ namespace NServiceBus.MongoDB.SagaPersister
         /// </param>
         protected override void Setup(FeatureConfigurationContext context)
         {
-            SagaClassMaps.ConfigureClassMaps();
             context.Container.ConfigureComponent<MongoSagaPersister>(DependencyLifecycle.InstancePerCall);
         }
     }
