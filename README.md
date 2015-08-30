@@ -76,7 +76,7 @@ public class EndpointConfig : IConfigureThisEndpoint, AsA_Server
 ```
 
 ### Sagas
-Saga data needs to be defined the normal way NSB requires with the additional interface `IHaveDocumentVersion` to work appropriatly with `NServiceBus.MongoDB`.  All this interface adds is a version property.  Alternatively you can just inherit from ContainMongoSagaData as follows:
+Saga data needs to be defined the normal way NSB requires with the additional interface `IHaveDocumentVersion` to work appropriately with `NServiceBus.MongoDB`.  All this interface adds is a version property.  Alternatively you can just inherit from ContainMongoSagaData as follows:
 
 ```csharp
 using NServiceBus.MongoDB;
