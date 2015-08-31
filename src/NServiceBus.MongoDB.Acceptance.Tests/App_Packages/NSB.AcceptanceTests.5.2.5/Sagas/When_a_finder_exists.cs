@@ -2,7 +2,6 @@
 {
     using NServiceBus.AcceptanceTesting;
     using NServiceBus.AcceptanceTests.EndpointTemplates;
-    using NServiceBus.MongoDB;
     using NServiceBus.Saga;
     using NUnit.Framework;
 
@@ -54,7 +53,7 @@
                 {
                 }
 
-                public class SagaData : ContainMongoSagaData
+                public class SagaData : ContainSagaData
                 {
                 }
             }

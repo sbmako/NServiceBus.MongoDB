@@ -3,9 +3,9 @@
     using System;
     using NServiceBus.AcceptanceTesting;
     using NServiceBus.AcceptanceTests.EndpointTemplates;
+    using NServiceBus.MongoDB;
     using NServiceBus.Saga;
     using NUnit.Framework;
-    using NServiceBus.MongoDB;
 
     [TestFixture]
     public class When_reply_from_a_finder
@@ -42,12 +42,12 @@
                 EndpointSetup<DefaultServer>();
             }
 
-            class CustomFinder : IFindSagas<TestSaga.SagaData2>.Using<StartSagaMessage>
+            class CustomFinder : IFindSagas<TestSaga.SagaData>.Using<StartSagaMessage>
             {
                 public IBus Bus { get; set; }
                 public Context Context { get; set; }
 
-                public TestSaga.SagaData2 FindBy(StartSagaMessage message)
+                public TestSaga.SagaData FindBy(StartSagaMessage message)
                 {
                     Bus.Reply(new SagaNotFoundMessage
                               {
@@ -57,7 +57,7 @@
                 }
             }
 
-            public class TestSaga : Saga<TestSaga.SagaData2>,
+            public class TestSaga : Saga<TestSaga.SagaData>,
                 IAmStartedByMessages<StartSagaMessage>
             {
                 public Context Context { get; set; }
@@ -66,11 +66,11 @@
                 {
                 }
 
-                protected override void ConfigureHowToFindSaga(SagaPropertyMapper<SagaData2> mapper)
+                protected override void ConfigureHowToFindSaga(SagaPropertyMapper<SagaData> mapper)
                 {
                 }
 
-                public class SagaData2 : ContainMongoSagaData
+                public class SagaData : ContainMongoSagaData
                 {
                 }
             }

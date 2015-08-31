@@ -3,10 +3,12 @@
     using System;
     using EndpointTemplates;
     using AcceptanceTesting;
+
+    using NServiceBus.MongoDB;
+
     using NUnit.Framework;
     using Saga;
     using ScenarioDescriptors;
-    using NServiceBus.MongoDB;
 
     // Repro for #SB-191
     public class When_using_contain_saga_data : NServiceBusAcceptanceTest

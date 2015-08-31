@@ -5,7 +5,6 @@
     using AcceptanceTesting;
     using NUnit.Framework;
     using Saga;
-    using NServiceBus.MongoDB;
 
     public class Issue_2044 : NServiceBusAcceptanceTest
     {
@@ -66,7 +65,7 @@
                 {
                 }
 
-                public class Saga1Data : ContainMongoSagaData
+                public class Saga1Data : ContainSagaData
                 {
                 }
 

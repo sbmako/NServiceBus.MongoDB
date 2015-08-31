@@ -4,11 +4,13 @@
     using EndpointTemplates;
     using AcceptanceTesting;
     using Features;
+
+    using NServiceBus.MongoDB;
+
     using NUnit.Framework;
     using PubSub;
     using Saga;
     using ScenarioDescriptors;
-    using NServiceBus.MongoDB;
 
     //Repro for #1323
     public class When_started_by_event_from_another_saga : NServiceBusAcceptanceTest
@@ -56,7 +58,7 @@
                 }));
             }
 
-            public class Saga1 : Saga<Saga1.Saga1Data3>, IAmStartedByMessages<StartSaga>, IHandleTimeouts<Saga1.Timeout1>
+            public class Saga1 : Saga<Saga1.Saga1Data>, IAmStartedByMessages<StartSaga>, IHandleTimeouts<Saga1.Timeout1>
             {
                 public Context Context { get; set; }
 
@@ -77,7 +79,7 @@
                     Context.DidSaga1Complete = true;
                 }
 
-                public class Saga1Data3 : ContainMongoSagaData
+                public class Saga1Data : ContainMongoSagaData
                 {
                     [Unique]
                     public virtual Guid DataId { get; set; }
@@ -87,7 +89,7 @@
                 {
                 }
 
-                protected override void ConfigureHowToFindSaga(SagaPropertyMapper<Saga1Data3> mapper)
+                protected override void ConfigureHowToFindSaga(SagaPropertyMapper<Saga1Data> mapper)
                 {
                 }
             }
@@ -102,7 +104,7 @@
 
             }
 
-            public class Saga2 : Saga<Saga2.Saga2Data3>, IAmStartedByMessages<SomethingHappenedEvent>, IHandleTimeouts<Saga2.Saga2Timeout>
+            public class Saga2 : Saga<Saga2.Saga2Data>, IAmStartedByMessages<SomethingHappenedEvent>, IHandleTimeouts<Saga2.Saga2Timeout>
             {
                 public Context Context { get; set; }
 
@@ -120,7 +122,7 @@
                     Context.DidSaga2Complete = true;
                 }
 
-                public class Saga2Data3 : ContainMongoSagaData
+                public class Saga2Data : ContainMongoSagaData
                 {
                     [Unique]
                     public virtual Guid DataId { get; set; }
@@ -130,7 +132,7 @@
                 {
                 }
 
-                protected override void ConfigureHowToFindSaga(SagaPropertyMapper<Saga2Data3> mapper)
+                protected override void ConfigureHowToFindSaga(SagaPropertyMapper<Saga2Data> mapper)
                 {
                 }
             }

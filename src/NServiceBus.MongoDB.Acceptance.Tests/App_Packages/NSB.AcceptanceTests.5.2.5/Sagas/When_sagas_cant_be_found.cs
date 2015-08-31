@@ -3,9 +3,11 @@
     using System;
     using EndpointTemplates;
     using AcceptanceTesting;
+
+    using NServiceBus.MongoDB;
+
     using NUnit.Framework;
     using Saga;
-    using NServiceBus.MongoDB;
 
     public class When_sagas_cant_be_found : NServiceBusAcceptanceTest
     {
@@ -68,7 +70,7 @@
                 }
             }
 
-            public class Saga1 : Saga<Saga1.Saga1Data2>, IAmStartedByMessages<StartSaga>, IHandleMessages<MessageToSaga>
+            public class Saga1 : Saga<Saga1.Saga1Data>, IAmStartedByMessages<StartSaga>, IHandleMessages<MessageToSaga>
             {
 
                 public void Handle(StartSaga message)
@@ -79,16 +81,16 @@
                 {
                 }
 
-                public class Saga1Data2 : ContainMongoSagaData
+                public class Saga1Data : ContainMongoSagaData
                 {
                 }
 
-                protected override void ConfigureHowToFindSaga(SagaPropertyMapper<Saga1Data2> mapper)
+                protected override void ConfigureHowToFindSaga(SagaPropertyMapper<Saga1Data> mapper)
                 {
                 }
             }
 
-            public class Saga2 : Saga<Saga2.Saga2Data2>, IAmStartedByMessages<StartSaga>, IHandleMessages<MessageToSaga>
+            public class Saga2 : Saga<Saga2.Saga2Data>, IAmStartedByMessages<StartSaga>, IHandleMessages<MessageToSaga>
             {
 
                 public void Handle(StartSaga message)
@@ -99,11 +101,11 @@
                 {
                 }
 
-                public class Saga2Data2 : ContainMongoSagaData
+                public class Saga2Data : ContainMongoSagaData
                 {
                 }
 
-                protected override void ConfigureHowToFindSaga(SagaPropertyMapper<Saga2Data2> mapper)
+                protected override void ConfigureHowToFindSaga(SagaPropertyMapper<Saga2Data> mapper)
                 {
                 }
             }

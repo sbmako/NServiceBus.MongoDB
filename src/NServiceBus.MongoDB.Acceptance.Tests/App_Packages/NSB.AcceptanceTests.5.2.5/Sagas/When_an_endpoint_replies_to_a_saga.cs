@@ -3,10 +3,12 @@
     using System;
     using EndpointTemplates;
     using AcceptanceTesting;
+
+    using NServiceBus.MongoDB;
+
     using NUnit.Framework;
     using Saga;
     using ScenarioDescriptors;
-    using NServiceBus.MongoDB;
 
     // Repro for issue  https://github.com/NServiceBus/NServiceBus/issues/1277 to test the fix
     // making sure that the saga correlation still works.

@@ -10,7 +10,6 @@
     using NUnit.Framework;
     using Saga;
     using ScenarioDescriptors;
-    using NServiceBus.MongoDB;
 
     public class When_saga_id_changed : NServiceBusAcceptanceTest
     {
@@ -29,7 +28,7 @@
                 .Repeat(r => r.For(Transports.Default))
                 .Run();
 
-            Debug.WriteLine(context.ExceptionMessage, "A modification of IContainMongoSagaData.Id has been detected. This property is for infrastructure purposes only and should not be modified. SagaType: " + typeof(Endpoint.MySaga));
+            Debug.WriteLine(context.ExceptionMessage, "A modification of IContainSagaData.Id has been detected. This property is for infrastructure purposes only and should not be modified. SagaType: " + typeof(Endpoint.MySaga));
         }
 
         public class Context : ScenarioContext
@@ -69,7 +68,7 @@
                     mapper.ConfigureMapping<StartSaga>(m => m.DataId).ToSaga(s => s.DataId);
                 }
 
-                public class MySagaData : ContainMongoSagaData
+                public class MySagaData : ContainSagaData
                 {
                     [Unique]
                     public virtual Guid DataId { get; set; }

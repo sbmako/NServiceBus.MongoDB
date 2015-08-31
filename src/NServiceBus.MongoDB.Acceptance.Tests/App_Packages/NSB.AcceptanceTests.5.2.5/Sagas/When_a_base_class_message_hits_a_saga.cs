@@ -3,9 +3,9 @@
     using System;
     using NServiceBus.AcceptanceTesting;
     using NServiceBus.AcceptanceTests.EndpointTemplates;
+    using NServiceBus.MongoDB;
     using NServiceBus.Saga;
     using NUnit.Framework;
-    using NServiceBus.MongoDB;
 
     [TestFixture]
     public class When_a_base_class_message_hits_a_saga

@@ -3,10 +3,12 @@
     using System;
     using EndpointTemplates;
     using AcceptanceTesting;
+
+    using NServiceBus.MongoDB;
+
     using NUnit.Framework;
     using Saga;
     using ScenarioDescriptors;
-    using NServiceBus.MongoDB;
 
     public class When_sending_from_a_saga_timeout : NServiceBusAcceptanceTest
     {

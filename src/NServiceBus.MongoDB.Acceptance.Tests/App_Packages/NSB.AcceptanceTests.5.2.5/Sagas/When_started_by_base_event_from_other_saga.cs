@@ -8,7 +8,6 @@
     using PubSub;
     using Saga;
     using ScenarioDescriptors;
-    using NServiceBus.MongoDB;
 
     //Repro for #1323
     public class When_started_by_base_event_from_other_saga : NServiceBusAcceptanceTest
@@ -74,7 +73,7 @@
                     Context.DidSagaComplete = true;
                 }
 
-                public class SagaData : ContainMongoSagaData
+                public class SagaData : ContainSagaData
                 {
                     [Unique]
                     public virtual Guid DataId { get; set; }

@@ -4,11 +4,13 @@ namespace NServiceBus.AcceptanceTests.Sagas
     using System;
     using EndpointTemplates;
     using AcceptanceTesting;
+
+    using NServiceBus.MongoDB;
+
     using NUnit.Framework;
     using PubSub;
     using Saga;
     using ScenarioDescriptors;
-    using NServiceBus.MongoDB;
 
     // Repro for issue  https://github.com/NServiceBus/NServiceBus/issues/1277
     public class When_two_sagas_subscribe_to_the_same_event : NServiceBusAcceptanceTest

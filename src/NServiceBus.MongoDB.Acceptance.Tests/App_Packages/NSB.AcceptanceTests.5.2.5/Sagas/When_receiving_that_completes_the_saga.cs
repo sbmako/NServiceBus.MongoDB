@@ -139,10 +139,15 @@
                 }
             }
 
-            public class TestSagaData : ContainMongoSagaData
+            public class TestSagaData : IContainSagaData, IHaveDocumentVersion
             {
+                public virtual Guid Id { get; set; }
+                public virtual string Originator { get; set; }
+                public virtual string OriginalMessageId { get; set; }
                 [Unique]
                 public virtual Guid SomeId { get; set; }
+
+                public int DocumentVersion { get; set; }
             }
         }
 

@@ -6,7 +6,6 @@
     using NUnit.Framework;
     using Saga;
     using ScenarioDescriptors;
-    using NServiceBus.MongoDB;
 
     public class When_receiving_that_should_start_a_saga : NServiceBusAcceptanceTest
     {
@@ -73,7 +72,7 @@
                         .ToSaga(s=>s.SomeId);
                 }
 
-                public class TestSagaData : ContainMongoSagaData
+                public class TestSagaData : ContainSagaData
                 {
                     public string SomeId { get; set; }
                 }

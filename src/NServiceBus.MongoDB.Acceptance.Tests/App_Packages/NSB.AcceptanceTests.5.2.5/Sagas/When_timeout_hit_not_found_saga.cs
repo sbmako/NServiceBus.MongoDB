@@ -3,9 +3,11 @@
     using System;
     using EndpointTemplates;
     using AcceptanceTesting;
+
+    using NServiceBus.MongoDB;
+
     using NUnit.Framework;
     using Saga;
-    using NServiceBus.MongoDB;
 
     public class When_timeout_hit_not_found_saga : NServiceBusAcceptanceTest
     {

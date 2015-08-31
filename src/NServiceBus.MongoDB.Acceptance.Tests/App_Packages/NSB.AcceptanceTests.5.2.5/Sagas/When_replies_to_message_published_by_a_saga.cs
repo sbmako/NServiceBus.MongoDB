@@ -5,11 +5,12 @@
     using AcceptanceTesting;
     using Features;
     using NServiceBus.Config;
+    using NServiceBus.MongoDB;
+
     using NUnit.Framework;
     using PubSub;
     using Saga;
     using ScenarioDescriptors;
-    using NServiceBus.MongoDB;
 
     public class When_replies_to_message_published_by_a_saga : NServiceBusAcceptanceTest
     {

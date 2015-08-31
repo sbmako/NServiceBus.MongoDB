@@ -3,7 +3,6 @@
     using System;
     using NServiceBus.AcceptanceTesting;
     using NServiceBus.AcceptanceTests.EndpointTemplates;
-    using NServiceBus.MongoDB;
     using NServiceBus.Saga;
     using NUnit.Framework;
 
@@ -37,7 +36,7 @@
         {
             public Context Context { get; set; }
 
-            public class SagaData : ContainMongoSagaData
+            public class SagaData : ContainSagaData
             {
             }
 
@@ -75,7 +74,7 @@
 
             }
 
-            public class SagaData : ContainMongoSagaData
+            public class SagaData : ContainSagaData
             {
             }
 

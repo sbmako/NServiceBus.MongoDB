@@ -5,9 +5,10 @@ namespace NServiceBus.AcceptanceTests.Sagas
     using EndpointTemplates;
     using AcceptanceTesting;
     using NServiceBus.AcceptanceTesting.Support;
+    using NServiceBus.MongoDB;
+
     using NUnit.Framework;
     using Saga;
-    using NServiceBus.MongoDB;
 
     public class When_doing_request_response_between_sagas : NServiceBusAcceptanceTest
     {
@@ -135,7 +136,6 @@ namespace NServiceBus.AcceptanceTests.Sagas
                     // also note we don't set the correlation ID since auto correlation happens to work for this special case 
                     // where we reply from the first handler
                     Bus.Reply(new ResponseFromOtherSaga());
-                    this.MarkAsComplete();
                 }
 
                 protected override void ConfigureHowToFindSaga(SagaPropertyMapper<RespondingSagaData> mapper)

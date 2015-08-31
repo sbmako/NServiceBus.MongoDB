@@ -3,9 +3,6 @@
     using System;
     using EndpointTemplates;
     using AcceptanceTesting;
-
-    using NServiceBus.MongoDB;
-
     using NUnit.Framework;
     using Saga;
     using ScenarioDescriptors;
@@ -71,8 +68,12 @@
                 }
             }
 
-            public class TestSagaData : ContainMongoSagaData
+            public class TestSagaData : IContainSagaData
             {
+                public virtual Guid Id { get; set; }
+                public virtual string Originator { get; set; }
+                public virtual string OriginalMessageId { get; set; }
+
                 [Unique]
                 public virtual Guid SomeId { get; set; }
             }
