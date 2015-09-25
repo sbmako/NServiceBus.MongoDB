@@ -27,12 +27,14 @@ namespace NServiceBus.MongoDB.Tests.Issues
 {
     using System;
 
+    using CategoryTraits.Xunit2;
+
     using NServiceBus.MongoDB.Internals;
     using NServiceBus.MongoDB.SagaPersister;
     using NServiceBus.MongoDB.Tests.TestingUtilities;
     using NServiceBus.Saga;
 
-    using Xunit.Extensions;
+    using Xunit;
 
     public class Issue16
     {

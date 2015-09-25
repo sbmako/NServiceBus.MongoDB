@@ -28,12 +28,15 @@
 
 namespace NServiceBus.MongoDB.Tests.Extensions
 {
+    using CategoryTraits.Xunit2;
+
     using FluentAssertions;
 
     using NServiceBus.MongoDB.Extensions;
     using NServiceBus.MongoDB.Tests.Sample;
     using NServiceBus.MongoDB.Tests.TestingUtilities;
-    using Xunit.Extensions;
+
+    using Xunit;
 
     public class DocumentVersionExtensionsTests
     {

@@ -29,6 +29,9 @@
 namespace NServiceBus.MongoDB.Tests.SagaPersister
 {
     using System;
+
+    using CategoryTraits.Xunit2;
+
     using FluentAssertions;
     using global::MongoDB.Driver;
 
@@ -36,7 +39,8 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
     using NServiceBus.MongoDB.SagaPersister;
     using NServiceBus.MongoDB.Tests.Sample;
     using NServiceBus.MongoDB.Tests.TestingUtilities;
-    using Xunit.Extensions;
+
+    using Xunit;
 
     public class MongoSagaPersisterTests
     {

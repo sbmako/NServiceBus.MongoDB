@@ -30,12 +30,16 @@ namespace NServiceBus.MongoDB.Tests.TimeoutPersister
 {
     using System;
     using System.Linq;
+
+    using CategoryTraits.Xunit2;
+
     using FluentAssertions;
 
     using NServiceBus.MongoDB.Internals;
     using NServiceBus.MongoDB.Tests.TestingUtilities;
     using NServiceBus.MongoDB.TimeoutPersister;
-    using Xunit.Extensions;
+
+    using Xunit;
 
     public class MongoTimeoutPersisterTests
     {

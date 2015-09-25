@@ -31,6 +31,8 @@ namespace NServiceBus.MongoDB.Tests.SubscriptionPersister
     using System.Collections.Generic;
     using System.Linq;
 
+    using CategoryTraits.Xunit2;
+
     using FluentAssertions;
 
     using NServiceBus.MongoDB.Internals;
@@ -39,7 +41,7 @@ namespace NServiceBus.MongoDB.Tests.SubscriptionPersister
     using NServiceBus.Unicast.Subscriptions;
     using NServiceBus.Unicast.Subscriptions.MessageDrivenSubscriptions;
 
-    using Xunit.Extensions;
+    using Xunit;
 
     public class MongoSubscriptionPersisterTests
     {

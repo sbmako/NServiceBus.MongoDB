@@ -30,11 +30,15 @@ namespace NServiceBus.MongoDB.Tests.DataBus
 {
     using System;
     using System.IO;
+
+    using CategoryTraits.Xunit2;
+
     using FluentAssertions;
     using NServiceBus.MongoDB.DataBus;
     using NServiceBus.MongoDB.Internals;
     using NServiceBus.MongoDB.Tests.TestingUtilities;
-    using Xunit.Extensions;
+
+    using Xunit;
 
     public class MongoGridFsDataBusTests
     {

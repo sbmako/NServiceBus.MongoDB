@@ -28,13 +28,16 @@
 
 namespace NServiceBus.MongoDB.Tests
 {
+    using CategoryTraits.Xunit2;
+
     using FluentAssertions;
     using global::MongoDB.Driver;
 
     using NServiceBus.MongoDB.Internals;
     using NServiceBus.MongoDB.Tests.TestingUtilities;
-    using Ploeh.AutoFixture.Xunit;
-    using Xunit.Extensions;
+    using Ploeh.AutoFixture.Xunit2;
+
+    using Xunit;
 
     public class MongoClientAccessorTests
     {

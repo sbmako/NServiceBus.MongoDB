@@ -30,14 +30,16 @@ namespace NServiceBus.MongoDB.Tests.Internals
 {
     using System.Collections.Generic;
 
+    using CategoryTraits.Xunit2;
+
     using FluentAssertions;
 
     using NServiceBus.MongoDB.Internals;
     using NServiceBus.MongoDB.Tests.TestingUtilities;
 
-    using Ploeh.AutoFixture.Xunit;
+    using Ploeh.AutoFixture.Xunit2;
 
-    using Xunit.Extensions;
+    using Xunit;
 
     public class DeterministicGuidTests
     {
