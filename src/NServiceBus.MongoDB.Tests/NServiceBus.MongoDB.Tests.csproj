@@ -107,6 +107,7 @@
     <Compile Include="ConfigureMongoPersistenceTests.cs" />
     <Compile Include="Extensions\DatabaseNameExtensionsTests.cs" />
     <Compile Include="Extensions\DocumentVersionExtensionsTests.cs" />
+    <Compile Include="Issues\Issue_16.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="MongoClientAccessorTests.cs" />
     <Compile Include="SagaPersister\ConfigureMongoSagaPersisterTests.cs" />

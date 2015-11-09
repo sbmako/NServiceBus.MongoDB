@@ -191,7 +191,7 @@ namespace NServiceBus.MongoDB.SagaPersister
             Contract.Requires(saga != null);
 
             var collection = this.mongoDatabase.GetCollection(saga.GetType().Name);
-            var indexOptions = IndexOptions.SetName(uniqueProperty.Key).SetUnique(true);
+            var indexOptions = IndexOptions.SetName(uniqueProperty.Key).SetUnique(true).SetSparse(true);
             var result = collection.CreateIndex(IndexKeys.Ascending(uniqueProperty.Key), indexOptions);
 
             if (!result.Ok)
