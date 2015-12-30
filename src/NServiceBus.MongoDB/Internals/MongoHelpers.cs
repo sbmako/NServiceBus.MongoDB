@@ -44,8 +44,6 @@ namespace NServiceBus.MongoDB.Internals
                 var connectionString =
                     settings.Get<string>(MongoPersistenceConstants.ConnectionStringKey).AssumedNotNullOrWhiteSpace();
 
-                Logger.InfoFormat("Using connection string specified using .SetConnectionString: {0}", connectionString);
-
                 return connectionString;
             }
 
