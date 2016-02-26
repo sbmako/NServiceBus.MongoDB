@@ -156,7 +156,8 @@ namespace NServiceBus.MongoDB.TimeoutPersister
 
             if (!result.Ok)
             {
-                throw new InvalidOperationException($"Unable to remove timeout for id {timeoutId}: {result.ErrorMessage}");
+                throw new InvalidOperationException(
+                   string.Format("Unable to remove timeout for id {0}: {1}", timeoutId, result.ErrorMessage));
             }
 
             var data = result.GetModifiedDocumentAs<TimeoutData>();
