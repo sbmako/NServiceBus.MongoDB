@@ -32,6 +32,9 @@ namespace NServiceBus.MongoDB.TimeoutPersister
     using System.Collections.Generic;
     using System.Diagnostics.Contracts;
     using System.Linq;
+
+    using global::MongoDB.Bson.Serialization.Attributes;
+    using global::MongoDB.Bson.Serialization.Options;
     using global::MongoDB.Driver;
     using global::MongoDB.Driver.Builders;
     using global::MongoDB.Driver.Linq;
@@ -42,7 +45,7 @@ namespace NServiceBus.MongoDB.TimeoutPersister
     /// <summary>
     /// The mongo timeout persister.
     /// </summary>
-    public class MongoTimeoutPersister : IPersistTimeouts
+    public class MongoTimeoutPersister : IPersistTimeouts, IPersistTimeoutsV2
     {
         internal static readonly string TimeoutDataName = typeof(TimeoutData).Name;
 
@@ -153,8 +156,7 @@ namespace NServiceBus.MongoDB.TimeoutPersister
 
             if (!result.Ok)
             {
-                throw new InvalidOperationException(
-                    string.Format("Unable to remove timeout for id {0}: {1}", timeoutId, result.ErrorMessage));
+                throw new InvalidOperationException($"Unable to remove timeout for id {timeoutId}: {result.ErrorMessage}");
             }
 
             var data = result.GetModifiedDocumentAs<TimeoutData>();
@@ -215,6 +217,33 @@ namespace NServiceBus.MongoDB.TimeoutPersister
         private void ObjectInvariants()
         {
             Contract.Invariant(this.mongoDatabase != null);
+        }
+
+        public Timeout.Core.TimeoutData Peek(string timeoutId)
+        {
+            var collection = this.mongoDatabase.GetCollection<TimeoutData>(TimeoutDataName);
+            var data = collection.AsQueryable().SingleOrDefault(e => e.Id == timeoutId);
+            if (data != null)
+            {
+                return new Timeout.Core.TimeoutData()
+                {
+                    Id = data.Id,
+                    Destination = data.Destination,
+                    SagaId = data.SagaId,
+                    State = data.State,
+                    Time = data.Time,
+                    Headers = data.Headers,
+                    OwningTimeoutManager = data.OwningTimeoutManager
+                };
+            }
+
+            return null;
+        }
+
+        public bool TryRemove(string timeoutId)
+        {
+            Timeout.Core.TimeoutData timeoutData;
+            return this.TryRemove(timeoutId, out timeoutData);
         }
     }
 }
