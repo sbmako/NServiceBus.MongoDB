@@ -33,8 +33,6 @@ namespace NServiceBus.MongoDB.TimeoutPersister
     using System.Diagnostics.Contracts;
     using System.Linq;
 
-    using global::MongoDB.Bson.Serialization.Attributes;
-    using global::MongoDB.Bson.Serialization.Options;
     using global::MongoDB.Driver;
     using global::MongoDB.Driver.Builders;
     using global::MongoDB.Driver.Linq;
@@ -196,6 +194,47 @@ namespace NServiceBus.MongoDB.TimeoutPersister
             }
         }
 
+        /// <summary>
+        /// Reads timeout data.
+        /// </summary>
+        /// <param name="timeoutId">The timeout id to read.</param>
+        /// <returns>
+        /// <see cref="T:NServiceBus.Timeout.Core.TimeoutData"/> of the timeout if it was found. <c>null</c> otherwise.
+        /// </returns>
+        public Timeout.Core.TimeoutData Peek(string timeoutId)
+        {
+            var collection = this.mongoDatabase.GetCollection<TimeoutData>(TimeoutDataName);
+            var data = collection.AsQueryable().SingleOrDefault(e => e.Id == timeoutId);
+            if (data != null)
+            {
+                return new Timeout.Core.TimeoutData()
+                {
+                    Id = data.Id,
+                    Destination = data.Destination,
+                    SagaId = data.SagaId,
+                    State = data.State,
+                    Time = data.Time,
+                    Headers = data.Headers,
+                    OwningTimeoutManager = data.OwningTimeoutManager
+                };
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// The IPersistTimeoutsV2 implementation of the TryRemove method
+        /// </summary>
+        /// <param name="timeoutId">The timeout id to remove.</param>
+        /// <returns>
+        /// <c>true</c> it the timeout was successfully removed.
+        /// </returns>
+        public bool TryRemove(string timeoutId)
+        {
+            Timeout.Core.TimeoutData timeoutData;
+            return this.TryRemove(timeoutId, out timeoutData);
+        }
+
         private void EnsureTimeoutIndexes()
         {
             var collection = this.mongoDatabase.GetCollection<TimeoutData>(TimeoutDataName);
@@ -218,33 +257,6 @@ namespace NServiceBus.MongoDB.TimeoutPersister
         private void ObjectInvariants()
         {
             Contract.Invariant(this.mongoDatabase != null);
-        }
-
-        public Timeout.Core.TimeoutData Peek(string timeoutId)
-        {
-            var collection = this.mongoDatabase.GetCollection<TimeoutData>(TimeoutDataName);
-            var data = collection.AsQueryable().SingleOrDefault(e => e.Id == timeoutId);
-            if (data != null)
-            {
-                return new Timeout.Core.TimeoutData()
-                {
-                    Id = data.Id,
-                    Destination = data.Destination,
-                    SagaId = data.SagaId,
-                    State = data.State,
-                    Time = data.Time,
-                    Headers = data.Headers,
-                    OwningTimeoutManager = data.OwningTimeoutManager
-                };
-            }
-
-            return null;
-        }
-
-        public bool TryRemove(string timeoutId)
-        {
-            Timeout.Core.TimeoutData timeoutData;
-            return this.TryRemove(timeoutId, out timeoutData);
         }
     }
 }
