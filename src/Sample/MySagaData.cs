@@ -29,7 +29,7 @@
 namespace Sample
 {
     using NServiceBus.MongoDB;
-    using NServiceBus.Saga;
+    using NServiceBus.Sagas;
 
     /// <summary>
     /// The my saga data.

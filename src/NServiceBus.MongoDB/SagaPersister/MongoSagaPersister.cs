@@ -31,13 +31,17 @@ namespace NServiceBus.MongoDB.SagaPersister
     using System;
     using System.Collections.Generic;
     using System.Diagnostics.Contracts;
+    using System.Threading.Tasks;
 
     using global::MongoDB.Bson;
     using global::MongoDB.Driver;
     using global::MongoDB.Driver.Builders;
+
+    using NServiceBus.Extensibility;
     using NServiceBus.MongoDB.Extensions;
     using NServiceBus.MongoDB.Internals;
-    using NServiceBus.Saga;
+    using NServiceBus.Persistence;
+    using NServiceBus.Sagas;
 
     /// <summary>
     /// The Mongo saga persister.
@@ -199,6 +203,35 @@ namespace NServiceBus.MongoDB.SagaPersister
                     string.Format(
                         "Unable to create unique index on {0}: {1}", saga.GetType().Name, uniqueProperty.Key));
             }
+        }
+
+        public Task Save(
+            IContainSagaData sagaData,
+            SagaCorrelationProperty correlationProperty,
+            SynchronizedStorageSession session,
+            ContextBag context)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task Update(IContainSagaData sagaData, SynchronizedStorageSession session, ContextBag context)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<TSagaData> Get<TSagaData>(Guid sagaId, SynchronizedStorageSession session, ContextBag context) where TSagaData : IContainSagaData
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<TSagaData> Get<TSagaData>(string propertyName, object propertyValue, SynchronizedStorageSession session, ContextBag context) where TSagaData : IContainSagaData
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task Complete(IContainSagaData sagaData, SynchronizedStorageSession session, ContextBag context)
+        {
+            throw new NotImplementedException();
         }
     }
 }

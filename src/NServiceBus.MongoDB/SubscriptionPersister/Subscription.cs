@@ -46,7 +46,7 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
             this.Id = string.Empty;
             this.DocumentVersion = 0;
             this.MessageType = new MessageType(typeof(object));
-            this.Clients = new List<Address>();
+            this.Clients = new List<SubscriptionClient>();
         }
 
         /// <summary>
@@ -55,17 +55,13 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
         /// <param name="messageType">
         /// The message type.
         /// </param>
-        /// <param name="clients">
-        /// The clients.
-        /// </param>
-        public Subscription(MessageType messageType, IEnumerable<Address> clients)
+        public Subscription(MessageType messageType)
         {
-            Contract.Requires<ArgumentNullException>(messageType != null, "messageType != null");
-            Contract.Requires<ArgumentNullException>(clients != null, "clients != null");
+            Contract.Requires(messageType != null, "messageType != null");
 
             this.Id = FormatId(messageType);
             this.MessageType = messageType;
-            this.Clients = clients.ToList();
+            this.Clients = new List<SubscriptionClient>();
         }
 
         /// <summary>
@@ -86,7 +82,7 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
         /// <summary>
         /// Gets or sets the clients.
         /// </summary>
-        public List<Address> Clients { get; set; }
+        public List<SubscriptionClient> Clients { get; set; }
 
         /// <summary>
         /// The format id.

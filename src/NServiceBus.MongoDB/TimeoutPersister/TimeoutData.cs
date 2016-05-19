@@ -41,7 +41,7 @@ namespace NServiceBus.MongoDB.TimeoutPersister
         /// <summary>
         /// Gets or sets the destination.
         /// </summary>
-        public Address Destination { get; set; }
+        public string Destination { get; set; }
 
         /// <summary>
         /// Gets or sets the saga id.

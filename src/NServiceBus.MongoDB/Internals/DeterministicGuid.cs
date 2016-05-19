@@ -33,6 +33,9 @@ namespace NServiceBus.MongoDB.Internals
     using System.Security.Cryptography;
     using System.Text;
 
+    /// <summary>
+    /// This was borrowed from NServiceBus/src/NServiceBus.Core/Utils/DeterministicGuid.cs
+    /// </summary>
     internal static class DeterministicGuid
     {
         public static Guid Create(params object[] data)

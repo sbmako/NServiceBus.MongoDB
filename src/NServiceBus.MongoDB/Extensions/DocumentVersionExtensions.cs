@@ -37,7 +37,6 @@ namespace NServiceBus.MongoDB.Extensions
 
     using NServiceBus.MongoDB.Internals;
     using NServiceBus.MongoDB.SubscriptionPersister;
-    using NServiceBus.Saga;
 
     internal static class DocumentVersionExtensions
     {

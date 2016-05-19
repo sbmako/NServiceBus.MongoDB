@@ -32,10 +32,12 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
     using System.Collections.Generic;
     using System.Diagnostics.Contracts;
     using System.Linq;
+    using System.Threading.Tasks;
 
     using global::MongoDB.Driver;
     using global::MongoDB.Driver.Builders;
 
+    using NServiceBus.Extensibility;
     using NServiceBus.MongoDB.Extensions;
     using NServiceBus.MongoDB.Internals;
     using NServiceBus.Unicast.Subscriptions;
@@ -71,53 +73,35 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
         }
 
         /// <summary>
-        /// The subscribe.
+        /// Subscribes the given client to messages of a given type.
         /// </summary>
-        /// <param name="client">
-        /// The client.
-        /// </param>
-        /// <param name="messageTypes">
-        /// The message types.
-        /// </param>
-        void ISubscriptionStorage.Subscribe(Address client, IEnumerable<MessageType> messageTypes)
+        public Task Subscribe(Subscriber subscriber, MessageType messageType, ContextBag context)
         {
-            var messageTypeLookup = messageTypes.AssumedNotNull().ToDictionary(Subscription.FormatId);
+            //// note: taken from NServiceBus.RavenDB persistence: When the subscriber is running V6 and UseLegacyMessageDrivenSubscriptionMode is enabled at the subscriber the 'subcriber.Endpoint' value is null
+            var endpoint = subscriber.Endpoint != null ? subscriber.Endpoint.ToString() : subscriber.TransportAddress.Split('@').First();
+            var subscriptionClient = new SubscriptionClient { TransportAddress = subscriber.TransportAddress, Endpoint = endpoint };
 
-            var existingSubscriptions = this.GetSubscriptions(messageTypeLookup.Values).ToDictionary(m => m.Id);
-            var newSubscriptions = new List<Subscription>();
+            var messageTypeLookup = Subscription.FormatId(messageType.AssumedNotNull());
+
+            var existingSubscription = this.GetSubscription(messageTypeLookup);
 
             //// TODO: section needs to be refactored/simplified
-            messageTypeLookup.ToList().ForEach(
-                mt =>
-                    {
-                        if (!existingSubscriptions.ContainsKey(mt.Key))
-                        {
-                            newSubscriptions.Add(new Subscription(mt.Value, new List<Address>() { client }));
-                            return;
-                        }
-
-                        var existing = existingSubscriptions[mt.Key];
-
-                        if (existing.Clients.All(c => c != client))
-                        {
-                            existing.Clients.Add(client);
-                        }
-                    });
+            
 
             var collection = this.mongoDatabase.GetCollection(SubscriptionName).AssumedNotNull();
-            existingSubscriptions.Values.ToList().ForEach(
+            existingSubscription.Values.ToList().ForEach(
                 s =>
+                {
+                    var query = s.MongoUpdateQuery();
+                    var update = s.MongoUpdate();
+                    var updateResult = collection.Update(query, update, UpdateFlags.None);
+                    if (!updateResult.UpdatedExisting)
                     {
-                        var query = s.MongoUpdateQuery();
-                        var update = s.MongoUpdate();
-                        var updateResult = collection.Update(query, update, UpdateFlags.None);
-                        if (!updateResult.UpdatedExisting)
-                        {
-                            throw new InvalidOperationException(
-                                string.Format("Unable to update subscription with id {0}", s.Id));
-                        }
-                    });
-            
+                        throw new InvalidOperationException(
+                            string.Format("Unable to update subscription with id {0}", s.Id));
+                    }
+                });
+
             if (!newSubscriptions.Any())
             {
                 return;
@@ -131,15 +115,9 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
         }
 
         /// <summary>
-        /// The unsubscribe.
+        /// Unsubscribes the given client from messages of given type.
         /// </summary>
-        /// <param name="client">
-        /// The client.
-        /// </param>
-        /// <param name="messageTypes">
-        /// The message types.
-        /// </param>
-        void ISubscriptionStorage.Unsubscribe(Address client, IEnumerable<MessageType> messageTypes)
+        public Task Unsubscribe(Subscriber subscriber, MessageType messageType, ContextBag context)
         {
             var queries =
                 messageTypes.AssumedNotNull()
@@ -155,6 +133,14 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
                 throw new InvalidOperationException(
                     string.Format("Unable to unsubscribe {0} from one of its subscriptions", client));
             }
+        }
+
+        /// <summary>
+        /// Returns a list of addresses for subscribers currently subscribed to the given message type.
+        /// </summary>
+        public Task<IEnumerable<Subscriber>> GetSubscriberAddressesForMessage(IEnumerable<MessageType> messageTypes, ContextBag context)
+        {
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -182,6 +168,19 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
             var ids = messageTypes.Select(Subscription.FormatId);
             var query = Query<Subscription>.In(p => p.Id, ids);
             var result = collection.FindAs<Subscription>(query);
+
+            return result.AssumedNotNull();
+        }
+
+        internal Subscription GetSubscription(string messageTypeLookup)
+        {
+            Contract.Requires(!string.IsNullOrWhiteSpace(messageTypeLookup));
+            Contract.Ensures(Contract.Result<Subscription>() != null);
+
+            var collection = this.mongoDatabase.GetCollection(SubscriptionName).AssumedNotNull();
+
+            var query = Query<Subscription>.EQ(p => p.Id, messageTypeLookup);
+            var result = collection.FindOneAs<Subscription>(query);
 
             return result.AssumedNotNull();
         }

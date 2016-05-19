@@ -28,12 +28,6 @@
 
 namespace NServiceBus.MongoDB
 {
-    using System;
-
-    using global::MongoDB.Bson;
-    using global::MongoDB.Bson.Serialization;
-    using global::MongoDB.Bson.Serialization.Serializers;
-
     using NServiceBus.Features;
     using NServiceBus.MongoDB.Internals;
     using NServiceBus.MongoDB.SagaPersister;

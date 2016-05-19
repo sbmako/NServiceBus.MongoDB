@@ -32,18 +32,20 @@ namespace NServiceBus.MongoDB.TimeoutPersister
     using System.Collections.Generic;
     using System.Diagnostics.Contracts;
     using System.Linq;
+    using System.Threading.Tasks;
 
     using global::MongoDB.Driver;
     using global::MongoDB.Driver.Builders;
     using global::MongoDB.Driver.Linq;
 
+    using NServiceBus.Extensibility;
     using NServiceBus.MongoDB.Internals;
     using NServiceBus.Timeout.Core;
 
     /// <summary>
     /// The mongo timeout persister.
     /// </summary>
-    public class MongoTimeoutPersister : IPersistTimeouts, IPersistTimeoutsV2
+    public class MongoTimeoutPersister : IPersistTimeouts
     {
         internal static readonly string TimeoutDataName = typeof(TimeoutData).Name;
 
@@ -257,6 +259,26 @@ namespace NServiceBus.MongoDB.TimeoutPersister
         private void ObjectInvariants()
         {
             Contract.Invariant(this.mongoDatabase != null);
+        }
+
+        public Task Add(Timeout.Core.TimeoutData timeout, ContextBag context)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> TryRemove(string timeoutId, ContextBag context)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Timeout.Core.TimeoutData> Peek(string timeoutId, ContextBag context)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task RemoveTimeoutBy(Guid sagaId, ContextBag context)
+        {
+            throw new NotImplementedException();
         }
     }
 }
