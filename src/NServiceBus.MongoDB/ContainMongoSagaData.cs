@@ -28,8 +28,6 @@
 
 namespace NServiceBus.MongoDB
 {
-    using NServiceBus.Saga;
-
     /// <summary>
     /// Base Helper class for MongoDB saga data
     /// </summary>

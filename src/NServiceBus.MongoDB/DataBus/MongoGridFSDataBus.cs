@@ -31,6 +31,8 @@ namespace NServiceBus.MongoDB.DataBus
     using System;
     using System.Diagnostics.Contracts;
     using System.IO;
+    using System.Threading.Tasks;
+
     using global::MongoDB.Driver.GridFS;
     using NServiceBus.DataBus;
     using NServiceBus.MongoDB.Internals;
@@ -63,11 +65,11 @@ namespace NServiceBus.MongoDB.DataBus
         /// <returns>
         /// The <see cref="Stream"/>.
         /// </returns>
-        public Stream Get(string key)
+        public Task<Stream> Get(string key)
         {
             Contract.Ensures(Contract.Result<Stream>() != null);
 
-            return this.gridFS.OpenRead(key).AssumedNotNull();
+            return Task.FromResult(this.gridFS.OpenRead(key).AssumedNotNull() as Stream);
         }
 
         /// <summary>
@@ -82,21 +84,25 @@ namespace NServiceBus.MongoDB.DataBus
         /// <returns>
         /// The file key.
         /// </returns>
-        public string Put(Stream stream, TimeSpan timeToBeReceived)
+        public Task<string> Put(Stream stream, TimeSpan timeToBeReceived)
         {
             Contract.Ensures(!string.IsNullOrWhiteSpace(Contract.Result<string>()));
 
             var key = Guid.NewGuid().ToString();
             this.gridFS.Upload(stream, key);
 
-            return key.AssumedNotNullOrWhiteSpace();
+            return Task.FromResult(key.AssumedNotNullOrWhiteSpace());
         }
 
         /// <summary>
         /// The start.
         /// </summary>
-        public void Start()
+        /// <returns>
+        /// The <see cref="Task"/>.
+        /// </returns>
+        public Task Start()
         {
+            return Task.FromResult(0);
         }
 
         [ContractInvariantMethod]

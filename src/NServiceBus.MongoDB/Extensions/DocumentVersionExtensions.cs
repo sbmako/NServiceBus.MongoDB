@@ -37,7 +37,6 @@ namespace NServiceBus.MongoDB.Extensions
 
     using NServiceBus.MongoDB.Internals;
     using NServiceBus.MongoDB.SubscriptionPersister;
-    using NServiceBus.Saga;
 
     internal static class DocumentVersionExtensions
     {
@@ -88,7 +87,10 @@ namespace NServiceBus.MongoDB.Extensions
             Contract.Requires(subscription != null);
             Contract.Ensures(Contract.Result<IMongoQuery>() != null);
 
-            return Query<Subscription>.EQ(s => s.Id, subscription.Id).AssumedNotNull();
+            return
+                Query.And(
+                    Query<Subscription>.EQ(s => s.Id, subscription.Id),
+                    Query<Subscription>.EQ(s => s.DocumentVersion, subscription.DocumentVersion)).AssumedNotNull();
         }
 
         public static IMongoUpdate MongoUpdate(this Subscription subscription)
@@ -97,18 +99,6 @@ namespace NServiceBus.MongoDB.Extensions
             Contract.Ensures(Contract.Result<IMongoUpdate>() != null);
 
             return Update.Replace(subscription).AssumedNotNull();
-        }
-
-        public static int ComputeETag<T>(this T sagaData) where T : IContainSagaData
-        {
-            Contract.Requires(sagaData != null);
-
-            var bsonDocument = sagaData.ToBsonDocument();
-
-            bsonDocument.Remove(MongoPersistenceConstants.VersionPropertyName);
-            bsonDocument.Remove(MongoPersistenceConstants.ETagPropertyName);
-
-            return bsonDocument.GetHashCode();
         }
     }
 }

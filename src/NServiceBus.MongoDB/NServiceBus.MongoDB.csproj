@@ -185,8 +185,8 @@
       <HintPath>..\packages\mongocsharpdriver.2.2.3\lib\net45\MongoDB.Driver.Legacy.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="NServiceBus.Core, Version=5.0.0.0, Culture=neutral, PublicKeyToken=9fc386479f8a226c, processorArchitecture=MSIL">
-      <HintPath>..\packages\NServiceBus.5.2.14\lib\net45\NServiceBus.Core.dll</HintPath>
+    <Reference Include="NServiceBus.Core, Version=6.0.0.0, Culture=neutral, PublicKeyToken=9fc386479f8a226c, processorArchitecture=MSIL">
+      <HintPath>..\packages\NServiceBus.6.0.0-beta0002\lib\net452\NServiceBus.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -221,6 +221,7 @@
     <Compile Include="SubscriptionPersister\MongoSubscriptionPersister.cs" />
     <Compile Include="SubscriptionPersister\MongoSubscriptionStorage.cs" />
     <Compile Include="SubscriptionPersister\Subscription.cs" />
+    <Compile Include="SubscriptionPersister\SubscriptionClient.cs" />
     <Compile Include="TimeoutPersister\TimeoutClassMaps.cs" />
     <Compile Include="TimeoutPersister\MongoTimeoutStorage.cs" />
     <Compile Include="TimeoutPersister\MongoTimeoutPersister.cs" />
