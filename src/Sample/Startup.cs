@@ -38,7 +38,7 @@ namespace Sample
     /// <summary>
     /// The startup.
     /// </summary>
-    public class Startup : IWantToRunWhenConfigurationIsComplete
+    public class Startup : IWantToRunWhenConfigurationIsComplete, Iwanttorunwhencon
     {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(Startup));
 

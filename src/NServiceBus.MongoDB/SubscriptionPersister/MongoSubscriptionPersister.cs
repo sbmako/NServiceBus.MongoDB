@@ -54,7 +54,6 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MongoSubscriptionPersister"/> class. 
-        /// Initializes a new instance of the <see cref="MongoSubscriptionStorage"/> class.
         /// </summary>
         /// <param name="mongoFactory">
         /// The MongoDB factory.
@@ -70,6 +69,7 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
         /// </summary>
         public void Init()
         {
+            // does not need to initialize anything
         }
 
         /// <summary>
@@ -82,36 +82,37 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
             var subscriptionClient = new SubscriptionClient { TransportAddress = subscriber.TransportAddress, Endpoint = endpoint };
 
             var messageTypeLookup = Subscription.FormatId(messageType.AssumedNotNull());
-
-            var existingSubscription = this.GetSubscription(messageTypeLookup);
-
-            //// TODO: section needs to be refactored/simplified
-            
+            var existingSubscription = this.GetSubscription(messageTypeLookup).ToArray();
 
             var collection = this.mongoDatabase.GetCollection(SubscriptionName).AssumedNotNull();
-            existingSubscription.Values.ToList().ForEach(
-                s =>
+
+            if (!existingSubscription.Any())
+            {
+                var newSubscription = new Subscription(messageType);
+                newSubscription.Clients.Add(subscriptionClient);
+
+                var insertResult = collection.Insert(newSubscription);
+                if (insertResult.HasLastErrorMessage)
                 {
-                    var query = s.MongoUpdateQuery();
-                    var update = s.MongoUpdate();
-                    var updateResult = collection.Update(query, update, UpdateFlags.None);
-                    if (!updateResult.UpdatedExisting)
-                    {
-                        throw new InvalidOperationException(
-                            string.Format("Unable to update subscription with id {0}", s.Id));
-                    }
-                });
+                    throw new InvalidOperationException(
+                        $"Unable to save {subscriptionClient.TransportAddress} subscription because: {insertResult.LastErrorMessage}");
+                }
 
-            if (!newSubscriptions.Any())
+                return Task.FromResult(0);
+            }
+            
+            var theSubscription = existingSubscription.First();
+
+            var query = theSubscription.MongoUpdateQuery();
+            var update = theSubscription.MongoUpdate();
+            var updateResult = collection.Update(query, update, UpdateFlags.None);
+            if (!updateResult.UpdatedExisting)
             {
-                return;
+                throw new InvalidOperationException(
+                    $"Unable to update subscription with id {existingSubscription.First().Id}");
             }
 
-            var insertResult = collection.InsertBatch(newSubscriptions);
-            if (insertResult.Any(r => r.HasLastErrorMessage))
-            {
-                throw new InvalidOperationException(string.Format("Unable to save {0} subscription", client));
-            }
+            return Task.FromResult(0);
         }
 
         /// <summary>
@@ -119,20 +120,22 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
         /// </summary>
         public Task Unsubscribe(Subscriber subscriber, MessageType messageType, ContextBag context)
         {
-            var queries =
-                messageTypes.AssumedNotNull()
-                            .Select(mt => Query<Subscription>.EQ(s => s.Id, Subscription.FormatId(mt)))
-                            .ToList();
-            var update = Update<Subscription>.Pull(subscription => subscription.Clients, client);
+            var query = Query<Subscription>.EQ(s => s.Id, Subscription.FormatId(messageType));
+
+            var update = Update<Subscription>.Pull(
+                subscription => subscription.Clients,
+                new SubscriptionClient(subscriber.TransportAddress, subscriber.Endpoint.ToString()));
 
             var collection = this.mongoDatabase.GetCollection(SubscriptionName).AssumedNotNull();
-            var results = queries.Select(q => collection.Update(q, update)).Where(result => result.HasLastErrorMessage);
+            var result = collection.Update(query, update);
 
-            if (results.Any())
+            if (result.HasLastErrorMessage)
             {
                 throw new InvalidOperationException(
-                    string.Format("Unable to unsubscribe {0} from one of its subscriptions", client));
+                    $"Unable to unsubscribe {subscriber.TransportAddress} from one of its subscriptions");
             }
+
+            return Task.FromResult(0);
         }
 
         /// <summary>
@@ -141,21 +144,6 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
         public Task<IEnumerable<Subscriber>> GetSubscriberAddressesForMessage(IEnumerable<MessageType> messageTypes, ContextBag context)
         {
             throw new NotImplementedException();
-        }
-
-        /// <summary>
-        /// The get subscriber addresses for message.
-        /// </summary>
-        /// <param name="messageTypes">
-        /// The message types.
-        /// </param>
-        /// <returns>
-        /// The <see cref="IEnumerable{T}"/>.
-        /// </returns>
-        IEnumerable<Address> ISubscriptionStorage.GetSubscriberAddressesForMessage(IEnumerable<MessageType> messageTypes)
-        {
-            var subscriptions = this.GetSubscriptions(messageTypes.AssumedNotNull());
-            return subscriptions.SelectMany(s => s.Clients).Distinct().ToArray();
         }
 
         internal IEnumerable<Subscription> GetSubscriptions(IEnumerable<MessageType> messageTypes)
@@ -172,17 +160,17 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
             return result.AssumedNotNull();
         }
 
-        internal Subscription GetSubscription(string messageTypeLookup)
+        internal IEnumerable<Subscription> GetSubscription(string messageTypeLookup)
         {
             Contract.Requires(!string.IsNullOrWhiteSpace(messageTypeLookup));
-            Contract.Ensures(Contract.Result<Subscription>() != null);
+            Contract.Ensures(Contract.Result<IEnumerable<Subscription>>() != null);
 
             var collection = this.mongoDatabase.GetCollection(SubscriptionName).AssumedNotNull();
 
             var query = Query<Subscription>.EQ(p => p.Id, messageTypeLookup);
-            var result = collection.FindOneAs<Subscription>(query);
+            var subscription = collection.FindOneAs<Subscription>(query);
 
-            return result.AssumedNotNull();
+            return subscription == null ? new List<Subscription>() : new List<Subscription>() { subscription };
         }
 
         [ContractInvariantMethod]

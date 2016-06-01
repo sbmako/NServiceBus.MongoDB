@@ -74,23 +74,22 @@ namespace NServiceBus.MongoDB.SagaPersister
 
             if (!(saga is IHaveDocumentVersion))
             {
-                throw new InvalidOperationException(
-                    string.Format("Saga type {0} does not implement IHaveDocumentVersion", sagaTypeName));
+                throw new InvalidOperationException($"Saga type {sagaTypeName} does not implement IHaveDocumentVersion");
             }
 
-            var uniqueProperty = UniqueAttribute.GetUniqueProperty(saga);
-            if (uniqueProperty.HasValue)
-            {
-                this.EnsureUniqueIndex(saga, uniqueProperty.Value);
-                CheckUniqueProperty(saga, uniqueProperty.Value);
-            }
+            ////var uniqueProperty = UniqueAttribute.GetUniqueProperty(saga);
+            ////if (uniqueProperty.HasValue)
+            ////{
+            ////    this.EnsureUniqueIndex(saga, uniqueProperty.Value);
+            ////    CheckUniqueProperty(saga, uniqueProperty.Value);
+            ////}
 
             var collection = this.mongoDatabase.GetCollection(sagaTypeName);
             var result = collection.Insert(saga);
 
             if (result.HasLastErrorMessage)
             {
-                throw new InvalidOperationException(string.Format("Unable to save with id {0}", saga.Id));
+                throw new InvalidOperationException($"Unable to save with id {saga.Id}");
             }
         }
 
@@ -107,7 +106,7 @@ namespace NServiceBus.MongoDB.SagaPersister
             var result = collection.Update(query, update, UpdateFlags.None);
             if (!result.UpdatedExisting)
             {
-                throw new InvalidOperationException(string.Format("Unable to update saga with id {0}", saga.Id));
+                throw new InvalidOperationException($"Unable to update saga with id {saga.Id}");
             }
         }
 
@@ -163,8 +162,7 @@ namespace NServiceBus.MongoDB.SagaPersister
 
             if (result.HasLastErrorMessage)
             {
-                throw new InvalidOperationException(
-                    string.Format("Unable to find and remove saga with id {0}", saga.Id));
+                throw new InvalidOperationException($"Unable to find and remove saga with id {saga.Id}");
             }
         }
 
@@ -174,7 +172,9 @@ namespace NServiceBus.MongoDB.SagaPersister
 
             if (uniqueProperty.Value == null)
             {
-                throw new ArgumentNullException("uniqueProperty", string.Format("Property {0} is marked with the [Unique] attribute on {1} but contains a null propertyValue.", uniqueProperty.Key, sagaData.GetType().Name));
+                throw new ArgumentNullException(
+                    "uniqueProperty",
+                    $"Property {uniqueProperty.Key} is marked with the [Unique] attribute on {sagaData.GetType().Name} but contains a null propertyValue.");
             }
         }
 
@@ -200,8 +200,7 @@ namespace NServiceBus.MongoDB.SagaPersister
             if (result.HasLastErrorMessage)
             {
                 throw new InvalidOperationException(
-                    string.Format(
-                        "Unable to create unique index on {0}: {1}", saga.GetType().Name, uniqueProperty.Key));
+                    $"Unable to create unique index on {saga.GetType().Name}: {uniqueProperty.Key}");
             }
         }
 

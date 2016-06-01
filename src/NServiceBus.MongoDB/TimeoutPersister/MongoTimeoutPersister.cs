@@ -237,6 +237,26 @@ namespace NServiceBus.MongoDB.TimeoutPersister
             return this.TryRemove(timeoutId, out timeoutData);
         }
 
+        public Task Add(Timeout.Core.TimeoutData timeout, ContextBag context)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> TryRemove(string timeoutId, ContextBag context)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Timeout.Core.TimeoutData> Peek(string timeoutId, ContextBag context)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task RemoveTimeoutBy(Guid sagaId, ContextBag context)
+        {
+            throw new NotImplementedException();
+        }
+
         private void EnsureTimeoutIndexes()
         {
             var collection = this.mongoDatabase.GetCollection<TimeoutData>(TimeoutDataName);
@@ -259,26 +279,6 @@ namespace NServiceBus.MongoDB.TimeoutPersister
         private void ObjectInvariants()
         {
             Contract.Invariant(this.mongoDatabase != null);
-        }
-
-        public Task Add(Timeout.Core.TimeoutData timeout, ContextBag context)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<bool> TryRemove(string timeoutId, ContextBag context)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<Timeout.Core.TimeoutData> Peek(string timeoutId, ContextBag context)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task RemoveTimeoutBy(Guid sagaId, ContextBag context)
-        {
-            throw new NotImplementedException();
         }
     }
 }
