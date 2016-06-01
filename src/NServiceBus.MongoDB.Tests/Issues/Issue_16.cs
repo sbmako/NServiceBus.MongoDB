@@ -32,7 +32,7 @@ namespace NServiceBus.MongoDB.Tests.Issues
     using NServiceBus.MongoDB.Internals;
     using NServiceBus.MongoDB.SagaPersister;
     using NServiceBus.MongoDB.Tests.TestingUtilities;
-    using NServiceBus.Saga;
+    using NServiceBus.Sagas;
 
     using Xunit;
 
@@ -65,7 +65,6 @@ namespace NServiceBus.MongoDB.Tests.Issues
 
     public sealed class DeviceCommandSagaState : IContainSagaData, IHaveDocumentVersion
     {
-        [Unique]
         public string SagaKey { get; set; }
 
         //IContainSagaData properties

@@ -31,7 +31,6 @@ namespace Sample
     using System;
     using NServiceBus;
     using NServiceBus.Logging;
-    using NServiceBus.Saga;
 
     /// <summary>
     /// The my saga.

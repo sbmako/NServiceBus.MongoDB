@@ -54,8 +54,8 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
         [ContractInvariantMethod]
         private void ObjectInvariants()
         {
-            Contract.Invariant(!string.IsNullOrEmpty(this.TransportAddress));
-            Contract.Invariant(!string.IsNullOrEmpty(this.Endpoint));
+            Contract.Invariant(this.TransportAddress != null);
+            Contract.Invariant(this.Endpoint != null);
         }
     }
 }

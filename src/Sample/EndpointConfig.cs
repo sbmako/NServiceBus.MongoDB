@@ -37,7 +37,7 @@ namespace Sample
     /// </summary>
     public class EndpointConfig : IConfigureThisEndpoint, AsA_Server
     {
-        public void Customize(BusConfiguration configuration)
+        public void Customize(EndpointConfiguration configuration)
         {
             configuration.UseSerialization<JsonSerializer>();
             configuration.UsePersistence<MongoDBPersistence>()

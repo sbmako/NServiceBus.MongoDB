@@ -41,7 +41,6 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
         /// </summary>
         public MongoSubscriptionStorage()
         {
-            this.DependsOn<StorageDrivenPublishing>();
             this.DependsOn<MongoDocumentStore>();
         }
 

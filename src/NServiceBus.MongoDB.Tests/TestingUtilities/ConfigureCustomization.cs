@@ -43,9 +43,9 @@ namespace NServiceBus.MongoDB.Tests.TestingUtilities
             fixture.Register(() => settings);
             fixture.Register(() => config);
 
-            fixture.Customize<Address>(c => c.FromFactory(new MethodInvoker(new GreedyConstructorQuery())));
-            fixture.Customize<TimeoutData>(
-                c => c.With(t => t.OwningTimeoutManager, config.GetSettings().EndpointName()));
+            ////fixture.Customize<Address>(c => c.FromFactory(new MethodInvoker(new GreedyConstructorQuery())));
+            ////fixture.Customize<TimeoutData>(
+            ////    c => c.With(t => t.OwningTimeoutManager, config.GetSettings().EndpointName()));
         }
     }
 }

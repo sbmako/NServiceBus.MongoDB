@@ -35,7 +35,6 @@ namespace NServiceBus.MongoDB.Tests.TestingUtilities
 
     using NServiceBus.MongoDB.Internals;
     using NServiceBus.MongoDB.TimeoutPersister;
-    using NServiceBus.Saga;
 
     internal static class MongoDatabaseFactoryExtensions
     {
