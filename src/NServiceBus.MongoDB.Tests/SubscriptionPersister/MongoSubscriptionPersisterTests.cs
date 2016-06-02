@@ -57,12 +57,11 @@ namespace NServiceBus.MongoDB.Tests.SubscriptionPersister
             MongoSubscriptionPersister storage,
             MongoDatabaseFactory factory,
             Subscriber subscriber,
+            ContextBag context,
             string messageTypeString)
         {
             var sut = storage as ISubscriptionStorage;
             var messageType = new MessageType(messageTypeString, "1.0.0.0");
-
-            var context = new ContextBag();
 
             sut.Subscribe(subscriber, messageType, context);
 
@@ -71,87 +70,96 @@ namespace NServiceBus.MongoDB.Tests.SubscriptionPersister
 
             var subscription = subscriptions.First();
             subscription.MessageType.Should().Be(messageType);
-            subscription.Clients.Should().HaveCount(1);
+            subscription.Subscribers.Should().HaveCount(1);
 
-            var subClient = subscription.Clients.First();
-            subClient.TransportAddress.Should().Be(subscriber.TransportAddress);
-            subClient.Endpoint.Should().Be(subscriber.Endpoint.ToString());
+            var firstSubscriber = subscription.Subscribers.First();
+            firstSubscriber.TransportAddress.Should().Be(subscriber.TransportAddress);
+            firstSubscriber.Endpoint.ToString().Should().Be(subscriber.Endpoint.ToString());
         }
 
-        ////[Theory, IntegrationTest]
-        ////[AutoDatabase]
-        ////public void SameClientSubscribesTwiceShouldOnlyCreateOneSubscribtion(
-        ////    MongoSubscriptionPersister storage,
-        ////    MongoDatabaseFactory factory,
-        ////    string messageTypeString)
-        ////{
-        ////    var client = new Address("testqueue.publisher", "localhost");
-        ////    var sut = storage as ISubscriptionStorage;
-        ////    var messageTypes = new List<MessageType>() { new MessageType(messageTypeString, "1.0.0.0") };
+        [Theory, IntegrationTest]
+        [AutoDatabase]
+        public void SameClientSubscribesTwiceShouldOnlyCreateOneSubscribtion(
+            MongoSubscriptionPersister storage,
+            MongoDatabaseFactory factory,
+            Subscriber subscriber,
+            ContextBag context,
+            string messageTypeString)
+        {
+            var sut = storage as ISubscriptionStorage;
+            var messageType = new MessageType(messageTypeString, "1.0.0.0");
 
-        ////    sut.Subscribe(client, messageTypes);
-        ////    sut.Subscribe(client, messageTypes);
+            sut.Subscribe(subscriber, messageType, context);
+            sut.Subscribe(subscriber, messageType, context);
 
-        ////    var subscriptions = storage.GetSubscriptions(messageTypes).ToList();
-        ////    subscriptions.Should().HaveCount(messageTypes.Count);
+            var subscriptions = storage.GetSubscription(Subscription.FormatId(messageType.AssumedNotNull())).ToList();
+            subscriptions.Should().HaveCount(1);
 
-        ////    var subscription = subscriptions.First();
-        ////    subscription.MessageType.Should().Be(messageTypes.First());
-        ////    subscription.Clients.Should().HaveCount(1);
-        ////    subscription.Clients.First().Should().Be(client);
-        ////}
+            var subscription = subscriptions.First();
+            subscription.MessageType.Should().Be(messageType);
+            subscription.Subscribers.Should().HaveCount(1);
 
-        ////[Theory, IntegrationTest]
-        ////[AutoDatabase]
-        ////public void SubscribeTwoMessageTypesShouldCreateTwoSubscriptions(
-        ////    MongoSubscriptionPersister storage,
-        ////    MongoDatabaseFactory factory,
-        ////    Address client,
-        ////    string messageTypeString1,
-        ////    string messageTypeString2)
-        ////{
-        ////    var sut = storage as ISubscriptionStorage;
-        ////    var messageTypes = new List<MessageType>()
-        ////                           {
-        ////                               new MessageType(messageTypeString1, "1.0.0.0"),
-        ////                               new MessageType(messageTypeString2, "1.0.0.0")
-        ////                           };
+            var firstSubscriber = subscription.Subscribers.First();
+            firstSubscriber.TransportAddress.Should().Be(subscriber.TransportAddress);
+            firstSubscriber.Endpoint.ToString().Should().Be(subscriber.Endpoint.ToString());
+        }
 
-        ////    sut.Subscribe(client, messageTypes);
+        [Theory, IntegrationTest]
+        [AutoDatabase]
+        public void SubscribeTwoMessageTypesShouldCreateTwoDifferentSubscriptions(
+            MongoSubscriptionPersister storage,
+            MongoDatabaseFactory factory,
+            Subscriber subscriber,
+            ContextBag context,
+            string messageTypeString1,
+            string messageTypeString2)
+        {
+            var sut = storage as ISubscriptionStorage;
+            var messageType1 = new MessageType(messageTypeString1, "1.0.0.0");
+            var messageType2 = new MessageType(messageTypeString2, "1.0.0.0");
 
-        ////    var subscriptions = storage.GetSubscriptions(messageTypes).ToList();
-        ////    subscriptions.Should().HaveCount(messageTypes.Count);
+            sut.Subscribe(subscriber, messageType1, context);
+            sut.Subscribe(subscriber, messageType2, context);
 
-        ////    subscriptions.ForEach(s =>
-        ////        {
-        ////            s.Clients.Should().HaveCount(1);
-        ////            s.Clients.First().Should().Be(client);
-        ////        });
-        ////}
+            var subscriptions = storage.GetSubscription(Subscription.FormatId(messageType1.AssumedNotNull())).ToList();
+            subscriptions.Should().HaveCount(1);
 
-        ////[Theory, IntegrationTest]
-        ////[AutoDatabase]
-        ////public void SubscribeTwoClientsOneMessageTypeShouldCreateOneSubscriptionWithMultipleAddresses(
-        ////    MongoSubscriptionPersister storage,
-        ////    MongoDatabaseFactory factory,
-        ////    Address client1,
-        ////    Address client2,
-        ////    string messageTypeString1)
-        ////{
-        ////    var sut = storage as ISubscriptionStorage;
-        ////    var messageTypes = new List<MessageType>()
-        ////                           {
-        ////                               new MessageType(messageTypeString1, "1.0.0.0"),
-        ////                           };
+            var subscription = subscriptions.First();
+            subscription.MessageType.Should().Be(messageType1);
+            subscription.Subscribers.Should().HaveCount(1);
 
-        ////    sut.Subscribe(client1, messageTypes);
-        ////    sut.Subscribe(client2, messageTypes);
 
-        ////    var clients = sut.GetSubscriberAddressesForMessage(messageTypes).ToList();
-        ////    clients.Should().HaveCount(2);
-        ////    clients.Should().ContainSingle(a => client1 == a);
-        ////    clients.Should().ContainSingle(a => client2 == a);
-        ////}
+            subscriptions = storage.GetSubscription(Subscription.FormatId(messageType2.AssumedNotNull())).ToList();
+            subscriptions.Should().HaveCount(1);
+
+            subscription = subscriptions.First();
+            subscription.MessageType.Should().Be(messageType2);
+            subscription.Subscribers.Should().HaveCount(1);
+        }
+
+        [Theory, IntegrationTest]
+        [AutoDatabase]
+        public void SubscribeTwoClientsOneMessageTypeShouldCreateOneSubscriptionWithMultipleAddresses(
+            MongoSubscriptionPersister storage,
+            MongoDatabaseFactory factory,
+            Subscriber subscriber1,
+            Subscriber subscriber2,
+            ContextBag context,
+            string messageTypeString)
+        {
+            var sut = storage as ISubscriptionStorage;
+            var messageType = new MessageType(messageTypeString, "1.0.0.0");
+
+            sut.Subscribe(subscriber1, messageType, context);
+            sut.Subscribe(subscriber2, messageType, context);
+
+            var subscribers =
+                sut.GetSubscriberAddressesForMessage(new List<MessageType> { messageType }, context).Result.ToList();
+            subscribers.Should().HaveCount(2);
+
+            subscribers.Should().ContainSingle(a => subscriber1.TransportAddress == a.TransportAddress);
+            subscribers.Should().ContainSingle(a => subscriber2.TransportAddress == a.TransportAddress);
+        }
 
         ////[Theory, IntegrationTest]
         ////[AutoDatabase]

@@ -33,6 +33,7 @@ namespace NServiceBus.MongoDB.Tests.TestingUtilities
 
     using global::MongoDB.Driver;
 
+    using NServiceBus.Extensibility;
     using NServiceBus.MongoDB.Internals;
     using NServiceBus.MongoDB.TimeoutPersister;
     using NServiceBus.Timeout.Core;
@@ -52,6 +53,7 @@ namespace NServiceBus.MongoDB.Tests.TestingUtilities
             fixture.Register(() => client);
             fixture.Register(() => clientAccessor);
             fixture.Register(() => databaseFactory);
+            fixture.Register(() => new ContextBag());
 
             fixture.Customize<TimeoutData>(
                 c => c.With(t => t.OwningTimeoutManager, "UnitTests").With(t => t.Time, DateTime.UtcNow));

@@ -40,6 +40,7 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
     using NServiceBus.Extensibility;
     using NServiceBus.MongoDB.Extensions;
     using NServiceBus.MongoDB.Internals;
+    using NServiceBus.Routing;
     using NServiceBus.Unicast.Subscriptions;
     using NServiceBus.Unicast.Subscriptions.MessageDrivenSubscriptions;
 
@@ -77,10 +78,6 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
         /// </summary>
         public Task Subscribe(Subscriber subscriber, MessageType messageType, ContextBag context)
         {
-            //// note: taken from NServiceBus.RavenDB persistence: When the subscriber is running V6 and UseLegacyMessageDrivenSubscriptionMode is enabled at the subscriber the 'subcriber.Endpoint' value is null
-            var endpoint = subscriber.Endpoint != null ? subscriber.Endpoint.ToString() : subscriber.TransportAddress.Split('@').First();
-            var subscriptionClient = new SubscriptionClient { TransportAddress = subscriber.TransportAddress, Endpoint = endpoint };
-
             var messageTypeLookup = Subscription.FormatId(messageType.AssumedNotNull());
             var existingSubscription = this.GetSubscription(messageTypeLookup).ToArray();
 
@@ -89,19 +86,28 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
             if (!existingSubscription.Any())
             {
                 var newSubscription = new Subscription(messageType);
-                newSubscription.Clients.Add(subscriptionClient);
+                newSubscription.Subscribers.Add(subscriber);
 
                 var insertResult = collection.Insert(newSubscription);
                 if (insertResult.HasLastErrorMessage)
                 {
                     throw new InvalidOperationException(
-                        $"Unable to save {subscriptionClient.TransportAddress} subscription because: {insertResult.LastErrorMessage}");
+                        $"Unable to save {subscriber.TransportAddress} subscription because: {insertResult.LastErrorMessage}");
                 }
 
                 return Task.FromResult(0);
             }
             
             var theSubscription = existingSubscription.First();
+
+            if (
+                theSubscription.Subscribers.Exists(
+                    c => c.TransportAddress == subscriber.TransportAddress && c.Endpoint == subscriber.Endpoint))
+            {
+                return Task.FromResult(0);
+            }
+
+            theSubscription.Subscribers.Add(subscriber);
 
             var query = theSubscription.MongoUpdateQuery();
             var update = theSubscription.MongoUpdate();
@@ -122,9 +128,7 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
         {
             var query = Query<Subscription>.EQ(s => s.Id, Subscription.FormatId(messageType));
 
-            var update = Update<Subscription>.Pull(
-                subscription => subscription.Clients,
-                new SubscriptionClient(subscriber.TransportAddress, subscriber.Endpoint.ToString()));
+            var update = Update<Subscription>.Pull(subscription => subscription.Subscribers, subscriber);
 
             var collection = this.mongoDatabase.GetCollection(SubscriptionName).AssumedNotNull();
             var result = collection.Update(query, update);
@@ -143,7 +147,9 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
         /// </summary>
         public Task<IEnumerable<Subscriber>> GetSubscriberAddressesForMessage(IEnumerable<MessageType> messageTypes, ContextBag context)
         {
-            throw new NotImplementedException();
+            var subscriptions = this.GetSubscriptions(messageTypes.AssumedNotNull());
+            var subscribers = subscriptions.SelectMany(s => s.Subscribers).Distinct();
+            return Task.FromResult(subscribers);
         }
 
         internal IEnumerable<Subscription> GetSubscriptions(IEnumerable<MessageType> messageTypes)
