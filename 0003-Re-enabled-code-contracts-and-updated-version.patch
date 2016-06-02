@@ -1,0 +1,104 @@
+From 0d8dc04e276dd1ed6416e5f34a75d7abf12504df Mon Sep 17 00:00:00 2001
+From: Carlos Sandoval <sbmako@gmail.com>
+Date: Mon, 29 Feb 2016 21:09:08 -0600
+Subject: [PATCH 3/3] Re enabled code contracts and updated version
+
+---
+ packaging/nuget/NServiceBus.MongoDB.nuspec                          | 4 ++--
+ src/NServiceBus.MongoDB.Acceptance.Tests/Properties/AssemblyInfo.cs | 4 ++--
+ src/NServiceBus.MongoDB.Tests/Properties/AssemblyInfo.cs            | 4 ++--
+ src/NServiceBus.MongoDB/NServiceBus.MongoDB.csproj                  | 2 +-
+ src/NServiceBus.MongoDB/Properties/AssemblyInfo.cs                  | 4 ++--
+ src/Sample/Properties/AssemblyInfo.cs                               | 4 ++--
+ 6 files changed, 11 insertions(+), 11 deletions(-)
+
+diff --git a/packaging/nuget/NServiceBus.MongoDB.nuspec b/packaging/nuget/NServiceBus.MongoDB.nuspec
+index 29f09ec..b7152e0 100644
+--- a/packaging/nuget/NServiceBus.MongoDB.nuspec
++++ b/packaging/nuget/NServiceBus.MongoDB.nuspec
+@@ -3,7 +3,7 @@
+   <metadata xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+     <id>NServiceBus.MongoDB</id>
+     <title>NServiceBus MongoDB</title>
+-    <version>5.2.3</version>
++    <version>5.2.4</version>
+     <authors>Carlos Sandoval</authors>
+     <owners>SharkByte Software</owners>
+     <licenseUrl>https://github.com/sbmako/NServiceBus.MongoDB/blob/master/LICENSE</licenseUrl>
+@@ -15,7 +15,7 @@
+     <tags>nservicebus mongodb persistence servicebus msmq cqrs publish subscribe</tags>
+     <language>en-US</language>
+     <dependencies>
+-      <dependency id="mongocsharpdriver" version="2.2.1" />
++      <dependency id="mongocsharpdriver" version="2.2.3" />
+       <dependency id="NServiceBus" version="[5.2,6.0)" />
+     </dependencies>
+     <references>
+diff --git a/src/NServiceBus.MongoDB.Acceptance.Tests/Properties/AssemblyInfo.cs b/src/NServiceBus.MongoDB.Acceptance.Tests/Properties/AssemblyInfo.cs
+index 3935f7a..b3c9f22 100644
+--- a/src/NServiceBus.MongoDB.Acceptance.Tests/Properties/AssemblyInfo.cs
++++ b/src/NServiceBus.MongoDB.Acceptance.Tests/Properties/AssemblyInfo.cs
+@@ -32,5 +32,5 @@
+ // You can specify all the values or you can default the Build and Revision Numbers 
+ // by using the '*' as shown below:
+ // [assembly: AssemblyVersion("1.0.*")]
+-[assembly: AssemblyVersion("5.2.3.0")]
+-[assembly: AssemblyFileVersion("5.2.3.0")]
++[assembly: AssemblyVersion("5.2.4.0")]
++[assembly: AssemblyFileVersion("5.2.4.0")]
+diff --git a/src/NServiceBus.MongoDB.Tests/Properties/AssemblyInfo.cs b/src/NServiceBus.MongoDB.Tests/Properties/AssemblyInfo.cs
+index e18b10b..8a69f9b 100644
+--- a/src/NServiceBus.MongoDB.Tests/Properties/AssemblyInfo.cs
++++ b/src/NServiceBus.MongoDB.Tests/Properties/AssemblyInfo.cs
+@@ -59,6 +59,6 @@
+ // You can specify all the values or you can default the Build and Revision Numbers 
+ // by using the '*' as shown below:
+ // [assembly: AssemblyVersion("1.0.*")]
+-[assembly: AssemblyVersion("5.2.3.0")]
+-[assembly: AssemblyFileVersion("5.2.3.0")]
++[assembly: AssemblyVersion("5.2.4.0")]
++[assembly: AssemblyFileVersion("5.2.4.0")]
+ 
+diff --git a/src/NServiceBus.MongoDB/NServiceBus.MongoDB.csproj b/src/NServiceBus.MongoDB/NServiceBus.MongoDB.csproj
+index b1adbe4..b577161 100644
+--- a/src/NServiceBus.MongoDB/NServiceBus.MongoDB.csproj
++++ b/src/NServiceBus.MongoDB/NServiceBus.MongoDB.csproj
+@@ -62,7 +62,7 @@
+     <CodeContractsCacheAnalysisResults>False</CodeContractsCacheAnalysisResults>
+     <CodeContractsFailBuildOnWarnings>True</CodeContractsFailBuildOnWarnings>
+     <CodeContractsBeingOptimisticOnExternal>True</CodeContractsBeingOptimisticOnExternal>
+-    <CodeContractsRuntimeCheckingLevel>None</CodeContractsRuntimeCheckingLevel>
++    <CodeContractsRuntimeCheckingLevel>Full</CodeContractsRuntimeCheckingLevel>
+     <CodeContractsReferenceAssembly>DoNotBuild</CodeContractsReferenceAssembly>
+     <CodeContractsAnalysisWarningLevel>3</CodeContractsAnalysisWarningLevel>
+     <CodeContractsAssertsToContractsCheckBox>True</CodeContractsAssertsToContractsCheckBox>
+diff --git a/src/NServiceBus.MongoDB/Properties/AssemblyInfo.cs b/src/NServiceBus.MongoDB/Properties/AssemblyInfo.cs
+index 34f7f35..684a6fb 100644
+--- a/src/NServiceBus.MongoDB/Properties/AssemblyInfo.cs
++++ b/src/NServiceBus.MongoDB/Properties/AssemblyInfo.cs
+@@ -63,8 +63,8 @@
+ // You can specify all the values or you can default the Build and Revision Numbers 
+ // by using the '*' as shown below:
+ // [assembly: AssemblyVersion("1.0.*")]
+-[assembly: AssemblyVersion("5.2.3.0")]
+-[assembly: AssemblyFileVersion("5.2.3.0")]
++[assembly: AssemblyVersion("5.2.4.0")]
++[assembly: AssemblyFileVersion("5.2.4.0")]
+ 
+ [assembly: InternalsVisibleTo("NServiceBus.MongoDB.Tests")]
+ [assembly: InternalsVisibleTo("NServiceBus.MongoDB.Acceptance.Tests")]
+diff --git a/src/Sample/Properties/AssemblyInfo.cs b/src/Sample/Properties/AssemblyInfo.cs
+index b59e438..3adeb74 100644
+--- a/src/Sample/Properties/AssemblyInfo.cs
++++ b/src/Sample/Properties/AssemblyInfo.cs
+@@ -59,5 +59,5 @@
+ // You can specify all the values or you can default the Build and Revision Numbers 
+ // by using the '*' as shown below:
+ // [assembly: AssemblyVersion("1.0.*")]
+-[assembly: AssemblyVersion("5.2.1.0")]
+-[assembly: AssemblyFileVersion("5.2.1.0")]
++[assembly: AssemblyVersion("5.2.4.0")]
++[assembly: AssemblyFileVersion("5.2.4.0")]
+-- 
+2.8.1.windows.1
+

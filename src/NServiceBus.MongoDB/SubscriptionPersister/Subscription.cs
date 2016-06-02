@@ -35,6 +35,7 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
 
     using NServiceBus.MongoDB.Internals;
     using NServiceBus.Unicast.Subscriptions;
+    using NServiceBus.Unicast.Subscriptions.MessageDrivenSubscriptions;
 
     internal sealed class Subscription : IHaveDocumentVersion
     {
@@ -46,7 +47,7 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
             this.Id = string.Empty;
             this.DocumentVersion = 0;
             this.MessageType = new MessageType(typeof(object));
-            this.Clients = new List<SubscriptionClient>();
+            this.Subscribers = new List<Subscriber>();
         }
 
         /// <summary>
@@ -61,7 +62,7 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
 
             this.Id = FormatId(messageType);
             this.MessageType = messageType;
-            this.Clients = new List<SubscriptionClient>();
+            this.Subscribers = new List<Subscriber>();
         }
 
         /// <summary>
@@ -80,9 +81,9 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
         public MessageType MessageType { get; set; }
 
         /// <summary>
-        /// Gets or sets the clients.
+        /// Gets or sets the subscribers
         /// </summary>
-        public List<SubscriptionClient> Clients { get; set; }
+        public List<Subscriber> Subscribers { get; set; }
 
         /// <summary>
         /// The format id.
@@ -107,7 +108,7 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
         {
             Contract.Invariant(this.Id != null);
             Contract.Invariant(this.MessageType != null);
-            Contract.Invariant(this.Clients != null);
+            Contract.Invariant(this.Subscribers != null);
         }
     }
 }
