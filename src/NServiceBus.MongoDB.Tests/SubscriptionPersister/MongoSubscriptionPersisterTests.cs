@@ -65,7 +65,7 @@ namespace NServiceBus.MongoDB.Tests.SubscriptionPersister
 
             sut.Subscribe(subscriber, messageType, context);
 
-            var subscriptions = storage.GetSubscription(Subscription.FormatId(messageType.AssumedNotNull())).ToList();
+            var subscriptions = storage.GetSubscription(messageType).ToList();
             subscriptions.Should().HaveCount(1);
 
             var subscription = subscriptions.First();
@@ -92,7 +92,7 @@ namespace NServiceBus.MongoDB.Tests.SubscriptionPersister
             sut.Subscribe(subscriber, messageType, context);
             sut.Subscribe(subscriber, messageType, context);
 
-            var subscriptions = storage.GetSubscription(Subscription.FormatId(messageType.AssumedNotNull())).ToList();
+            var subscriptions = storage.GetSubscription(messageType).ToList();
             subscriptions.Should().HaveCount(1);
 
             var subscription = subscriptions.First();
@@ -121,7 +121,7 @@ namespace NServiceBus.MongoDB.Tests.SubscriptionPersister
             sut.Subscribe(subscriber, messageType1, context);
             sut.Subscribe(subscriber, messageType2, context);
 
-            var subscriptions = storage.GetSubscription(Subscription.FormatId(messageType1.AssumedNotNull())).ToList();
+            var subscriptions = storage.GetSubscription(messageType1).ToList();
             subscriptions.Should().HaveCount(1);
 
             var subscription = subscriptions.First();
@@ -129,7 +129,7 @@ namespace NServiceBus.MongoDB.Tests.SubscriptionPersister
             subscription.Subscribers.Should().HaveCount(1);
 
 
-            subscriptions = storage.GetSubscription(Subscription.FormatId(messageType2.AssumedNotNull())).ToList();
+            subscriptions = storage.GetSubscription(messageType2).ToList();
             subscriptions.Should().HaveCount(1);
 
             subscription = subscriptions.First();
@@ -161,72 +161,77 @@ namespace NServiceBus.MongoDB.Tests.SubscriptionPersister
             subscribers.Should().ContainSingle(a => subscriber2.TransportAddress == a.TransportAddress);
         }
 
-        ////[Theory, IntegrationTest]
-        ////[AutoDatabase]
-        ////public void UnsubscribeWhenThereIsNoSubscriptionShouldNotCreateSubscription(
-        ////    MongoSubscriptionPersister storage,
-        ////    MongoDatabaseFactory factory,
-        ////    Address client,
-        ////    string messageTypeString1)
-        ////{
-        ////    var sut = storage as ISubscriptionStorage;
-        ////    var messageTypes = new List<MessageType>()
-        ////                           {
-        ////                               new MessageType(messageTypeString1, "1.0.0.0"),
-        ////                           };
+        [Theory, IntegrationTest]
+        [AutoDatabase]
+        public void UnsubscribeWhenThereIsNoSubscriptionShouldNotCreateSubscription(
+            MongoSubscriptionPersister storage,
+            MongoDatabaseFactory factory,
+            Subscriber subscriber,
+            ContextBag context,
+            string messageTypeString)
+        {
+            var sut = storage as ISubscriptionStorage;
+            var messageType = new MessageType(messageTypeString, "1.0.0.0");
 
-        ////    sut.Unsubscribe(client, messageTypes);
-        ////    storage.GetSubscriptions(messageTypes).Should().BeEmpty();
-        ////}
+            sut.Unsubscribe(subscriber, messageType, context);
 
-        ////[Theory, IntegrationTest]
-        ////[AutoDatabase]
-        ////public void UnsubscribeFromAllMessages(
-        ////    MongoSubscriptionPersister storage,
-        ////    MongoDatabaseFactory factory,
-        ////    Address client,
-        ////    string messageTypeString1,
-        ////    string messageTypeString2,
-        ////    string messageTypeString3)
-        ////{
-        ////    var sut = storage as ISubscriptionStorage;
-        ////    var messageTypes = new List<MessageType>()
-        ////                           {
-        ////                               new MessageType(messageTypeString1, "1.0.0.0"),
-        ////                               new MessageType(messageTypeString2, "1.0.0.0"),
-        ////                               new MessageType(messageTypeString3, "1.0.0.0"),
-        ////                           };
+            var subscriptions = storage.GetSubscription(messageType).ToList();
 
-        ////    sut.Subscribe(client, messageTypes);
-        ////    storage.GetSubscriptions(messageTypes).Should().HaveCount(3);
+            subscriptions.Should().BeEmpty();
+        }
 
-        ////    sut.Unsubscribe(client, messageTypes);
-        ////    storage.GetSubscriptions(messageTypes).ToList().ForEach(s => s.Clients.Should().HaveCount(0));
-        ////}
+        [Theory, IntegrationTest]
+        [AutoDatabase]
+        public void UnsubscribeFromAllMessages(
+            MongoSubscriptionPersister storage,
+            MongoDatabaseFactory factory,
+            Subscriber subscriber,
+            ContextBag context,
+            string messageTypeString1,
+            string messageTypeString2,
+            string messageTypeString3)
+        {
+            var sut = storage as ISubscriptionStorage;
+            var messageTypes = new List<MessageType>()
+                                   {
+                                       new MessageType(messageTypeString1, "1.0.0.0"),
+                                       new MessageType(messageTypeString2, "1.0.0.0"),
+                                       new MessageType(messageTypeString3, "1.0.0.0"),
+                                   };
 
-        ////[Theory, IntegrationTest]
-        ////[AutoDatabase]
-        ////public void UnsubscribeWhenClientSubscriptionIsTheOnlyOneShouldRemoveOnlyClient(
-        ////    MongoSubscriptionPersister storage,
-        ////    MongoDatabaseFactory factory,
-        ////    Address client,
-        ////    string messageTypeString1)
-        ////{
-        ////    var sut = storage as ISubscriptionStorage;
-        ////    var messageTypes = new List<MessageType>()
-        ////                           {
-        ////                               new MessageType(messageTypeString1, "1.0.0.0"),
-        ////                           };
+            messageTypes.ForEach(mt => sut.Subscribe(subscriber, mt, context));
+            storage.GetSubscriptions(messageTypes).Should().HaveCount(3);
 
-        ////    sut.Subscribe(client, messageTypes);
-        ////    storage.GetSubscriptions(messageTypes).Should().HaveCount(1);
-        ////    sut.GetSubscriberAddressesForMessage(messageTypes).Should().HaveCount(1);
+            messageTypes.ForEach(mt => sut.Unsubscribe(subscriber, mt, context));
 
-        ////    sut.Unsubscribe(client, messageTypes);
-        ////    storage.GetSubscriptions(messageTypes).Should().HaveCount(1);
+            storage.GetSubscriptions(messageTypes).ToList().ForEach(s => s.Subscribers.Should().HaveCount(0));
+        }
 
-        ////    sut.GetSubscriberAddressesForMessage(messageTypes).Should().HaveCount(0);
-        ////}
+        [Theory, IntegrationTest]
+        [AutoDatabase]
+        public void UnsubscribeWhenClientSubscriptionIsTheOnlyOneShouldRemoveOnlyClient(
+            MongoSubscriptionPersister storage,
+            MongoDatabaseFactory factory,
+            Subscriber subscriber,
+            ContextBag context,
+            string messageTypeString)
+        {
+            var sut = storage as ISubscriptionStorage;
+            var messageType = new MessageType(messageTypeString, "1.0.0.0");
+
+            sut.Subscribe(subscriber, messageType, context);
+            storage.GetSubscription(messageType).Should().HaveCount(1);
+            sut.GetSubscriberAddressesForMessage(new List<MessageType>() { messageType }, context)
+                .Result.Should()
+                .HaveCount(1);
+
+            sut.Unsubscribe(subscriber, messageType, context);
+            storage.GetSubscription(messageType).Should().HaveCount(1);
+
+            sut.GetSubscriberAddressesForMessage(new List<MessageType>() { messageType }, context)
+                .Result.Should()
+                .HaveCount(0);
+        }
 
         ////[Theory, IntegrationTest]
         ////[AutoDatabase]
