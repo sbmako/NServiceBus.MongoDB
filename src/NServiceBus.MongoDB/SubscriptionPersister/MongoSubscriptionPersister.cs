@@ -78,8 +78,7 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
         /// </summary>
         public Task Subscribe(Subscriber subscriber, MessageType messageType, ContextBag context)
         {
-            var messageTypeLookup = Subscription.FormatId(messageType.AssumedNotNull());
-            var existingSubscription = this.GetSubscription(messageTypeLookup).ToArray();
+            var existingSubscription = this.GetSubscription(messageType);
 
             var collection = this.mongoDatabase.GetCollection(SubscriptionName).AssumedNotNull();
 
@@ -166,14 +165,14 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
             return result.AssumedNotNull();
         }
 
-        internal IEnumerable<Subscription> GetSubscription(string messageTypeLookup)
+        internal IEnumerable<Subscription> GetSubscription(MessageType messageType)
         {
-            Contract.Requires(!string.IsNullOrWhiteSpace(messageTypeLookup));
+            Contract.Requires(messageType != null);
             Contract.Ensures(Contract.Result<IEnumerable<Subscription>>() != null);
 
             var collection = this.mongoDatabase.GetCollection(SubscriptionName).AssumedNotNull();
 
-            var query = Query<Subscription>.EQ(p => p.Id, messageTypeLookup);
+            var query = Query<Subscription>.EQ(p => p.Id, Subscription.FormatId(messageType.AssumedNotNull()));
             var subscription = collection.FindOneAs<Subscription>(query);
 
             return subscription == null ? new List<Subscription>() : new List<Subscription>() { subscription };
