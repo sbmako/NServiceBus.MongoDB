@@ -73,8 +73,7 @@ namespace NServiceBus.MongoDB.Tests.SubscriptionPersister
             subscription.Subscribers.Should().HaveCount(1);
 
             var firstSubscriber = subscription.Subscribers.First();
-            firstSubscriber.TransportAddress.Should().Be(subscriber.TransportAddress);
-            firstSubscriber.Endpoint.ToString().Should().Be(subscriber.Endpoint.ToString());
+            firstSubscriber.ShouldBeEquivalentTo(subscriber);
         }
 
         [Theory, IntegrationTest]
@@ -100,8 +99,7 @@ namespace NServiceBus.MongoDB.Tests.SubscriptionPersister
             subscription.Subscribers.Should().HaveCount(1);
 
             var firstSubscriber = subscription.Subscribers.First();
-            firstSubscriber.TransportAddress.Should().Be(subscriber.TransportAddress);
-            firstSubscriber.Endpoint.ToString().Should().Be(subscriber.Endpoint.ToString());
+            firstSubscriber.ShouldBeEquivalentTo(subscriber);
         }
 
         [Theory, IntegrationTest]
@@ -233,59 +231,61 @@ namespace NServiceBus.MongoDB.Tests.SubscriptionPersister
                 .HaveCount(0);
         }
 
-        ////[Theory, IntegrationTest]
-        ////[AutoDatabase]
-        ////public void UnsubscribeWhenThereAreSubscriptionsButNotClientsShouldNotChangeAnything(
-        ////    MongoSubscriptionPersister storage,
-        ////    MongoDatabaseFactory factory,
-        ////    Address client,
-        ////    Address otherClient1,
-        ////    Address otherClient2,
-        ////    string messageTypeString1)
-        ////{
-        ////    var sut = storage as ISubscriptionStorage;
-        ////    var messageTypes = new List<MessageType>()
-        ////                           {
-        ////                               new MessageType(messageTypeString1, "1.0.0.0"),
-        ////                           };
+        [Theory, IntegrationTest]
+        [AutoDatabase]
+        public void UnsubscribeWhenThereAreSubscriptionsButNotClientsShouldNotChangeAnything(
+            MongoSubscriptionPersister storage,
+            MongoDatabaseFactory factory,
+            Subscriber subscriber,
+            Subscriber otherSubscriber1,
+            Subscriber otherSubscriber2,
+            ContextBag context,
+            string messageTypeString)
+        {
+            var sut = storage as ISubscriptionStorage;
+            var messageType = new MessageType(messageTypeString, "1.0.0.0");
 
-        ////    sut.Subscribe(otherClient1, messageTypes);
-        ////    sut.Subscribe(otherClient2, messageTypes);
-        ////    sut.GetSubscriberAddressesForMessage(messageTypes).Should().HaveCount(2);
+            sut.Subscribe(otherSubscriber1, messageType, context);
+            sut.Subscribe(otherSubscriber2, messageType, context);
+            sut.GetSubscriberAddressesForMessage(new List<MessageType>() { messageType }, context)
+                .Result.Should()
+                .HaveCount(2);
 
-        ////    sut.Unsubscribe(client, messageTypes);
-        ////    var clients = sut.GetSubscriberAddressesForMessage(messageTypes).ToList();
-        ////    clients.Should().HaveCount(2);
-        ////    clients.First().Should().Be(otherClient1);
-        ////    clients.Last().Should().Be(otherClient2);
-        ////}
+            sut.Unsubscribe(subscriber, messageType, context);
+            var clients =
+                sut.GetSubscriberAddressesForMessage(new List<MessageType>() { messageType }, context).Result.ToList();
+            clients.Should().HaveCount(2);
+            clients.First().ShouldBeEquivalentTo(otherSubscriber1);
+            clients.Last().ShouldBeEquivalentTo(otherSubscriber2);
+        }
 
-        ////[Theory, IntegrationTest]
-        ////[AutoDatabase]
-        ////public void UnsubscribeWhenThereAreSubscriptionsShouldRemoveClientsAddress(
-        ////    MongoSubscriptionPersister storage,
-        ////    MongoDatabaseFactory factory,
-        ////    Address client,
-        ////    Address otherClient1,
-        ////    Address otherClient2,
-        ////    string messageTypeString1)
-        ////{
-        ////    var sut = storage as ISubscriptionStorage;
-        ////    var messageTypes = new List<MessageType>()
-        ////                           {
-        ////                               new MessageType(messageTypeString1, "1.0.0.0"),
-        ////                           };
+        [Theory, IntegrationTest]
+        [AutoDatabase]
+        public void UnsubscribeWhenThereAreSubscriptionsShouldRemoveClientsAddress(
+            MongoSubscriptionPersister storage,
+            MongoDatabaseFactory factory,
+            Subscriber subscriber,
+            Subscriber otherSubscriber1,
+            Subscriber otherSubscriber2,
+            ContextBag context,
+            string messageTypeString)
+        {
+            var sut = storage as ISubscriptionStorage;
+            var messageType = new MessageType(messageTypeString, "1.0.0.0");
 
-        ////    sut.Subscribe(client, messageTypes);
-        ////    sut.Subscribe(otherClient1, messageTypes);
-        ////    sut.Subscribe(otherClient2, messageTypes);
-        ////    sut.GetSubscriberAddressesForMessage(messageTypes).Should().HaveCount(3);
+            sut.Subscribe(subscriber, messageType, context);
+            sut.Subscribe(otherSubscriber1, messageType, context);
+            sut.Subscribe(otherSubscriber2, messageType, context);
+            sut.GetSubscriberAddressesForMessage(new List<MessageType>() { messageType }, context)
+                .Result.Should()
+                .HaveCount(3);
 
-        ////    sut.Unsubscribe(client, messageTypes);
-        ////    var clients = sut.GetSubscriberAddressesForMessage(messageTypes).ToList();
-        ////    clients.Should().HaveCount(2);
-        ////    clients.First().Should().Be(otherClient1);
-        ////    clients.Last().Should().Be(otherClient2);
-        ////}
+            sut.Unsubscribe(subscriber, messageType, context);
+            var clients =
+                sut.GetSubscriberAddressesForMessage(new List<MessageType>() { messageType }, context).Result.ToList();
+            clients.Should().HaveCount(2);
+            clients.First().ShouldBeEquivalentTo(otherSubscriber1);
+            clients.Last().ShouldBeEquivalentTo(otherSubscriber2);
+        }
     }
 }
