@@ -26,6 +26,8 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
+using NServiceBus.ObjectBuilder;
+
 namespace NServiceBus.MongoDB.TimeoutPersister
 {
     using NServiceBus.Features;
@@ -53,7 +55,13 @@ namespace NServiceBus.MongoDB.TimeoutPersister
             TimeoutClassMaps.ConfigureClassMaps();
 
             context.Container.ConfigureComponent<MongoTimeoutPersister>(DependencyLifecycle.SingleInstance);
-            ////TODO: .ConfigureProperty(x => x.EndpointName, context.Settings.EndpointName());
+            //// TODO: .ConfigureProperty(x => x.EndpointName, context.Settings.EndpointName());
+            
+            ////context.Container.ConfigureComponent<MongoTimeoutPersister>(
+            ////    builder => new MongoTimeoutPersister
+            ////{
+            ////    EndpointName = context.Settings.EndpointName().ToString()
+            ////}, DependencyLifecycle.InstancePerUnitOfWork);
         }
     }
 }
