@@ -65,35 +65,62 @@ namespace NServiceBus.MongoDB.SagaPersister
             this.mongoDatabase = mongoFactory.GetDatabase();
         }
 
-        /// <summary>
-        /// Saves the saga entity to the persistence store.
-        /// </summary>
-        /// <param name="saga">The saga entity to save.</param>
-        public void Save(IContainSagaData saga)
+        public Task Save(
+            IContainSagaData sagaData,
+            SagaCorrelationProperty correlationProperty,
+            SynchronizedStorageSession session,
+            ContextBag context)
         {
-            var sagaTypeName = saga.GetType().Name;
+            var sagaTypeName = sagaData.GetType().Name;
 
-            var sagaDataWithVersion = saga as IHaveDocumentVersion;
-
-            if (sagaDataWithVersion  == null)
+            if (!(sagaData is IHaveDocumentVersion))
             {
                 throw new InvalidOperationException("Saga type {sagaTypeName} does not implement IHaveDocumentVersion");
             }
 
-            ////var uniqueProperty = UniqueAttribute.GetUniqueProperty(saga);
-            ////if (uniqueProperty.HasValue)
-            ////{
-            ////    this.EnsureUniqueIndex(saga, uniqueProperty.Value);
-            ////    CheckUniqueProperty(saga, uniqueProperty.Value);
-            ////}
+            //// TODO: need to find the correlation property and ensure unique index on that
+            if (correlationProperty != null)
+            {
+                this.EnsureUniqueIndex(sagaData, uniqueProperty.Value);
+                CheckUniqueProperty(sagaData, uniqueProperty.Value);
+            }
 
             var collection = this.mongoDatabase.GetCollection(sagaTypeName);
-            var result = collection.Insert(saga);
+            var result = collection.Insert(sagaData);
 
             if (result.HasLastErrorMessage)
             {
                 throw new InvalidOperationException("Unable to save with id {saga.Id}");
             }
+
+            return Task.FromResult(0);
+        }
+
+        public Task Update(IContainSagaData sagaData, SynchronizedStorageSession session, ContextBag context)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<TSagaData> Get<TSagaData>(
+            Guid sagaId, 
+            SynchronizedStorageSession session, 
+            ContextBag context) where TSagaData : IContainSagaData
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<TSagaData> Get<TSagaData>(
+            string propertyName, 
+            object propertyValue, 
+            SynchronizedStorageSession session, 
+            ContextBag context) where TSagaData : IContainSagaData
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task Complete(IContainSagaData sagaData, SynchronizedStorageSession session, ContextBag context)
+        {
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -229,35 +256,6 @@ namespace NServiceBus.MongoDB.SagaPersister
             }
 
             Indexes.TryAdd(saga.GetType(), uniqueProperty.Key);
-        }
-
-        public Task Save(
-            IContainSagaData sagaData,
-            SagaCorrelationProperty correlationProperty,
-            SynchronizedStorageSession session,
-            ContextBag context)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task Update(IContainSagaData sagaData, SynchronizedStorageSession session, ContextBag context)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<TSagaData> Get<TSagaData>(Guid sagaId, SynchronizedStorageSession session, ContextBag context) where TSagaData : IContainSagaData
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<TSagaData> Get<TSagaData>(string propertyName, object propertyValue, SynchronizedStorageSession session, ContextBag context) where TSagaData : IContainSagaData
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task Complete(IContainSagaData sagaData, SynchronizedStorageSession session, ContextBag context)
-        {
-            throw new NotImplementedException();
         }
     }
 }

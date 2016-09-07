@@ -29,9 +29,11 @@ namespace NServiceBus.MongoDB.Tests.Issues
 
     using CategoryTraits.Xunit2;
 
+    using NServiceBus.Extensibility;
     using NServiceBus.MongoDB.Internals;
     using NServiceBus.MongoDB.SagaPersister;
     using NServiceBus.MongoDB.Tests.TestingUtilities;
+    using NServiceBus.Persistence;
     using NServiceBus.Sagas;
 
     using Xunit;
@@ -43,10 +45,12 @@ namespace NServiceBus.MongoDB.Tests.Issues
         [AutoDatabase]
         public void SaveSagaData(
             MongoSagaPersister sut,
-            MongoDatabaseFactory factory,
-            DeviceCommandSagaState state)
+            DeviceCommandSagaState state,
+            SagaCorrelationProperty correlationProperty,
+            SynchronizedStorageSession session,
+            ContextBag context)
         {
-            sut.Save(state);
+            sut.Save(state, correlationProperty, session, context);
         }
 
         [Theory]
@@ -54,10 +58,12 @@ namespace NServiceBus.MongoDB.Tests.Issues
         [AutoDatabase]
         public void UpdateSagaData(
             MongoSagaPersister sut,
-            MongoDatabaseFactory factory,
-            DeviceCommandSagaState state)
+            DeviceCommandSagaState state,
+            SagaCorrelationProperty correlationProperty,
+            SynchronizedStorageSession session,
+            ContextBag context)
         {
-            sut.Save(state);
+            sut.Save(state, correlationProperty, session, context);
 
             sut.Update(state);
         }

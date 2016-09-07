@@ -54,6 +54,6 @@ namespace NServiceBus.MongoDB
             this.Supports<StorageType.Sagas>(s => s.EnableFeatureByDefault<MongoSagaStorage>());
             this.Supports<StorageType.Timeouts>(s => s.EnableFeatureByDefault<MongoTimeoutStorage>());
             this.Supports<StorageType.Subscriptions>(s => s.EnableFeatureByDefault<MongoSubscriptionStorage>());
-        }
+         }
     }
 }
