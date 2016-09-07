@@ -65,7 +65,8 @@ namespace NServiceBus.MongoDB.Extensions
             Contract.Requires(settings != null);
             Contract.Ensures(!string.IsNullOrWhiteSpace(Contract.Result<string>()));
 
-            return settings.EndpointName().ToString().AssumedNotNull().AsValidDatabaseName();
+            var endpointName = settings.EndpointName();
+            return endpointName.ToString().AssumedNotNull().AsValidDatabaseName();
         }
     }
 }

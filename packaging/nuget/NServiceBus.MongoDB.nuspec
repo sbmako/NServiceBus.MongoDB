@@ -3,27 +3,27 @@
   <metadata xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <id>NServiceBus.MongoDB</id>
     <title>NServiceBus MongoDB</title>
-    <version>5.2.4</version>
+    <version>6.0.0</version>
     <authors>Carlos Sandoval</authors>
     <owners>SharkByte Software</owners>
     <licenseUrl>https://github.com/sbmako/NServiceBus.MongoDB/blob/master/LICENSE</licenseUrl>
     <projectUrl>https://github.com/sbmako/NServiceBus.MongoDB</projectUrl>
     <iconUrl>https://raw.githubusercontent.com/sbmako/NServiceBus.MongoDB/master/packaging/NServiceBus_mongo_32.png</iconUrl>
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
-    <description>MongoDB persistence for  NServiceBus 5.x</description>
-    <copyright>Copyright 2015 SharkByte Software. All rights reserved.</copyright>
+    <description>MongoDB persistence for  NServiceBus 6.x</description>
+    <copyright>Copyright 2016 SharkByte Software. All rights reserved.</copyright>
     <tags>nservicebus mongodb persistence servicebus msmq cqrs publish subscribe</tags>
     <language>en-US</language>
     <dependencies>
-      <dependency id="mongocsharpdriver" version="2.2.3" />
-      <dependency id="NServiceBus" version="[5.2,6.0)" />
+      <dependency id="mongocsharpdriver" version="2.2.4" />
+      <dependency id="NServiceBus" version="[6.0)" />
     </dependencies>
     <references>
       <reference file="NServiceBus.MongoDB.dll" />
     </references>
   </metadata>
   <files>
-    <file src="..\..\src\NServiceBus.MongoDB\bin\Release\NServiceBus.MongoDB.???" target="lib\net45" />
-    <file src="..\..\src\NserviceBus.MongoDB\bin\Release\CodeContracts\*.*" target="lib\net45\CodeContracts" />
+    <file src="..\..\src\NServiceBus.MongoDB\bin\Release\NServiceBus.MongoDB.???" target="lib\net452" />
+    <file src="..\..\src\NserviceBus.MongoDB\bin\Release\CodeContracts\*.*" target="lib\net452\CodeContracts" />
   </files>
 </package>

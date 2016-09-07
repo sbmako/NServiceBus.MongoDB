@@ -64,8 +64,7 @@ namespace NServiceBus.MongoDB.Tests.TimeoutPersister
 
             result.Should().BeEmpty();
             nextTimeToRunQuery.Should()
-                              .BeOnOrAfter(
-                                  startSlice.AddMinutes(MongoPersistenceConstants.DefaultNextTimeoutIncrementMinutes));
+                .BeOnOrAfter(startSlice.AddMinutes(MongoPersistenceConstants.DefaultNextTimeoutIncrementMinutes));
         }
 
         [Theory, IntegrationTest]

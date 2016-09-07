@@ -36,6 +36,8 @@ namespace NServiceBus.MongoDB.Tests.TestingUtilities
     using NServiceBus.Extensibility;
     using NServiceBus.MongoDB.Internals;
     using NServiceBus.MongoDB.TimeoutPersister;
+    using NServiceBus.Persistence;
+    using NServiceBus.Sagas;
     using NServiceBus.Timeout.Core;
 
     using Ploeh.AutoFixture;
@@ -54,6 +56,7 @@ namespace NServiceBus.MongoDB.Tests.TestingUtilities
             fixture.Register(() => clientAccessor);
             fixture.Register(() => databaseFactory);
             fixture.Register(() => new ContextBag());
+            fixture.Register(() => new SagaCorrelationProperty("Name", "Value"));
 
             fixture.Customize<TimeoutData>(
                 c => c.With(t => t.OwningTimeoutManager, "UnitTests").With(t => t.Time, DateTime.UtcNow));

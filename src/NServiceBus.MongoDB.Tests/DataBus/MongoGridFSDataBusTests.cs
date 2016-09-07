@@ -46,36 +46,36 @@ namespace NServiceBus.MongoDB.Tests.DataBus
         [AutoDatabase]
         public void PutTest(MongoDatabaseFactory factory, byte[] data)
         {
-            ////var sut = new MongoGridFSDataBus(factory);
+            var sut = new MongoGridFSDataBus(factory);
 
-            ////var input = new MemoryStream(data);
-            ////var key = sut.Put(input, TimeSpan.FromDays(1));
+            var input = new MemoryStream(data);
+            var key = sut.Put(input, TimeSpan.FromDays(1)).Result;
 
-            ////var gfs = factory.GetDatabase().GridFS.OpenRead(key);
+            var gfs = factory.GetDatabase().GridFS.OpenRead(key);
 
-            ////var result = new byte[data.Length];
-            ////gfs.Read(result, 0, data.Length); 
-            
-            ////gfs.Length.Should().Be(data.Length);
-            ////result.Should().BeEquivalentTo(data);
+            var result = new byte[data.Length];
+            gfs.Read(result, 0, data.Length);
+
+            gfs.Length.Should().Be(data.Length);
+            result.Should().BeEquivalentTo(data);
         }
 
         [Theory, IntegrationTest]
         [AutoDatabase]
         public void GetTest(MongoDatabaseFactory factory, byte[] data)
         {
-            ////var st = new MemoryStream(data);
-            ////var key = Guid.NewGuid().ToString();
-            ////factory.GetDatabase().GridFS.Upload(st, key);
+            var st = new MemoryStream(data);
+            var key = Guid.NewGuid().ToString();
+            factory.GetDatabase().GridFS.Upload(st, key);
 
-            ////var sut = new MongoGridFSDataBus(factory);
-            ////var resultStream = sut.Get(key);
+            var sut = new MongoGridFSDataBus(factory);
+            var resultStream = sut.Get(key).Result;
 
-            ////var result = new byte[data.Length];
-            ////resultStream.Read(result, 0, data.Length);
+            var result = new byte[data.Length];
+            resultStream.Read(result, 0, data.Length);
 
-            ////resultStream.Length.Should().Be(data.Length);
-            ////result.Should().BeEquivalentTo(data);
+            resultStream.Length.Should().Be(data.Length);
+            result.Should().BeEquivalentTo(data);
         }
     }
 }
