@@ -107,37 +107,6 @@ namespace NServiceBus.MongoDB.TimeoutPersister
         }
 
         /// <summary>
-        /// Adds a new timeout.
-        /// </summary>
-        /// <param name="timeout">Timeout data.</param>
-        /// <exception cref="InvalidOperationException">
-        /// Throws exception if timeout is not saved.
-        /// </exception>
-        public void Add(Timeout.Core.TimeoutData timeout)
-        {
-            var data = new TimeoutData()
-                                    {
-                                        Id = Guid.NewGuid().ToString(),
-                                        Destination = timeout.Destination,
-                                        SagaId = timeout.SagaId,
-                                        State = timeout.State,
-                                        Time = timeout.Time,
-                                        Headers = timeout.Headers,
-                                        OwningTimeoutManager = timeout.OwningTimeoutManager
-                                    };
-
-            var collection = this.mongoDatabase.GetCollection<TimeoutData>(TimeoutDataName);
-            var result = collection.Save(data);
-
-            if (result.HasLastErrorMessage)
-            {
-                throw new InvalidOperationException(string.Format("Unable to save timeout [{0}]", timeout));
-            }
-
-            timeout.Id = data.Id;
-        }
-
-        /// <summary>
         /// Removes the timeout if it hasn't been previously removed.
         /// </summary>
         /// <param name="timeoutId">The timeout id to remove.</param>
@@ -156,8 +125,7 @@ namespace NServiceBus.MongoDB.TimeoutPersister
 
             if (!result.Ok)
             {
-                throw new InvalidOperationException(
-                   string.Format("Unable to remove timeout for id {0}: {1}", timeoutId, result.ErrorMessage));
+                throw new InvalidOperationException($"Unable to remove timeout for id {timeoutId}: {result.ErrorMessage}");
             }
 
             var data = result.GetModifiedDocumentAs<TimeoutData>();
@@ -180,10 +148,83 @@ namespace NServiceBus.MongoDB.TimeoutPersister
         }
 
         /// <summary>
+        /// Reads timeout data.
+        /// </summary>
+        /// <param name="timeoutId">The timeout id to read.</param>
+        /// <returns>
+        /// <see cref="T:NServiceBus.Timeout.Core.TimeoutData"/> of the timeout if it was found. <c>null</c> otherwise.
+        /// </returns>
+        public Task<Timeout.Core.TimeoutData> Peek(string timeoutId, ContextBag context)
+        {
+            var collection = this.mongoDatabase.GetCollection<TimeoutData>(TimeoutDataName);
+            var data = collection.AsQueryable().SingleOrDefault(e => e.Id == timeoutId);
+            if (data != null)
+            {
+                return Task.FromResult<Timeout.Core.TimeoutData>(new Timeout.Core.TimeoutData
+                {
+                    Id = data.Id,
+                    Destination = data.Destination,
+                    SagaId = data.SagaId,
+                    State = data.State,
+                    Time = data.Time,
+                    Headers = data.Headers,
+                    OwningTimeoutManager = data.OwningTimeoutManager
+                });
+            }
+
+            return Task.FromResult<Timeout.Core.TimeoutData>(null);
+        }
+        
+        /// <summary>
+        /// Add timeout id
+        /// </summary>
+        /// <param name="timeout">The timeout data to add</param>
+        /// <param name="context">The context</param>
+        /// <returns>The task</returns>
+        public Task Add(Timeout.Core.TimeoutData timeout, ContextBag context)
+        {
+            var data = new TimeoutData()
+            {
+                Id = Guid.NewGuid().ToString(),
+                Destination = timeout.Destination,
+                SagaId = timeout.SagaId,
+                State = timeout.State,
+                Time = timeout.Time,
+                Headers = timeout.Headers,
+                OwningTimeoutManager = timeout.OwningTimeoutManager
+            };
+
+            var collection = this.mongoDatabase.GetCollection<TimeoutData>(TimeoutDataName);
+            var result = collection.Save(data);
+
+            if (result.HasLastErrorMessage)
+            {
+                throw new InvalidOperationException(string.Format("Unable to save timeout [{0}]", timeout));
+            }
+
+            timeout.Id = data.Id;
+
+            return Task.FromResult(0);
+        }
+
+        /// <summary>
+        /// The IPersistTimeoutsV2 implementation of the TryRemove method
+        /// </summary>
+        /// <param name="timeoutId">The timeout id to remove.</param>
+        /// <returns>
+        /// <c>true</c> it the timeout was successfully removed.
+        /// </returns>
+        public Task<bool> TryRemove(string timeoutId, ContextBag context)
+        {
+            Timeout.Core.TimeoutData timeoutData;
+            return Task.FromResult<bool>(this.TryRemove(timeoutId, out timeoutData));
+        }
+
+        /// <summary>
         /// Removes the time by saga id.
         /// </summary>
         /// <param name="sagaId">The saga id of the timeouts to remove.</param>
-        public void RemoveTimeoutBy(Guid sagaId)
+        public Task RemoveTimeoutBy(Guid sagaId, ContextBag context)
         {
             var collection = this.mongoDatabase.GetCollection<TimeoutData>(TimeoutDataName);
 
@@ -194,67 +235,8 @@ namespace NServiceBus.MongoDB.TimeoutPersister
             {
                 throw new InvalidOperationException(string.Format("Unable to remove timeouts for saga id {0}", sagaId));
             }
-        }
 
-        /// <summary>
-        /// Reads timeout data.
-        /// </summary>
-        /// <param name="timeoutId">The timeout id to read.</param>
-        /// <returns>
-        /// <see cref="T:NServiceBus.Timeout.Core.TimeoutData"/> of the timeout if it was found. <c>null</c> otherwise.
-        /// </returns>
-        public Timeout.Core.TimeoutData Peek(string timeoutId)
-        {
-            var collection = this.mongoDatabase.GetCollection<TimeoutData>(TimeoutDataName);
-            var data = collection.AsQueryable().SingleOrDefault(e => e.Id == timeoutId);
-            if (data != null)
-            {
-                return new Timeout.Core.TimeoutData()
-                {
-                    Id = data.Id,
-                    Destination = data.Destination,
-                    SagaId = data.SagaId,
-                    State = data.State,
-                    Time = data.Time,
-                    Headers = data.Headers,
-                    OwningTimeoutManager = data.OwningTimeoutManager
-                };
-            }
-
-            return null;
-        }
-
-        /// <summary>
-        /// The IPersistTimeoutsV2 implementation of the TryRemove method
-        /// </summary>
-        /// <param name="timeoutId">The timeout id to remove.</param>
-        /// <returns>
-        /// <c>true</c> it the timeout was successfully removed.
-        /// </returns>
-        public bool TryRemove(string timeoutId)
-        {
-            Timeout.Core.TimeoutData timeoutData;
-            return this.TryRemove(timeoutId, out timeoutData);
-        }
-
-        public Task Add(Timeout.Core.TimeoutData timeout, ContextBag context)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<bool> TryRemove(string timeoutId, ContextBag context)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<Timeout.Core.TimeoutData> Peek(string timeoutId, ContextBag context)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task RemoveTimeoutBy(Guid sagaId, ContextBag context)
-        {
-            throw new NotImplementedException();
+            return Task.FromResult(0);
         }
 
         private void EnsureTimeoutIndexes()
