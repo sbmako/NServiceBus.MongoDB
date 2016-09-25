@@ -78,11 +78,11 @@ namespace NServiceBus.MongoDB.SagaPersister
             }
 
             //// TODO: need to find the correlation property and ensure unique index on that
-            if (correlationProperty != null)
-            {
-                this.EnsureUniqueIndex(sagaData, uniqueProperty.Value);
-                CheckUniqueProperty(sagaData, uniqueProperty.Value);
-            }
+            ////if (correlationProperty != null)
+            ////{
+            ////    this.EnsureUniqueIndex(sagaData, uniqueProperty.Value);
+            ////    CheckUniqueProperty(sagaData, uniqueProperty.Value);
+            ////}
 
             var collection = this.mongoDatabase.GetCollection(sagaTypeName);
             var result = collection.Insert(sagaData);
