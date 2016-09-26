@@ -76,6 +76,18 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
         /// <summary>
         /// Subscribes the given client to messages of a given type.
         /// </summary>
+        /// <param name="subscriber">
+        /// The subscriber.
+        /// </param>
+        /// /// <param name="messageType">
+        /// The message type.
+        /// </param>
+        /// /// <param name="context">
+        /// The context.
+        /// </param>
+        /// <returns>
+        /// The task
+        /// </returns>
         public Task Subscribe(Subscriber subscriber, MessageType messageType, ContextBag context)
         {
             var existingSubscription = this.GetSubscription(messageType);
@@ -123,6 +135,18 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
         /// <summary>
         /// Unsubscribes the given client from messages of given type.
         /// </summary>
+        /// <param name="subscriber">
+        /// The subscriber.
+        /// </param>
+        /// /// <param name="messageType">
+        /// The message type.
+        /// </param>
+        /// /// <param name="context">
+        /// The context.
+        /// </param>
+        /// <returns>
+        /// The task
+        /// </returns>
         public Task Unsubscribe(Subscriber subscriber, MessageType messageType, ContextBag context)
         {
             var query = Query<Subscription>.EQ(s => s.Id, Subscription.FormatId(messageType));
@@ -144,6 +168,15 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
         /// <summary>
         /// Returns a list of addresses for subscribers currently subscribed to the given message type.
         /// </summary>
+        /// /// <param name="messageTypes">
+        /// The message types.
+        /// </param>
+        /// /// <param name="context">
+        /// The context.
+        /// </param>
+        /// <returns>
+        /// The collection of subscribers
+        /// </returns>
         public Task<IEnumerable<Subscriber>> GetSubscriberAddressesForMessage(IEnumerable<MessageType> messageTypes, ContextBag context)
         {
             var subscriptions = this.GetSubscriptions(messageTypes.AssumedNotNull());
