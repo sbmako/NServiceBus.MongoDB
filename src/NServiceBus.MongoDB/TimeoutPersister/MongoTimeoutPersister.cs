@@ -54,6 +54,13 @@ namespace NServiceBus.MongoDB.TimeoutPersister
         /// <summary>
         /// Initializes a new instance of the <see cref="MongoTimeoutPersister"/> class.
         /// </summary>
+        public MongoTimeoutPersister()
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MongoTimeoutPersister"/> class.
+        /// </summary>
         /// <param name="mongoFactory">
         /// The mongo factory.
         /// </param>
@@ -125,7 +132,7 @@ namespace NServiceBus.MongoDB.TimeoutPersister
 
             if (!result.Ok)
             {
-                throw new InvalidOperationException($"Unable to remove timeout for id {timeoutId}: {result.ErrorMessage}");
+                throw new InvalidOperationException("Unable to remove timeout for id {timeoutId}: {result.ErrorMessage}");
             }
 
             var data = result.GetModifiedDocumentAs<TimeoutData>();
@@ -151,6 +158,7 @@ namespace NServiceBus.MongoDB.TimeoutPersister
         /// Reads timeout data.
         /// </summary>
         /// <param name="timeoutId">The timeout id to read.</param>
+        /// <param name="context">The context</param>
         /// <returns>
         /// <see cref="T:NServiceBus.Timeout.Core.TimeoutData"/> of the timeout if it was found. <c>null</c> otherwise.
         /// </returns>
@@ -211,6 +219,7 @@ namespace NServiceBus.MongoDB.TimeoutPersister
         /// The IPersistTimeoutsV2 implementation of the TryRemove method
         /// </summary>
         /// <param name="timeoutId">The timeout id to remove.</param>
+        /// <param name="context">The context</param>
         /// <returns>
         /// <c>true</c> it the timeout was successfully removed.
         /// </returns>
@@ -224,6 +233,8 @@ namespace NServiceBus.MongoDB.TimeoutPersister
         /// Removes the time by saga id.
         /// </summary>
         /// <param name="sagaId">The saga id of the timeouts to remove.</param>
+        /// <param name="context">The context</param>
+        /// <returns>The task</returns>
         public Task RemoveTimeoutBy(Guid sagaId, ContextBag context)
         {
             var collection = this.mongoDatabase.GetCollection<TimeoutData>(TimeoutDataName);
