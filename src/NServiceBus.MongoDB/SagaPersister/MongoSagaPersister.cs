@@ -97,7 +97,17 @@ namespace NServiceBus.MongoDB.SagaPersister
 
         public Task Update(IContainSagaData sagaData, SynchronizedStorageSession session, ContextBag context)
         {
-            throw new NotImplementedException();
+            var collection = this.mongoDatabase.GetCollection(sagaData.GetType().Name);
+
+            var query = sagaData.MongoUpdateQuery();
+            var update = sagaData.MongoUpdate();
+            var result = collection.Update(query, update, UpdateFlags.None);
+            if (!result.UpdatedExisting)
+            {
+                throw new InvalidOperationException("Unable to update saga with id {saga.Id}");
+            }
+
+            return Task.FromResult(0);
         }
 
         public Task<TSagaData> Get<TSagaData>(
@@ -114,29 +124,22 @@ namespace NServiceBus.MongoDB.SagaPersister
             SynchronizedStorageSession session, 
             ContextBag context) where TSagaData : IContainSagaData
         {
-            throw new NotImplementedException();
+            var result = this.GetByUniqueProperty<TSagaData>(propertyName.AssumedNotNullOrWhiteSpace(), propertyValue);
+
+            return Task.FromResult(result);
         }
 
         public Task Complete(IContainSagaData sagaData, SynchronizedStorageSession session, ContextBag context)
         {
-            throw new NotImplementedException();
-        }
+            var query = Query.EQ("_id", sagaData.Id);
+            var result = this.mongoDatabase.GetCollection(sagaData.GetType().Name).Remove(query);
 
-        /// <summary>
-        /// Updates an existing saga entity in the persistence store.
-        /// </summary>
-        /// <param name="saga">The saga entity to updated.</param>
-        public void Update(IContainSagaData saga)
-        {
-            var collection = this.mongoDatabase.GetCollection(saga.GetType().Name);
-
-            var query = saga.MongoUpdateQuery();
-            var update = saga.MongoUpdate();
-            var result = collection.Update(query, update, UpdateFlags.None);
-            if (!result.UpdatedExisting)
+            if (result.HasLastErrorMessage)
             {
-                throw new InvalidOperationException("Unable to update saga with id {saga.Id}");
+                throw new InvalidOperationException("Unable to find and remove saga with id {saga.Id}");
             }
+
+            return Task.FromResult(0);
         }
 
         /// <summary>
@@ -157,42 +160,6 @@ namespace NServiceBus.MongoDB.SagaPersister
             var entity = this.mongoDatabase.GetCollection<T>(typeof(T).Name).FindOne(query);
 
             return entity;
-        }
-
-        /// <summary>
-        /// Looks up a saga entity by a given propertyName.
-        /// </summary>
-        /// <typeparam name="T">
-        /// The return type.
-        /// </typeparam>
-        /// <param name="propertyName">
-        /// The propertyName.
-        /// </param>
-        /// <param name="propertyValue">
-        /// The propertyValue.
-        /// </param>
-        /// <returns>
-        /// The <see cref="T"/>.
-        /// </returns>
-        public T Get<T>(string propertyName, object propertyValue) where T : IContainSagaData
-        {
-            return this.GetByUniqueProperty<T>(propertyName.AssumedNotNullOrWhiteSpace(), propertyValue);
-        }
-
-        /// <summary>
-        /// Sets a saga as completed and removes it from the active saga list
-        ///             in the persistence store.
-        /// </summary>
-        /// <param name="saga">The saga to complete.</param>
-        public void Complete(IContainSagaData saga)
-        {
-            var query = Query.EQ("_id", saga.Id);
-            var result = this.mongoDatabase.GetCollection(saga.GetType().Name).Remove(query);
-
-            if (result.HasLastErrorMessage)
-            {
-                throw new InvalidOperationException("Unable to find and remove saga with id {saga.Id}");
-            }
         }
 
         private static void CheckUniqueProperty(IContainSagaData sagaData, KeyValuePair<string, object> uniqueProperty)
