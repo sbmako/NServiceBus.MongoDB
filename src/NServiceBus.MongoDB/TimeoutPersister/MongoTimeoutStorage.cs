@@ -22,11 +22,9 @@
 //   CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // </copyright>
 // <summary>
-//   The mongo DB timeout storage.
+//   The timeout storage.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
-
-using NServiceBus.ObjectBuilder;
 
 namespace NServiceBus.MongoDB.TimeoutPersister
 {
@@ -54,14 +52,15 @@ namespace NServiceBus.MongoDB.TimeoutPersister
         {
             TimeoutClassMaps.ConfigureClassMaps();
 
-            context.Container.ConfigureComponent<MongoTimeoutPersister>(DependencyLifecycle.SingleInstance);
+            ////context.Container.ConfigureComponent<MongoTimeoutPersister>(DependencyLifecycle.SingleInstance);
             //// TODO: .ConfigureProperty(x => x.EndpointName, context.Settings.EndpointName());
-            
-            ////context.Container.ConfigureComponent<MongoTimeoutPersister>(
-            ////    builder => new MongoTimeoutPersister
-            ////{
-            ////    EndpointName = context.Settings.EndpointName().ToString()
-            ////}, DependencyLifecycle.InstancePerUnitOfWork);
+
+            context.Container.ConfigureComponent<MongoTimeoutPersister>(
+                builder => new MongoTimeoutPersister
+                {
+                    EndpointName = context.Settings.EndpointName().ToString()
+                }, 
+                DependencyLifecycle.SingleInstance);
         }
     }
 }
