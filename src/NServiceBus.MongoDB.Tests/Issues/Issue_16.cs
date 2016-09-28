@@ -63,9 +63,9 @@ namespace NServiceBus.MongoDB.Tests.Issues
             SynchronizedStorageSession session,
             ContextBag context)
         {
-            sut.Save(state, correlationProperty, session, context);
+            sut.Save(state, correlationProperty, session, context).Wait();
 
-            sut.Update(state);
+            sut.Update(state, session, context).Wait();
         }
     }
 

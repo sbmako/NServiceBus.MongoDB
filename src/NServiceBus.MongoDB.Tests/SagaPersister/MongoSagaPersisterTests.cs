@@ -64,7 +64,7 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
             SynchronizedStorageSession session,
             ContextBag context)
         {
-            sut.Save(sagaData, correlationProperty, session, context);
+            sut.Save(sagaData, correlationProperty, session, context).Wait();
 
             var entity = factory.RetrieveSagaData(sagaData);
 
@@ -122,7 +122,7 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
             sagaData2.UniqueProperty = uniqueProperty;
 
             sut.Save(sagaData1, correlationProperty, session, context);
-            sut.Complete(sagaData1);
+            sut.Complete(sagaData1, session, context).Wait();
 
             sut.Save(sagaData2, correlationProperty, session, context);
 
@@ -156,10 +156,10 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
             SynchronizedStorageSession session,
             ContextBag context)
         {
-            sut.Save(sagaData, correlationProperty, session, context);
+            sut.Save(sagaData, correlationProperty, session, context).Wait();
 
             sagaData.NonUniqueProperty = newValue;
-            sut.Update(sagaData);
+            sut.Update(sagaData, session, context).Wait();
 
             var entity = factory.RetrieveSagaData(sagaData);
             entity.NonUniqueProperty.Should().Be(newValue);
@@ -176,10 +176,10 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
             SynchronizedStorageSession session,
             ContextBag context)
         {
-            sut.Save(sagaData, correlationProperty, session, context);
+            sut.Save(sagaData, correlationProperty, session, context).Wait();
 
             sagaData.NonUniqueProperty = newValue;
-            sut.Update(sagaData);
+            sut.Update(sagaData, session, context);
 
             var entity = factory.RetrieveSagaData(sagaData);
             entity.NonUniqueProperty.Should().Be(newValue);
@@ -195,7 +195,7 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
             SynchronizedStorageSession session,
             ContextBag context)
         {
-            sut.Invoking(s => s.Update(sagaData)).ShouldThrow<InvalidOperationException>();
+            sut.Invoking(s => s.Update(sagaData, session, context).Wait()).ShouldThrow<InvalidOperationException>();
 
             factory.RetrieveSagaData(sagaData).Should().BeNull();
         }
@@ -210,7 +210,7 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
             SynchronizedStorageSession session,
             ContextBag context)
         {
-            sut.Invoking(s => s.Update(sagaData)).ShouldThrow<InvalidOperationException>();
+            sut.Invoking(s => s.Update(sagaData, session, context).Wait()).ShouldThrow<InvalidOperationException>();
 
             factory.RetrieveSagaData(sagaData).Should().BeNull();
         }
@@ -225,15 +225,15 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
             SynchronizedStorageSession session,
             ContextBag context)
         {
-            sut.Save(sagaData, correlationProperty, session, context);
+            sut.Save(sagaData, correlationProperty, session, context).Wait();
             var saga1 = factory.RetrieveSagaData(sagaData);
             var saga2 = factory.RetrieveSagaData(sagaData);
 
             saga1.UniqueProperty = Guid.NewGuid().ToString();
-            sut.Update(saga1);
+            sut.Update(saga1, session, context).Wait();
 
             saga2.UniqueProperty = Guid.NewGuid().ToString();
-            sut.Invoking(s => s.Update(saga2)).ShouldThrow<InvalidOperationException>();
+            sut.Invoking(s => s.Update(saga2, session, context).Wait()).ShouldThrow<InvalidOperationException>();
         }
 
         [Theory, IntegrationTest]
@@ -246,7 +246,7 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
             SynchronizedStorageSession session,
             ContextBag context)
         {
-            sut.Invoking(s => s.Update(sagaData)).ShouldThrow<InvalidOperationException>();
+            sut.Invoking(s => s.Update(sagaData, session, context).Wait()).ShouldThrow<InvalidOperationException>();
         }
 
         [Theory, IntegrationTest]
@@ -293,9 +293,9 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
             SynchronizedStorageSession session,
             ContextBag context)
         {
-            sut.Save(sagaData, correlationProperty, session, context);
+            sut.Save(sagaData, correlationProperty, session, context).Wait();
 
-            sut.Complete(sagaData);
+            sut.Complete(sagaData, session, context);
             factory.RetrieveSagaData(sagaData).Should().BeNull();
         }
 
@@ -309,43 +309,9 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
             SynchronizedStorageSession session,
             ContextBag context)
         {
-            sut.Save(sagaData, correlationProperty, session, context);
+            sut.Save(sagaData, correlationProperty, session, context).Wait();
 
             var result = sut.Get<SagaWithoutUniqueProperties>(sagaData.Id);
-
-            result.ShouldBeEquivalentTo(sagaData);
-        }
-
-        [Theory]
-        [IntegrationTest]
-        [AutoDatabase]
-        public void RetrievingSagaUsingGuidUniqueId(
-            MongoSagaPersister sut,
-            SagaWithUniqueGuidProperty sagaData,
-            SagaCorrelationProperty correlationProperty,
-            SynchronizedStorageSession session,
-            ContextBag context)
-        {
-            sut.Save(sagaData, correlationProperty, session, context);
-
-            var result = sut.Get<SagaWithUniqueGuidProperty>("SomeId", sagaData.SomeId);
-
-            result.ShouldBeEquivalentTo(sagaData);
-        }
-
-        [Theory]
-        [IntegrationTest]
-        [AutoDatabase]
-        public void RetrievingSagaUsingStringUniqueId(
-            MongoSagaPersister sut,
-            SagaWithUniqueProperty sagaData,
-            SagaCorrelationProperty correlationProperty,
-            SynchronizedStorageSession session,
-            ContextBag context)
-        {
-            sut.Save(sagaData, correlationProperty, session, context);
-
-            var result = sut.Get<SagaWithUniqueProperty>("UniqueProperty", sagaData.UniqueProperty);
 
             result.ShouldBeEquivalentTo(sagaData);
         }
