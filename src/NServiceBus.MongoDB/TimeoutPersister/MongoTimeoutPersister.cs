@@ -81,12 +81,11 @@ namespace NServiceBus.MongoDB.TimeoutPersister
         /// Retrieves the next range of timeouts that are due.
         /// </summary>
         /// <param name="startSlice"> The time where to start retrieving the next slice, the slice should exclude this date.</param>
-        /// <param name="nextTimeToRunQuery">Returns the next time we should query again.</param>
+        /// <param name="nextTimeTorunQuery">Returns the next time we should query again.</param>
         /// <returns>
         /// Returns the next range of timeouts that are due.
         /// </returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1002:DoNotExposeGenericLists", Justification = "Ok here.")]
-        public IEnumerable<Tuple<string, DateTime>> GetNextChunk(DateTime startSlice, out DateTime nextTimeToRunQuery)
+        public IEnumerable<Tuple<string, DateTime>> GetNextChunk(DateTime startSlice, out DateTime nextTimeTorunQuery)
         {
             var collection = this.mongoDatabase.GetCollection<TimeoutData>(TimeoutDataName);
 
@@ -105,7 +104,7 @@ namespace NServiceBus.MongoDB.TimeoutPersister
                               orderby data.Time ascending 
                               select data;
 
-            nextTimeToRunQuery = nextTimeout.Any()
+            nextTimeTorunQuery = nextTimeout.Any()
                                      ? nextTimeout.First().Time
                                      : now.AddMinutes(
                                          MongoPersistenceConstants.DefaultNextTimeoutIncrementMinutes);
@@ -132,7 +131,8 @@ namespace NServiceBus.MongoDB.TimeoutPersister
 
             if (!result.Ok)
             {
-                throw new InvalidOperationException("Unable to remove timeout for id {timeoutId}: {result.ErrorMessage}");
+                throw new InvalidOperationException(
+                    string.Format("Unable to remove timeout for id {0}: {1}", timeoutId, result.ErrorMessage));
             }
 
             var data = result.GetModifiedDocumentAs<TimeoutData>();
