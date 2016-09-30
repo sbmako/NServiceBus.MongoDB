@@ -311,7 +311,7 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
         {
             sut.Save(sagaData, correlationProperty, session, context).Wait();
 
-            var result = sut.Get<SagaWithoutUniqueProperties>(sagaData.Id);
+            var result = sut.Get<SagaWithoutUniqueProperties>(sagaData.Id, session, context).Result;
 
             result.ShouldBeEquivalentTo(sagaData);
         }
