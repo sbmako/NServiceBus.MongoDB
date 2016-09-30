@@ -75,10 +75,12 @@ namespace NServiceBus.MongoDB.SagaPersister
 
             if (!(sagaData is IHaveDocumentVersion))
             {
-                throw new InvalidOperationException("Saga type {sagaTypeName} does not implement IHaveDocumentVersion");
+                throw new InvalidOperationException(
+                    string.Format("Saga type {0} does not implement IHaveDocumentVersion", sagaTypeName));
             }
 
             //// TODO: need to find the correlation property and ensure unique index on that
+            ////var uniqueProperty = UniqueAttribute.GetUniqueProperty(saga);
             ////if (correlationProperty != null)
             ////{
             ////    this.EnsureUniqueIndex(sagaData, uniqueProperty.Value);
@@ -146,17 +148,17 @@ namespace NServiceBus.MongoDB.SagaPersister
             return Task.FromResult(0);
         }
 
-        private static void CheckUniqueProperty(IContainSagaData sagaData, KeyValuePair<string, object> uniqueProperty)
-        {
-            Contract.Requires(sagaData != null);
+        ////private static void CheckUniqueProperty(IContainSagaData sagaData, KeyValuePair<string, object> uniqueProperty)
+        ////{
+        ////    Contract.Requires(sagaData != null);
 
-            if (uniqueProperty.Value == null)
-            {
-                throw new ArgumentNullException(
-                    "uniqueProperty",
-                    "Property {uniqueProperty.Key} is marked with the [Unique] attribute on {sagaData.GetType().Name} but contains a null propertyValue.");
-            }
-        }
+        ////    if (uniqueProperty.Value == null)
+        ////    {
+        ////        throw new ArgumentNullException(
+        ////            "uniqueProperty",
+        ////            "Property {uniqueProperty.Key} is marked with the [Unique] attribute on {sagaData.GetType().Name} but contains a null propertyValue.");
+        ////    }
+        ////}
 
         private T GetByUniqueProperty<T>(string property, object value) where T : IContainSagaData
         {
@@ -169,35 +171,19 @@ namespace NServiceBus.MongoDB.SagaPersister
             return entity;
         }
 
-        private void EnsureUniqueIndex(IContainSagaData saga, KeyValuePair<string, object> uniqueProperty)
-        {
-            Contract.Requires(saga != null);
+        ////private void EnsureUniqueIndex(IContainSagaData saga, KeyValuePair<string, object> uniqueProperty)
+        ////{
+        ////    Contract.Requires(saga != null);
 
-            if (Indexes.ContainsKey(saga.GetType()))
-            {
-                return;
-            }
+        ////    var collection = this.mongoDatabase.GetCollection(saga.GetType().Name);
+        ////    var indexOptions = IndexOptions.SetName(uniqueProperty.Key).SetUnique(true).SetSparse(true);
+        ////    var result = collection.CreateIndex(IndexKeys.Ascending(uniqueProperty.Key), indexOptions);
 
-            var collection = this.mongoDatabase.GetCollection(saga.GetType().Name);
-            var found = collection.IndexExistsByName(uniqueProperty.Key);
-            if (found)
-            {
-                Indexes.TryAdd(saga.GetType(), uniqueProperty.Key);
-                return;
-            }
-
-            var indexOptions =
-                IndexOptions.SetName(uniqueProperty.Key).SetUnique(true).SetSparse(true).SetBackground(true);
-            var indexKeys = IndexKeys.Ascending(uniqueProperty.Key);
-            var result = collection.CreateIndex(indexKeys, indexOptions);
-
-            if (result.HasLastErrorMessage)
-            {
-                throw new InvalidOperationException(
-                    "Unable to create unique index on {saga.GetType().Name}: {uniqueProperty.Key}");
-            }
-
-            Indexes.TryAdd(saga.GetType(), uniqueProperty.Key);
-        }
+        ////    if (result.HasLastErrorMessage)
+        ////    {
+        ////        throw new InvalidOperationException(
+        ////            string.Format("Unable to create unique index on {0}: {1}", saga.GetType().Name, uniqueProperty.Key));
+        ////    }
+        ////}
     }
 }

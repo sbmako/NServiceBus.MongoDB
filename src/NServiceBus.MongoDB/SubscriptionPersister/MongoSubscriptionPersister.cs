@@ -103,7 +103,10 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
                 if (insertResult.HasLastErrorMessage)
                 {
                     throw new InvalidOperationException(
-                        "Unable to save {subscriber.TransportAddress} subscription because: {insertResult.LastErrorMessage}");
+                        string.Format(
+                            "Unable to save {0} subscription because: {1}",
+                            subscriber.TransportAddress,
+                            insertResult.LastErrorMessage));
                 }
 
                 return Task.FromResult(0);
@@ -126,7 +129,7 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
             if (!updateResult.UpdatedExisting)
             {
                 throw new InvalidOperationException(
-                    "Unable to update subscription with id {existingSubscription.First().Id}");
+                    string.Format("Unable to update subscription with id {0}", existingSubscription.First().Id));
             }
 
             return Task.FromResult(0);
@@ -159,7 +162,9 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
             if (result.HasLastErrorMessage)
             {
                 throw new InvalidOperationException(
-                    "Unable to unsubscribe {subscriber.TransportAddress} from one of its subscriptions");
+                    string.Format(
+                        "Unable to unsubscribe {0} from one of its subscriptions",
+                        subscriber.TransportAddress));
             }
 
             return Task.FromResult(0);
