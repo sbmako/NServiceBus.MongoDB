@@ -115,7 +115,10 @@ namespace NServiceBus.MongoDB.SagaPersister
             SynchronizedStorageSession session, 
             ContextBag context) where TSagaData : IContainSagaData
         {
-            throw new NotImplementedException();
+            var query = Query<TSagaData>.EQ(e => e.Id, sagaId);
+            var entity = this.mongoDatabase.GetCollection<TSagaData>(typeof(TSagaData).Name).FindOne(query);
+
+            return Task.FromResult(entity);
         }
 
         public Task<TSagaData> Get<TSagaData>(
@@ -140,26 +143,6 @@ namespace NServiceBus.MongoDB.SagaPersister
             }
 
             return Task.FromResult(0);
-        }
-
-        /// <summary>
-        /// Gets a saga entity from the persistence store by its Id.
-        /// </summary>
-        /// <typeparam name="T">
-        /// The return type.
-        /// </typeparam>
-        /// <param name="sagaId">
-        /// The saga Id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="T"/>.
-        /// </returns>
-        public T Get<T>(Guid sagaId) where T : IContainSagaData
-        {
-            var query = Query<T>.EQ(e => e.Id, sagaId);
-            var entity = this.mongoDatabase.GetCollection<T>(typeof(T).Name).FindOne(query);
-
-            return entity;
         }
 
         private static void CheckUniqueProperty(IContainSagaData sagaData, KeyValuePair<string, object> uniqueProperty)
