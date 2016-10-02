@@ -29,13 +29,11 @@
 namespace NServiceBus.MongoDB.SagaPersister
 {
     using System;
-    using System.Collections.Generic;
     using System.Diagnostics.Contracts;
     using System.Threading.Tasks;
 
     using global::MongoDB.Bson;
     using global::MongoDB.Driver;
-    using global::MongoDB.Driver.Builders;
 
     using NServiceBus.Extensibility;
     using NServiceBus.MongoDB.Extensions;
