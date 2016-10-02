@@ -33,6 +33,7 @@ namespace NServiceBus.MongoDB.DataBus
     using System.IO;
     using System.Threading.Tasks;
 
+    using global::MongoDB.Bson;
     using global::MongoDB.Driver.GridFS;
     using NServiceBus.DataBus;
     using NServiceBus.MongoDB.Internals;
@@ -42,7 +43,7 @@ namespace NServiceBus.MongoDB.DataBus
     /// </summary>
     public class MongoGridFSDataBus : IDataBus
     {
-        private readonly MongoGridFS gridFS;
+        private readonly GridFSBucket gridFsBucket;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MongoGridFSDataBus"/> class.
@@ -53,7 +54,7 @@ namespace NServiceBus.MongoDB.DataBus
         public MongoGridFSDataBus(MongoDatabaseFactory mongoFactory)
         {
             Contract.Requires<ArgumentNullException>(mongoFactory != null, "mongoFactory != null");
-            this.gridFS = mongoFactory.GetDatabase().GridFS.AssumedNotNull();
+            this.gridFsBucket = new GridFSBucket(mongoFactory.GetDatabase());
         }
 
         /// <summary>
@@ -65,11 +66,13 @@ namespace NServiceBus.MongoDB.DataBus
         /// <returns>
         /// The <see cref="Stream"/>.
         /// </returns>
-        public Task<Stream> Get(string key)
+        public async Task<Stream> Get(string key)
         {
             Contract.Ensures(Contract.Result<Stream>() != null);
 
-            return Task.FromResult(this.gridFS.OpenRead(key).AssumedNotNull() as Stream);
+            var stream = new MemoryStream();
+            await this.gridFsBucket.DownloadToStreamAsync(ObjectId.Parse(key), stream).ConfigureAwait(false);
+            return stream;
         }
 
         /// <summary>
@@ -84,14 +87,13 @@ namespace NServiceBus.MongoDB.DataBus
         /// <returns>
         /// The file key.
         /// </returns>
-        public Task<string> Put(Stream stream, TimeSpan timeToBeReceived)
+        public async Task<string> Put(Stream stream, TimeSpan timeToBeReceived)
         {
             Contract.Ensures(!string.IsNullOrWhiteSpace(Contract.Result<string>()));
 
             var key = Guid.NewGuid().ToString();
-            this.gridFS.Upload(stream, key);
-
-            return Task.FromResult(key.AssumedNotNullOrWhiteSpace());
+            await this.gridFsBucket.UploadFromStreamAsync(key, stream).ConfigureAwait(false);
+            return key;
         }
 
         /// <summary>
@@ -108,7 +110,7 @@ namespace NServiceBus.MongoDB.DataBus
         [ContractInvariantMethod]
         private void ObjectInvariants()
         {
-            Contract.Invariant(this.gridFS != null);
+            Contract.Invariant(this.gridFsBucket != null);
         }
     }
 }

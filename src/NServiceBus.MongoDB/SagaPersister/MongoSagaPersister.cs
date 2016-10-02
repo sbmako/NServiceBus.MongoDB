@@ -50,7 +50,7 @@ namespace NServiceBus.MongoDB.SagaPersister
     {
         ////private static ConcurrentDictionary<Type, string> indexes = new ConcurrentDictionary<Type, string>();
 
-        private readonly MongoDatabase mongoDatabase;
+        private readonly IMongoDatabase mongoDatabase;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MongoSagaPersister"/> class.
@@ -64,7 +64,7 @@ namespace NServiceBus.MongoDB.SagaPersister
             this.mongoDatabase = mongoFactory.GetDatabase();
         }
 
-        public Task Save(
+        public async Task Save(
             IContainSagaData sagaData,
             SagaCorrelationProperty correlationProperty,
             SynchronizedStorageSession session,
@@ -86,41 +86,29 @@ namespace NServiceBus.MongoDB.SagaPersister
             ////    CheckUniqueProperty(sagaData, uniqueProperty.Value);
             ////}
 
-            var collection = this.mongoDatabase.GetCollection(sagaTypeName);
-            var result = collection.Insert(sagaData);
-
-            if (result.HasLastErrorMessage)
-            {
-                throw new InvalidOperationException("Unable to save with id {saga.Id}");
-            }
-
-            return Task.FromResult(0);
+            var collection = this.mongoDatabase.GetCollection<BsonDocument>(sagaTypeName);
+            await collection.InsertOneAsync(sagaData.ToBsonDocument()).ConfigureAwait(false);
         }
 
-        public Task Update(IContainSagaData sagaData, SynchronizedStorageSession session, ContextBag context)
+        public async Task Update(IContainSagaData sagaData, SynchronizedStorageSession session, ContextBag context)
         {
-            var collection = this.mongoDatabase.GetCollection(sagaData.GetType().Name);
-
             var query = sagaData.MongoUpdateQuery();
             var update = sagaData.MongoUpdate();
-            var result = collection.Update(query, update, UpdateFlags.None);
-            if (!result.UpdatedExisting)
-            {
-                throw new InvalidOperationException("Unable to update saga with id {saga.Id}");
-            }
 
-            return Task.FromResult(0);
-        }
+            var collection = this.mongoDatabase.GetCollection<BsonDocument>(sagaData.GetType().Name);
+
+            await collection.UpdateOneAsync(query, update).ConfigureAwait(false);
+         }
 
         public Task<TSagaData> Get<TSagaData>(
             Guid sagaId, 
             SynchronizedStorageSession session, 
             ContextBag context) where TSagaData : IContainSagaData
         {
-            var query = Query<TSagaData>.EQ(e => e.Id, sagaId);
-            var entity = this.mongoDatabase.GetCollection<TSagaData>(typeof(TSagaData).Name).FindOne(query);
+            var collection = this.mongoDatabase.GetCollection<TSagaData>(typeof(TSagaData).Name);
 
-            return Task.FromResult(entity);
+            var query = Builders<TSagaData>.Filter.Eq(e => e.Id, sagaId);
+            return collection.FindAsync(query).Result.FirstAsync();
         }
 
         public Task<TSagaData> Get<TSagaData>(
@@ -129,22 +117,19 @@ namespace NServiceBus.MongoDB.SagaPersister
             SynchronizedStorageSession session, 
             ContextBag context) where TSagaData : IContainSagaData
         {
-            var result = this.GetByUniqueProperty<TSagaData>(propertyName.AssumedNotNullOrWhiteSpace(), propertyValue);
+            var collection = this.mongoDatabase.GetCollection<TSagaData>(typeof(TSagaData).Name);
 
-            return Task.FromResult(result);
+            var query = Builders<TSagaData>.Filter.Eq(propertyName, BsonValue.Create(propertyValue));
+            return collection.FindAsync(query).Result.FirstAsync();
         }
 
-        public Task Complete(IContainSagaData sagaData, SynchronizedStorageSession session, ContextBag context)
+        public async Task Complete(IContainSagaData sagaData, SynchronizedStorageSession session, ContextBag context)
         {
-            var query = Query.EQ("_id", sagaData.Id);
-            var result = this.mongoDatabase.GetCollection(sagaData.GetType().Name).Remove(query);
+            ////var query = Query.EQ("_id", sagaData.Id);
+            var query = Builders<BsonDocument>.Filter.Eq("_id`", sagaData.Id);
 
-            if (result.HasLastErrorMessage)
-            {
-                throw new InvalidOperationException("Unable to find and remove saga with id {saga.Id}");
-            }
-
-            return Task.FromResult(0);
+            var collection = this.mongoDatabase.GetCollection<BsonDocument>(sagaData.GetType().Name);
+            await collection.DeleteOneAsync(query).ConfigureAwait(false);
         }
 
         ////private static void CheckUniqueProperty(IContainSagaData sagaData, KeyValuePair<string, object> uniqueProperty)
@@ -158,17 +143,6 @@ namespace NServiceBus.MongoDB.SagaPersister
         ////            "Property {uniqueProperty.Key} is marked with the [Unique] attribute on {sagaData.GetType().Name} but contains a null propertyValue.");
         ////    }
         ////}
-
-        private T GetByUniqueProperty<T>(string property, object value) where T : IContainSagaData
-        {
-            Contract.Requires(!string.IsNullOrWhiteSpace(property));
-
-            var query = Query.EQ(property, BsonValue.Create(value));
-
-            var entity = this.mongoDatabase.GetCollection<T>(typeof(T).Name).FindOne(query);
-
-            return entity;
-        }
 
         ////private void EnsureUniqueIndex(IContainSagaData saga, KeyValuePair<string, object> uniqueProperty)
         ////{

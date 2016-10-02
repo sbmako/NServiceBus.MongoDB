@@ -82,7 +82,7 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
             SynchronizedStorageSession session,
             ContextBag context)
         {
-            sut.Save(sagaData, correlationProperty, session, context);
+            sut.Save(sagaData, correlationProperty, session, context).Wait();
 
             var entity = factory.RetrieveSagaData(sagaData);
 
@@ -101,8 +101,8 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
             SynchronizedStorageSession session,
             ContextBag context)
         {
-            sut.Save(sagaData, correlationProperty, session, context);
-            sut.Invoking(s => s.Save(sagaData, correlationProperty, session, context))
+            sut.Save(sagaData, correlationProperty, session, context).Wait();
+            sut.Invoking(s => s.Save(sagaData, correlationProperty, session, context).Wait())
                 .ShouldThrow<MongoDuplicateKeyException>();
         }
 
@@ -121,10 +121,10 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
             sagaData1.UniqueProperty = uniqueProperty;
             sagaData2.UniqueProperty = uniqueProperty;
 
-            sut.Save(sagaData1, correlationProperty, session, context);
+            sut.Save(sagaData1, correlationProperty, session, context).Wait();
             sut.Complete(sagaData1, session, context).Wait();
 
-            sut.Save(sagaData2, correlationProperty, session, context);
+            sut.Save(sagaData2, correlationProperty, session, context).Wait();
 
             var entity = factory.RetrieveSagaData(sagaData2);
             entity.UniqueProperty.Should().Be(sagaData2.UniqueProperty);
@@ -141,7 +141,7 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
             SynchronizedStorageSession session,
             ContextBag context)
         {
-            sut.Invoking(s => s.Save(sagaData, correlationProperty, session, context))
+            sut.Invoking(s => s.Save(sagaData, correlationProperty, session, context).Wait())
                 .ShouldThrow<InvalidOperationException>();
         }
 
@@ -179,7 +179,7 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
             sut.Save(sagaData, correlationProperty, session, context).Wait();
 
             sagaData.NonUniqueProperty = newValue;
-            sut.Update(sagaData, session, context);
+            sut.Update(sagaData, session, context).Wait();
 
             var entity = factory.RetrieveSagaData(sagaData);
             entity.NonUniqueProperty.Should().Be(newValue);
@@ -261,7 +261,7 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
         {
             sut.Save(sagaData, correlationProperty, session, context).Wait();
 
-            sut.Complete(sagaData, session, context);
+            sut.Complete(sagaData, session, context).Wait();
             factory.RetrieveSagaData(sagaData).Should().BeNull();
         }
 

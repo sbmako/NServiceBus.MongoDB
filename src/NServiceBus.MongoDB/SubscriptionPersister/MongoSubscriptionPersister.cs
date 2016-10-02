@@ -51,7 +51,7 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
     {
         private static readonly string SubscriptionName = typeof(Subscription).Name;
 
-        private readonly MongoDatabase mongoDatabase;
+        private readonly IMongoDatabase mongoDatabase;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MongoSubscriptionPersister"/> class. 
@@ -92,24 +92,14 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
         {
             var existingSubscription = this.GetSubscription(messageType);
 
-            var collection = this.mongoDatabase.GetCollection(SubscriptionName).AssumedNotNull();
+            var collection = this.mongoDatabase.GetCollection<Subscription>(SubscriptionName).AssumedNotNull();
 
             if (!existingSubscription.Any())
             {
                 var newSubscription = new Subscription(messageType);
                 newSubscription.Subscribers.Add(subscriber);
 
-                var insertResult = collection.Insert(newSubscription);
-                if (insertResult.HasLastErrorMessage)
-                {
-                    throw new InvalidOperationException(
-                        string.Format(
-                            "Unable to save {0} subscription because: {1}",
-                            subscriber.TransportAddress,
-                            insertResult.LastErrorMessage));
-                }
-
-                return Task.FromResult(0);
+                return collection.InsertOneAsync(newSubscription);
             }
             
             var theSubscription = existingSubscription.First();
@@ -124,15 +114,7 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
             theSubscription.Subscribers.Add(subscriber);
 
             var query = theSubscription.MongoUpdateQuery();
-            var update = theSubscription.MongoUpdate();
-            var updateResult = collection.Update(query, update, UpdateFlags.None);
-            if (!updateResult.UpdatedExisting)
-            {
-                throw new InvalidOperationException(
-                    string.Format("Unable to update subscription with id {0}", existingSubscription.First().Id));
-            }
-
-            return Task.FromResult(0);
+            return collection.ReplaceOneAsync(query, theSubscription);
         }
 
         /// <summary>
@@ -152,22 +134,11 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
         /// </returns>
         public Task Unsubscribe(Subscriber subscriber, MessageType messageType, ContextBag context)
         {
-            var query = Query<Subscription>.EQ(s => s.Id, Subscription.FormatId(messageType));
+            var query = Builders<Subscription>.Filter.Eq(s => s.Id, Subscription.FormatId(messageType));
+            var update = Builders<Subscription>.Update.Pull(s => s.Subscribers, subscriber);
 
-            var update = Update<Subscription>.Pull(subscription => subscription.Subscribers, subscriber);
-
-            var collection = this.mongoDatabase.GetCollection(SubscriptionName).AssumedNotNull();
-            var result = collection.Update(query, update);
-
-            if (result.HasLastErrorMessage)
-            {
-                throw new InvalidOperationException(
-                    string.Format(
-                        "Unable to unsubscribe {0} from one of its subscriptions",
-                        subscriber.TransportAddress));
-            }
-
-            return Task.FromResult(0);
+            var collection = this.mongoDatabase.GetCollection<Subscription>(SubscriptionName).AssumedNotNull();
+            return collection.UpdateOneAsync(query, update);
         }
 
         /// <summary>
@@ -194,11 +165,11 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
             Contract.Requires(messageTypes != null);
             Contract.Ensures(Contract.Result<IEnumerable<Subscription>>() != null);
 
-            var collection = this.mongoDatabase.GetCollection(SubscriptionName).AssumedNotNull();
+            var collection = this.mongoDatabase.GetCollection<Subscription>(SubscriptionName).AssumedNotNull();
 
             var ids = messageTypes.Select(Subscription.FormatId);
-            var query = Query<Subscription>.In(p => p.Id, ids);
-            var result = collection.FindAs<Subscription>(query);
+            var query = Builders<Subscription>.Filter.In(p => p.Id, ids);
+            var result = collection.FindAsync(query).Result.ToList();
 
             return result.AssumedNotNull();
         }
@@ -208,12 +179,12 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
             Contract.Requires(messageType != null);
             Contract.Ensures(Contract.Result<IEnumerable<Subscription>>() != null);
 
-            var collection = this.mongoDatabase.GetCollection(SubscriptionName).AssumedNotNull();
+            var collection = this.mongoDatabase.GetCollection<Subscription>(SubscriptionName).AssumedNotNull();
 
-            var query = Query<Subscription>.EQ(p => p.Id, Subscription.FormatId(messageType.AssumedNotNull()));
-            var subscription = collection.FindOneAs<Subscription>(query);
+            var query = Builders<Subscription>.Filter.Eq(p => p.Id, Subscription.FormatId(messageType.AssumedNotNull()));
+            var subscription = collection.FindAsync(query).Result.ToList();
 
-            return subscription == null ? new List<Subscription>() : new List<Subscription>() { subscription };
+            return subscription ?? new List<Subscription>();
         }
 
         [ContractInvariantMethod]

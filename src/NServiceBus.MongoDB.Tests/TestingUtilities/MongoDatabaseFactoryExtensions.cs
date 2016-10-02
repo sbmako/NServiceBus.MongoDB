@@ -30,6 +30,8 @@ namespace NServiceBus.MongoDB.Tests.TestingUtilities
 {
     using System.Collections.Generic;
     using System.Linq;
+
+    using global::MongoDB.Driver;
     using global::MongoDB.Driver.Builders;
     using global::MongoDB.Driver.Linq;
 
@@ -41,11 +43,11 @@ namespace NServiceBus.MongoDB.Tests.TestingUtilities
         public static T RetrieveSagaData<T>(this MongoDatabaseFactory factory, T sagaData)
             where T : IContainSagaData
         {
-            var query = Query<T>.EQ(e => e.Id, sagaData.Id);
+            var query = Builders<T>.Filter.Eq(e => e.Id, sagaData.Id);
             var entity = factory.GetDatabase()
                                 .GetCollection<T>(typeof(T).Name)
-                                .FindOne(query);
-            return entity;
+                                .FindAsync(query);
+            return entity.Result.First();
         }
 
         public static IEnumerable<TimeoutData> RetrieveAllTimeouts(this MongoDatabaseFactory factor)
@@ -59,8 +61,8 @@ namespace NServiceBus.MongoDB.Tests.TestingUtilities
 
         public static void ResetTimeoutCollection(this MongoDatabaseFactory factory)
         {
-            var collection = factory.GetDatabase().GetCollection<Timeout.Core.TimeoutData>(MongoTimeoutPersister.TimeoutDataName);
-            collection.RemoveAll();
+            var database = factory.GetDatabase();
+            database.DropCollection(MongoTimeoutPersister.TimeoutDataName);
         }
     }
 }

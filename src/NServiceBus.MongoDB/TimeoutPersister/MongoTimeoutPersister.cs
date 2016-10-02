@@ -49,7 +49,7 @@ namespace NServiceBus.MongoDB.TimeoutPersister
     {
         internal static readonly string TimeoutDataName = typeof(TimeoutData).Name;
 
-        private readonly MongoDatabase mongoDatabase;
+        private readonly IMongoDatabase mongoDatabase;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MongoTimeoutPersister"/> class.
@@ -113,48 +113,6 @@ namespace NServiceBus.MongoDB.TimeoutPersister
         }
 
         /// <summary>
-        /// Removes the timeout if it hasn't been previously removed.
-        /// </summary>
-        /// <param name="timeoutId">The timeout id to remove.</param>
-        /// <param name="timeoutData">The timeout data of the removed timeout.</param>
-        /// <returns>
-        /// <c>true</c> it the timeout was successfully removed.
-        /// </returns>
-        public bool TryRemove(string timeoutId, out Timeout.Core.TimeoutData timeoutData)
-        {
-            timeoutData = null;
-
-            var collection = this.mongoDatabase.GetCollection<TimeoutData>(TimeoutDataName);
-
-            var findAndRemoveArgs = new FindAndRemoveArgs { Query = Query<TimeoutData>.EQ(t => t.Id, timeoutId) };
-            var result = collection.FindAndRemove(findAndRemoveArgs);
-
-            if (!result.Ok)
-            {
-                throw new InvalidOperationException(
-                    string.Format("Unable to remove timeout for id {0}: {1}", timeoutId, result.ErrorMessage));
-            }
-
-            var data = result.GetModifiedDocumentAs<TimeoutData>();
-
-            if (data != null)
-            {
-                timeoutData = new Timeout.Core.TimeoutData()
-                                  {
-                                      Id = data.Id,
-                                      Destination = data.Destination,
-                                      SagaId = data.SagaId,
-                                      State = data.State,
-                                      Time = data.Time,
-                                      Headers = data.Headers,
-                                      OwningTimeoutManager = data.OwningTimeoutManager
-                                  };
-            }
-
-            return data != null;
-        }
-
-        /// <summary>
         /// Reads timeout data.
         /// </summary>
         /// <param name="timeoutId">The timeout id to read.</param>
@@ -189,7 +147,7 @@ namespace NServiceBus.MongoDB.TimeoutPersister
         /// <param name="timeout">The timeout data to add</param>
         /// <param name="context">The context</param>
         /// <returns>The task</returns>
-        public Task Add(Timeout.Core.TimeoutData timeout, ContextBag context)
+        public async Task Add(Timeout.Core.TimeoutData timeout, ContextBag context)
         {
             var data = new TimeoutData()
             {
@@ -203,16 +161,7 @@ namespace NServiceBus.MongoDB.TimeoutPersister
             };
 
             var collection = this.mongoDatabase.GetCollection<TimeoutData>(TimeoutDataName);
-            var result = collection.Save(data);
-
-            if (result.HasLastErrorMessage)
-            {
-                throw new InvalidOperationException(string.Format("Unable to save timeout [{0}]", timeout));
-            }
-
-            timeout.Id = data.Id;
-
-            return Task.FromResult(0);
+            await collection.InsertOneAsync(data).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -225,8 +174,10 @@ namespace NServiceBus.MongoDB.TimeoutPersister
         /// </returns>
         public Task<bool> TryRemove(string timeoutId, ContextBag context)
         {
-            Timeout.Core.TimeoutData timeoutData;
-            return Task.FromResult<bool>(this.TryRemove(timeoutId, out timeoutData));
+            var query = Builders<TimeoutData>.Filter.Eq(e => e.Id, timeoutId);
+
+            var collection = this.mongoDatabase.GetCollection<TimeoutData>(TimeoutDataName);
+            return Task.FromResult(collection.DeleteOneAsync(query).Result.DeletedCount != 0);
         }
 
         /// <summary>
@@ -238,34 +189,20 @@ namespace NServiceBus.MongoDB.TimeoutPersister
         public Task RemoveTimeoutBy(Guid sagaId, ContextBag context)
         {
             var collection = this.mongoDatabase.GetCollection<TimeoutData>(TimeoutDataName);
-
-            var query = Query<TimeoutData>.EQ(t => t.SagaId, sagaId);
-            var result = collection.Remove(query);
-
-            if (result.HasLastErrorMessage)
-            {
-                throw new InvalidOperationException(string.Format("Unable to remove timeouts for saga id {0}", sagaId));
-            }
-
-            return Task.FromResult(0);
+            return collection.DeleteManyAsync(t => t.SagaId == sagaId);
         }
 
         private void EnsureTimeoutIndexes()
         {
             var collection = this.mongoDatabase.GetCollection<TimeoutData>(TimeoutDataName);
 
-            var indexOptions = IndexOptions.SetName(MongoPersistenceConstants.OwningTimeoutManagerAndTimeName);
-            var result =
-                collection.CreateIndex(
-                    IndexKeys<TimeoutData>.Ascending(t => t.Time, t => t.OwningTimeoutManager),
-                    indexOptions);
+            collection.Indexes.CreateOneAsync(
+                Builders<TimeoutData>.IndexKeys.Ascending(t => t.SagaId),
+                new CreateIndexOptions { Background = true }).Wait();
 
-            if (result.HasLastErrorMessage)
-            {
-                throw new InvalidOperationException(
-                    string.Format(
-                        "Unable to create {0} index", MongoPersistenceConstants.OwningTimeoutManagerAndTimeName));
-            }
+            collection.Indexes.CreateOneAsync(
+                Builders<TimeoutData>.IndexKeys.Ascending(t => t.OwningTimeoutManager),
+                new CreateIndexOptions { Background = true }).Wait();
         }
 
         [ContractInvariantMethod]
