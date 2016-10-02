@@ -29,10 +29,8 @@
 namespace NServiceBus.MongoDB.Tests.TestingUtilities
 {
     using System.Collections.Generic;
-    using System.Linq;
 
     using global::MongoDB.Driver;
-    using global::MongoDB.Driver.Builders;
     using global::MongoDB.Driver.Linq;
 
     using NServiceBus.MongoDB.Internals;

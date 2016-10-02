@@ -35,12 +35,10 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
     using System.Threading.Tasks;
 
     using global::MongoDB.Driver;
-    using global::MongoDB.Driver.Builders;
 
     using NServiceBus.Extensibility;
     using NServiceBus.MongoDB.Extensions;
     using NServiceBus.MongoDB.Internals;
-    using NServiceBus.Routing;
     using NServiceBus.Unicast.Subscriptions;
     using NServiceBus.Unicast.Subscriptions.MessageDrivenSubscriptions;
 
