@@ -34,6 +34,10 @@ namespace NServiceBus.MongoDB.Tests.DataBus
     using CategoryTraits.Xunit2;
 
     using FluentAssertions;
+
+    using global::MongoDB.Bson;
+    using global::MongoDB.Driver.GridFS;
+
     using NServiceBus.MongoDB.DataBus;
     using NServiceBus.MongoDB.Internals;
     using NServiceBus.MongoDB.Tests.TestingUtilities;
@@ -51,12 +55,11 @@ namespace NServiceBus.MongoDB.Tests.DataBus
             var input = new MemoryStream(data);
             var key = sut.Put(input, TimeSpan.FromDays(1)).Result;
 
-            var gfs = factory.GetDatabase().GridFS.OpenRead(key);
+            var gridFsBucket = new GridFSBucket(factory.GetDatabase());
 
-            var result = new byte[data.Length];
-            gfs.Read(result, 0, data.Length);
+            var result = gridFsBucket.DownloadAsBytes(ObjectId.Parse(key));
 
-            gfs.Length.Should().Be(data.Length);
+            result.Length.Should().Be(data.Length);
             result.Should().BeEquivalentTo(data);
         }
 
@@ -64,9 +67,10 @@ namespace NServiceBus.MongoDB.Tests.DataBus
         [AutoDatabase]
         public void GetTest(MongoDatabaseFactory factory, byte[] data)
         {
-            var st = new MemoryStream(data);
+
+            var gridFsBucket = new GridFSBucket(factory.GetDatabase());
             var key = Guid.NewGuid().ToString();
-            factory.GetDatabase().GridFS.Upload(st, key);
+            gridFsBucket.UploadFromBytes(key, data);
 
             var sut = new MongoGridFSDataBus(factory);
             var resultStream = sut.Get(key).Result;

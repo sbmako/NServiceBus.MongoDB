@@ -33,17 +33,16 @@ namespace NServiceBus.MongoDB.Extensions
     using System.Linq;
     using global::MongoDB.Bson;
     using global::MongoDB.Driver;
-    using global::MongoDB.Driver.Builders;
 
     using NServiceBus.MongoDB.Internals;
     using NServiceBus.MongoDB.SubscriptionPersister;
 
     internal static class DocumentVersionExtensions
     {
-        public static IMongoQuery MongoUpdateQuery(this IContainSagaData saga)
+        public static FilterDefinition<BsonDocument> MongoUpdateQuery(this IContainSagaData saga)
         {
             Contract.Requires(saga != null);
-            Contract.Ensures(Contract.Result<IMongoQuery>() != null);
+            Contract.Ensures(Contract.Result<FilterDefinition<BsonDocument>>() != null);
 
             var versionedDocument = saga as IHaveDocumentVersion;
 
@@ -53,52 +52,41 @@ namespace NServiceBus.MongoDB.Extensions
                     string.Format("Saga type {0} does not implement IHaveDocumentVersion", saga.GetType().Name));
             }
 
-            return
-                Query.And(
-                    Query.EQ("_id", saga.Id),
-                    Query.EQ(MongoPersistenceConstants.VersionPropertyName, versionedDocument.DocumentVersion))
-                     .AssumedNotNull();
+            var builder = Builders<BsonDocument>.Filter;
+            var filter = builder.Eq("_id", saga.Id)
+                         & builder.Eq(MongoPersistenceConstants.VersionPropertyName, versionedDocument.DocumentVersion);
+
+            return filter.AssumedNotNull();
         }
 
-        public static IMongoUpdate MongoUpdate<T>(this T saga) where T : IContainSagaData
+        public static UpdateDefinition<BsonDocument> MongoUpdate<T>(this T saga) where T : IContainSagaData
         {
             Contract.Requires(saga != null);
-            Contract.Ensures(Contract.Result<IMongoUpdate>() != null);
+            Contract.Ensures(Contract.Result<UpdateDefinition<BsonDocument>>() != null);
 
             var classMap = saga.ToBsonDocument();
 
-            var versionedDocument = saga as IHaveDocumentVersion;
-            if (versionedDocument == null)
-            {
-                return Update.Replace(saga).AssumedNotNull();
-            }
-
             classMap.Remove("_id");
             classMap.Remove(MongoPersistenceConstants.VersionPropertyName);
-            var updateBuilder = Update.Inc(MongoPersistenceConstants.VersionPropertyName, 1);
 
-            classMap.ToList().ForEach(f => updateBuilder.Set(f.Name, f.Value));
+            var builder = Builders<BsonDocument>.Update;
+            var update = builder.Inc(MongoPersistenceConstants.VersionPropertyName, 1);
 
-            return updateBuilder.AssumedNotNull();
+            classMap.ToList().ForEach(f => update.Set(f.Name, f.Value));
+
+            return update.AssumedNotNull();
         }
 
-        public static IMongoQuery MongoUpdateQuery(this Subscription subscription)
+        public static FilterDefinition<Subscription> MongoUpdateQuery(this Subscription subscription)
         {
             Contract.Requires(subscription != null);
-            Contract.Ensures(Contract.Result<IMongoQuery>() != null);
+            Contract.Ensures(Contract.Result<FilterDefinition<Subscription>>() != null);
 
             return
-                Query.And(
-                    Query<Subscription>.EQ(s => s.Id, subscription.Id),
-                    Query<Subscription>.EQ(s => s.DocumentVersion, subscription.DocumentVersion)).AssumedNotNull();
-        }
-
-        public static IMongoUpdate MongoUpdate(this Subscription subscription)
-        {
-            Contract.Requires(subscription != null);
-            Contract.Ensures(Contract.Result<IMongoUpdate>() != null);
-
-            return Update.Replace(subscription).AssumedNotNull();
+                Builders<Subscription>.Filter.And(
+                    Builders<Subscription>.Filter.Eq(s => s.Id, subscription.Id),
+                    Builders<Subscription>.Filter.Eq(s => s.DocumentVersion, subscription.DocumentVersion))
+                    .AssumedNotNull();
         }
     }
 }

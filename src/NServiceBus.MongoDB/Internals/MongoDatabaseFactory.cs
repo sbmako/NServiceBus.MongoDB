@@ -59,13 +59,12 @@ namespace NServiceBus.MongoDB.Internals
         /// The <see cref="MongoDatabase"/>.
         /// </returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate", Justification = "Ok here")]
-        public MongoDatabase GetDatabase()
+        public IMongoDatabase GetDatabase()
         {
-            Contract.Ensures(Contract.Result<MongoDatabase>() != null);
+            Contract.Ensures(Contract.Result<IMongoDatabase>() != null);
 
             var databaseName = this.mongoClientAccessor.DatabaseName;
-            var server = this.mongoClientAccessor.MongoClient.GetServer();
-            return server.GetDatabase(databaseName).AssumedNotNull();
+            return this.mongoClientAccessor.MongoClient.GetDatabase(databaseName).AssumedNotNull();
         }
 
         [ContractInvariantMethod]
