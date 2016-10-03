@@ -69,11 +69,10 @@ namespace NServiceBus.MongoDB.Tests.DataBus
         {
 
             var gridFsBucket = new GridFSBucket(factory.GetDatabase());
-            var key = Guid.NewGuid().ToString();
-            gridFsBucket.UploadFromBytes(key, data);
+            var key = gridFsBucket.UploadFromBytes(Guid.NewGuid().ToString(), data);
 
             var sut = new MongoGridFSDataBus(factory);
-            var resultStream = sut.Get(key).Result;
+            var resultStream = sut.Get(key.ToString()).Result;
 
             var result = new byte[data.Length];
             resultStream.Read(result, 0, data.Length);

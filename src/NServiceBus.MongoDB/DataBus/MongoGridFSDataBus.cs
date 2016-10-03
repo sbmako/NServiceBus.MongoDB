@@ -68,11 +68,13 @@ namespace NServiceBus.MongoDB.DataBus
         /// </returns>
         public async Task<Stream> Get(string key)
         {
-            Contract.Ensures(Contract.Result<Stream>() != null);
+            Contract.Ensures(Contract.Result<Task<Stream>>() != null);
 
             var stream = new MemoryStream();
             await this.gridFsBucket.DownloadToStreamAsync(ObjectId.Parse(key), stream).ConfigureAwait(false);
-            return stream;
+            stream.Position = 0;
+
+            return stream as Stream;
         }
 
         /// <summary>
@@ -91,9 +93,10 @@ namespace NServiceBus.MongoDB.DataBus
         {
             Contract.Ensures(!string.IsNullOrWhiteSpace(Contract.Result<string>()));
 
-            var key = Guid.NewGuid().ToString();
-            await this.gridFsBucket.UploadFromStreamAsync(key, stream).ConfigureAwait(false);
-            return key;
+            var key =
+                await this.gridFsBucket.UploadFromStreamAsync(Guid.NewGuid().ToString(), stream).ConfigureAwait(false);
+
+            return key.ToString();
         }
 
         /// <summary>
