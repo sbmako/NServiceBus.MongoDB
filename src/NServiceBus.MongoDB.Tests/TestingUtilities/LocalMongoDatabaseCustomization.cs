@@ -64,7 +64,7 @@ namespace NServiceBus.MongoDB.Tests.TestingUtilities
             fixture.Customize<TimeoutData>(
                 c => c.With(t => t.OwningTimeoutManager, "UnitTests").With(t => t.Time, DateTime.UtcNow));
 
-            fixture.Customize<MongoTimeoutPersister>(c => c.With(t => t.EndpointName, "UnitTests"));
+            fixture.Register(() => new MongoTimeoutPersister(databaseFactory, "UnitTests"));
 
             fixture.Customize(new SupportMutableValueTypesCustomization());
 

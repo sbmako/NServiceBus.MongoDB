@@ -49,7 +49,7 @@ namespace NServiceBus.MongoDB.Tests.TimeoutPersister
         [AutoDatabase]
         public void BasicMongoTimeoutPersisterConstruction(MongoDatabaseFactory factory)
         {
-            var sut = new MongoTimeoutPersister(factory);
+            var sut = new MongoTimeoutPersister(factory, "UnitTests");
         }
 
         [Theory, IntegrationTest]
@@ -223,13 +223,13 @@ namespace NServiceBus.MongoDB.Tests.TimeoutPersister
 
             var timeouts = factory.RetrieveAllTimeouts();
 
-            var result = sut.TryRemove(timeouts.First().Id.ToString(), context).Result;
+            var result = sut.TryRemove(timeouts.First().Id, context).Result;
 
             result.Should().BeTrue();
 
             var remainingTimeout = factory.RetrieveAllTimeouts().ToList();
             remainingTimeout.Should().HaveCount(1);
-            remainingTimeout.First().ShouldBeEquivalentTo(timeoutData2);
+            remainingTimeout.First().Id.Should().Be(timeoutData2.Id);
         }
 
         [Theory, IntegrationTest]

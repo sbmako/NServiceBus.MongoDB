@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="TimeoutData.cs" company="SharkByte Software">
+// <copyright file="TimeoutEntity.cs" company="SharkByte Software">
 //   The MIT License (MIT)
 //   
 //   Copyright (c) 2015 SharkByte Software
@@ -31,7 +31,7 @@ namespace NServiceBus.MongoDB.TimeoutPersister
     using System;
     using System.Collections.Generic;
 
-    internal class TimeoutData
+    internal class TimeoutEntity
     {
         /// <summary>
         /// Gets or sets the id.

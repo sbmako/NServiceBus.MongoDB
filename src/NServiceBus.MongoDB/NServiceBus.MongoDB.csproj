@@ -228,7 +228,7 @@
     <Compile Include="TimeoutPersister\MongoTimeoutPersister.cs" />
     <Compile Include="Internals\ContractHelper.cs" />
     <Compile Include="Internals\DeterministicGuid.cs" />
-    <Compile Include="TimeoutPersister\TimeoutData.cs" />
+    <Compile Include="TimeoutPersister\TimeoutEntity.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config">

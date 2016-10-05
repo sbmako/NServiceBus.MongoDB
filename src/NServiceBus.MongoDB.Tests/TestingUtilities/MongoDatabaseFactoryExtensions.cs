@@ -48,10 +48,10 @@ namespace NServiceBus.MongoDB.Tests.TestingUtilities
             return entity.Any() ? entity.First() : default(T);
         }
 
-        public static IEnumerable<TimeoutData> RetrieveAllTimeouts(this MongoDatabaseFactory factor)
+        public static IEnumerable<TimeoutEntity> RetrieveAllTimeouts(this MongoDatabaseFactory factor)
         {
             var timeouts = from t in factor.GetDatabase()
-                               .GetCollection<TimeoutData>(MongoTimeoutPersister.TimeoutDataName).AsQueryable()
+                               .GetCollection<TimeoutEntity>(MongoTimeoutPersister.TimeoutDataName).AsQueryable()
                             select t;
 
             return timeouts;
