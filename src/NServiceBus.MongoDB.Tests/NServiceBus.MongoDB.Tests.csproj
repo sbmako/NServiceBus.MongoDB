@@ -127,7 +127,6 @@
   <ItemGroup>
     <Compile Include="DataBus\MongoGridFSDataBusTests.cs" />
     <Compile Include="Extensions\DatabaseNameExtensionsTests.cs" />
-    <Compile Include="Extensions\DocumentVersionExtensionsTests.cs" />
     <Compile Include="Internals\MongoHelpersTests.cs" />
     <Compile Include="Issues\Issue_16.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -72,21 +72,9 @@ namespace NServiceBus.MongoDB.Extensions
             var builder = Builders<BsonDocument>.Update;
             var update = builder.Inc(MongoPersistenceConstants.VersionPropertyName, 1);
 
-            classMap.ToList().ForEach(f => update.Set(f.Name, f.Value));
+            classMap.ToList().ForEach(f => update = update.Set(f.Name, f.Value));
 
             return update.AssumedNotNull();
-        }
-
-        public static FilterDefinition<Subscription> MongoUpdateQuery(this Subscription subscription)
-        {
-            Contract.Requires(subscription != null);
-            Contract.Ensures(Contract.Result<FilterDefinition<Subscription>>() != null);
-
-            return
-                Builders<Subscription>.Filter.And(
-                    Builders<Subscription>.Filter.Eq(s => s.Id, subscription.Id),
-                    Builders<Subscription>.Filter.Eq(s => s.DocumentVersion, subscription.DocumentVersion))
-                    .AssumedNotNull();
         }
     }
 }

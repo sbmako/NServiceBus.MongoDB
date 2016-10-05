@@ -103,7 +103,7 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
         {
             sut.Save(sagaData, correlationProperty, session, context).Wait();
             sut.Invoking(s => s.Save(sagaData, correlationProperty, session, context).Wait())
-                .ShouldThrow<MongoDuplicateKeyException>();
+                .ShouldThrow<MongoWriteException>();
         }
 
         [Theory, IntegrationTest]

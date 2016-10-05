@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="MongoDatabaseFactoryExtensions.cs" company="SharkByte Software">
+// <copyright file="SubscriptionKey.cs" company="SharkByte Software">
 //   The MIT License (MIT)
 //   
 //   Copyright (c) 2015 SharkByte Software
@@ -22,45 +22,30 @@
 //   CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // </copyright>
 // <summary>
-//   Defines the MongoDatabaseFactoryExtensions type.
+//   Defines the SubscriptionKey type.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace NServiceBus.MongoDB.Tests.TestingUtilities
+namespace NServiceBus.MongoDB.Tests.SubscriptionPersister
 {
-    using System.Collections.Generic;
-    using System.Linq;
+    using NServiceBus.Unicast.Subscriptions;
 
-    using global::MongoDB.Driver;
-    using global::MongoDB.Driver.Linq;
-
-    using NServiceBus.MongoDB.Internals;
-    using NServiceBus.MongoDB.TimeoutPersister;
-
-    internal static class MongoDatabaseFactoryExtensions
+    internal sealed class SubscriptionKey
     {
-        public static T RetrieveSagaData<T>(this MongoDatabaseFactory factory, T sagaData)
-            where T : IContainSagaData
+        public SubscriptionKey()
         {
-            var query = Builders<T>.Filter.Eq(e => e.Id, sagaData.Id);
-            var entity = factory.GetDatabase().GetCollection<T>(typeof(T).Name).FindAsync(query).Result.ToList();
-
-            return entity.Any() ? entity.First() : default(T);
+            this.TypeName = string.Empty;
+            this.Version = string.Empty;
         }
 
-        public static IEnumerable<TimeoutData> RetrieveAllTimeouts(this MongoDatabaseFactory factor)
+        public SubscriptionKey(MessageType messagteType)
         {
-            var timeouts = from t in factor.GetDatabase()
-                               .GetCollection<TimeoutData>(MongoTimeoutPersister.TimeoutDataName).AsQueryable()
-                            select t;
-
-            return timeouts;
+            this.TypeName = messagteType.TypeName;
+            this.Version = messagteType.Version.ToString();
         }
 
-        public static void ResetTimeoutCollection(this MongoDatabaseFactory factory)
-        {
-            var database = factory.GetDatabase();
-            database.DropCollection(MongoTimeoutPersister.TimeoutDataName);
-        }
+        public string Version { get; set; }
+
+        public string TypeName { get; set; }
     }
 }

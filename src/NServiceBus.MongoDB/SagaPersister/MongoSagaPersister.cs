@@ -29,6 +29,7 @@
 namespace NServiceBus.MongoDB.SagaPersister
 {
     using System;
+    using System.Collections.Generic;
 
     using System.Diagnostics.Contracts;
     using System.Threading.Tasks;
@@ -77,8 +78,11 @@ namespace NServiceBus.MongoDB.SagaPersister
                     string.Format("Saga type {0} does not implement IHaveDocumentVersion", sagaTypeName));
             }
 
+            var sagaDataWithVersion = (IHaveDocumentVersion)sagaData;
+            sagaDataWithVersion.DocumentVersion = 0;
+
             //// TODO: need to find the correlation property and ensure unique index on that
-            ////var uniqueProperty = UniqueAttribute.GetUniqueProperty(saga);
+            ////var uniqueProperty = UniqueAttribute.GetUniqueProperty(sagaData);
             ////if (correlationProperty != null)
             ////{
             ////    this.EnsureUniqueIndex(sagaData, uniqueProperty.Value);
@@ -89,15 +93,22 @@ namespace NServiceBus.MongoDB.SagaPersister
             await collection.InsertOneAsync(sagaData.ToBsonDocument()).ConfigureAwait(false);
         }
 
-        public async Task Update(IContainSagaData sagaData, SynchronizedStorageSession session, ContextBag context)
+        public Task Update(IContainSagaData sagaData, SynchronizedStorageSession session, ContextBag context)
         {
             var query = sagaData.MongoUpdateQuery();
             var update = sagaData.MongoUpdate();
 
             var collection = this.mongoDatabase.GetCollection<BsonDocument>(sagaData.GetType().Name);
 
-            await collection.UpdateOneAsync(query, update).ConfigureAwait(false);
-         }
+            var result = collection.UpdateOneAsync(query, update).Result;
+
+            if (result.ModifiedCount != 1)
+            {
+                throw new InvalidOperationException(string.Format("Unable to update saga with id {0}", sagaData.Id));
+            }
+
+            return Task.FromResult(0);
+        }
 
         public Task<TSagaData> Get<TSagaData>(
             Guid sagaId, 
@@ -125,7 +136,7 @@ namespace NServiceBus.MongoDB.SagaPersister
         public async Task Complete(IContainSagaData sagaData, SynchronizedStorageSession session, ContextBag context)
         {
             ////var query = Query.EQ("_id", sagaData.Id);
-            var query = Builders<BsonDocument>.Filter.Eq("_id`", sagaData.Id);
+            var query = Builders<BsonDocument>.Filter.Eq("_id", sagaData.Id);
 
             var collection = this.mongoDatabase.GetCollection<BsonDocument>(sagaData.GetType().Name);
             await collection.DeleteOneAsync(query).ConfigureAwait(false);
