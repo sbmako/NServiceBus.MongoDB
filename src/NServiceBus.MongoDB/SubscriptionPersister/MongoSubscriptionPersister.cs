@@ -37,7 +37,6 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
     using global::MongoDB.Driver;
 
     using NServiceBus.Extensibility;
-    using NServiceBus.MongoDB.Extensions;
     using NServiceBus.MongoDB.Internals;
     using NServiceBus.MongoDB.Tests.SubscriptionPersister;
     using NServiceBus.Unicast.Subscriptions;
@@ -50,7 +49,7 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
     {
         private static readonly string SubscriptionName = typeof(Subscription).Name;
 
-        private readonly IMongoDatabase mongoDatabase;
+        private readonly IMongoCollection<Subscription> collection;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MongoSubscriptionPersister"/> class. 
@@ -61,7 +60,8 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
         public MongoSubscriptionPersister(MongoDatabaseFactory mongoFactory)
         {
             Contract.Requires<ArgumentNullException>(mongoFactory != null);
-            this.mongoDatabase = mongoFactory.GetDatabase();
+
+            this.collection = mongoFactory.GetDatabase().GetCollection<Subscription>(SubscriptionName).AssumedNotNull();
         }
 
         /// <summary>
@@ -89,12 +89,10 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
         /// </returns>
         public Task Subscribe(Subscriber subscriber, MessageType messageType, ContextBag context)
         {
-            var collection = this.mongoDatabase.GetCollection<Subscription>(SubscriptionName).AssumedNotNull();
-
             var subscriptionKey = new SubscriptionKey(messageType);
             var update = new UpdateDefinitionBuilder<Subscription>().AddToSet(s => s.Subscribers, subscriber);
 
-            return collection.UpdateOneAsync(
+            return this.collection.UpdateOneAsync(
                 s => s.Id == subscriptionKey,
                 update,
                 new UpdateOptions() { IsUpsert = true });
@@ -117,13 +115,11 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
         /// </returns>
         public Task Unsubscribe(Subscriber subscriber, MessageType messageType, ContextBag context)
         {
-            var collection = this.mongoDatabase.GetCollection<Subscription>(SubscriptionName).AssumedNotNull();
-
             var subscriptionKey = new SubscriptionKey(messageType);
 
             var update = new UpdateDefinitionBuilder<Subscription>().Pull(s => s.Subscribers, subscriber);
 
-            return collection.UpdateOneAsync(
+            return this.collection.UpdateOneAsync(
                 s => s.Id == subscriptionKey && s.Subscribers.Contains(subscriber),
                 update,
                 new UpdateOptions() { IsUpsert = false });
@@ -153,11 +149,9 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
             Contract.Requires(messageTypes != null);
             Contract.Ensures(Contract.Result<IEnumerable<Subscription>>() != null);
 
-            var collection = this.mongoDatabase.GetCollection<Subscription>(SubscriptionName).AssumedNotNull();
-
             var ids = messageTypes.Select(mt => new SubscriptionKey(mt));
             var query = Builders<Subscription>.Filter.In(p => p.Id, ids);
-            var result = collection.FindAsync(query).Result.ToList();
+            var result = this.collection.FindAsync(query).Result.ToList();
 
             return result.AssumedNotNull();
         }
@@ -167,10 +161,8 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
                                               Contract.Requires(messageType != null);
             Contract.Ensures(Contract.Result<IEnumerable<Subscription>>() != null);
 
-            var collection = this.mongoDatabase.GetCollection<Subscription>(SubscriptionName).AssumedNotNull();
-
             var query = Builders<Subscription>.Filter.Eq(p => p.Id, new SubscriptionKey(messageType));
-            var subscription = collection.FindAsync(query).Result.ToList();
+            var subscription = this.collection.FindAsync(query).Result.ToList();
 
             return subscription ?? new List<Subscription>();
         }
@@ -178,7 +170,7 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
         [ContractInvariantMethod]
         private void ObjectInvariants()
         {
-            Contract.Invariant(this.mongoDatabase != null);
+            Contract.Invariant(this.collection != null);
         }
     }
 }
