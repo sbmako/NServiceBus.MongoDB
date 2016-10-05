@@ -47,9 +47,9 @@ namespace NServiceBus.MongoDB.TimeoutPersister
     /// </summary>
     public class MongoTimeoutPersister : IPersistTimeouts, IQueryTimeouts
     {
-        internal static readonly string TimeoutDataName = typeof(TimeoutEntity).Name;
+        internal static readonly string TimeoutEntityName = "TimeoutData";
 
-        private readonly IMongoDatabase mongoDatabase;
+        private readonly IMongoCollection<TimeoutEntity> collection; 
 
         private readonly string endpointName;
 
@@ -66,7 +66,8 @@ namespace NServiceBus.MongoDB.TimeoutPersister
         {
             Contract.Requires<ArgumentNullException>(mongoFactory != null);
 
-            this.mongoDatabase = mongoFactory.GetDatabase();
+            this.collection = mongoFactory.GetDatabase().GetCollection<TimeoutEntity>(TimeoutEntityName);
+
             this.endpointName = endpointName;
             this.EnsureTimeoutIndexes();
         }
@@ -80,8 +81,6 @@ namespace NServiceBus.MongoDB.TimeoutPersister
         /// </returns>
         public async Task<TimeoutsChunk> GetNextChunk(DateTime startSlice)
         {
-            var collection = this.mongoDatabase.GetCollection<TimeoutEntity>(TimeoutDataName);
-
             var now = DateTime.UtcNow;
 
             var builder = Builders<TimeoutEntity>.Filter;
@@ -90,7 +89,7 @@ namespace NServiceBus.MongoDB.TimeoutPersister
 
             var results =
                 await
-                collection.Find(query)
+                this.collection.Find(query)
                     .Sort(Builders<TimeoutEntity>.Sort.Ascending(t => t.Time))
                     .ToListAsync()
                     .ConfigureAwait(false);
@@ -103,7 +102,7 @@ namespace NServiceBus.MongoDB.TimeoutPersister
             ////              orderby data.Time ascending
             ////              select new TimeoutsChunk.Timeout(data.Id, data.Time);
 
-            var nextTimeout = from data in collection.AsQueryable().AssumedNotNull()
+            var nextTimeout = from data in this.collection.AsQueryable().AssumedNotNull()
                               where data.Time > now
                               orderby data.Time ascending
                               select data;
@@ -127,8 +126,7 @@ namespace NServiceBus.MongoDB.TimeoutPersister
         /// </returns>
         public Task<TimeoutData> Peek(string timeoutId, ContextBag context)
         {
-            var collection = this.mongoDatabase.GetCollection<TimeoutEntity>(TimeoutDataName);
-            var data = collection.AsQueryable().SingleOrDefault(e => e.Id == timeoutId);
+            var data = this.collection.AsQueryable().SingleOrDefault(e => e.Id == timeoutId);
             if (data != null)
             {
                 return Task.FromResult<TimeoutData>(new TimeoutData
@@ -165,8 +163,7 @@ namespace NServiceBus.MongoDB.TimeoutPersister
                 OwningTimeoutManager = timeout.OwningTimeoutManager
             };
 
-            var collection = this.mongoDatabase.GetCollection<TimeoutEntity>(TimeoutDataName);
-            await collection.InsertOneAsync(data).ConfigureAwait(false);
+            await this.collection.InsertOneAsync(data).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -180,9 +177,7 @@ namespace NServiceBus.MongoDB.TimeoutPersister
         public Task<bool> TryRemove(string timeoutId, ContextBag context)
         {
             var query = Builders<TimeoutEntity>.Filter.Eq(e => e.Id, timeoutId);
-
-            var collection = this.mongoDatabase.GetCollection<TimeoutEntity>(TimeoutDataName);
-            return Task.FromResult(collection.DeleteOneAsync(query).Result.DeletedCount != 0);
+            return Task.FromResult(this.collection.DeleteOneAsync(query).Result.DeletedCount != 0);
         }
 
         /// <summary>
@@ -193,19 +188,16 @@ namespace NServiceBus.MongoDB.TimeoutPersister
         /// <returns>The task</returns>
         public Task RemoveTimeoutBy(Guid sagaId, ContextBag context)
         {
-            var collection = this.mongoDatabase.GetCollection<TimeoutEntity>(TimeoutDataName);
-            return collection.DeleteManyAsync(t => t.SagaId == sagaId);
+            return this.collection.DeleteManyAsync(t => t.SagaId == sagaId);
         }
 
         private void EnsureTimeoutIndexes()
         {
-            var collection = this.mongoDatabase.GetCollection<TimeoutEntity>(TimeoutDataName);
-
-            collection.Indexes.CreateOneAsync(
+            this.collection.Indexes.CreateOneAsync(
                 Builders<TimeoutEntity>.IndexKeys.Ascending(t => t.SagaId),
                 new CreateIndexOptions { Background = true }).Wait();
 
-            collection.Indexes.CreateOneAsync(
+            this.collection.Indexes.CreateOneAsync(
                 Builders<TimeoutEntity>.IndexKeys.Ascending(t => t.OwningTimeoutManager),
                 new CreateIndexOptions { Background = true }).Wait();
         }
@@ -213,7 +205,7 @@ namespace NServiceBus.MongoDB.TimeoutPersister
         [ContractInvariantMethod]
         private void ObjectInvariants()
         {
-            Contract.Invariant(this.mongoDatabase != null);
+            Contract.Invariant(this.collection != null);
             Contract.Invariant(this.endpointName != null);
         }
     }

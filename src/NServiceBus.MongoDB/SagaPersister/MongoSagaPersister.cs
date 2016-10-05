@@ -29,7 +29,6 @@
 namespace NServiceBus.MongoDB.SagaPersister
 {
     using System;
-    using System.Collections.Generic;
     using System.Diagnostics.Contracts;
     using System.Threading.Tasks;
 
