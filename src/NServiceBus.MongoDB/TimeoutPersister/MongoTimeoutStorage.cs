@@ -28,6 +28,8 @@
 
 namespace NServiceBus.MongoDB.TimeoutPersister
 {
+    using global::MongoDB.Driver;
+
     using NServiceBus.Features;
     using NServiceBus.MongoDB.Internals;
 
@@ -56,10 +58,10 @@ namespace NServiceBus.MongoDB.TimeoutPersister
             //// TODO: .ConfigureProperty(x => x.EndpointName, context.Settings.EndpointName());
 
             context.Container.ConfigureComponent<MongoTimeoutPersister>(
-                builder => new MongoTimeoutPersister
-                {
-                    EndpointName = context.Settings.EndpointName().ToString()
-                }, 
+                builder =>
+                new MongoTimeoutPersister(
+                    builder.Build<MongoDatabaseFactory>(),
+                    context.Settings.EndpointName().ToString()),
                 DependencyLifecycle.SingleInstance);
         }
     }

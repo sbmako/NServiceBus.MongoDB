@@ -40,12 +40,12 @@ namespace NServiceBus.MongoDB.TimeoutPersister
     {
         internal static void ConfigureClassMaps()
         {
-            if (BsonClassMap.IsClassMapRegistered(typeof(TimeoutData)))
+            if (BsonClassMap.IsClassMapRegistered(typeof(TimeoutEntity)))
             {
                 return;
             }
 
-            BsonClassMap.RegisterClassMap<TimeoutData>(
+            BsonClassMap.RegisterClassMap<TimeoutEntity>(
                 cm =>
                     {
                         cm.AutoMap();
