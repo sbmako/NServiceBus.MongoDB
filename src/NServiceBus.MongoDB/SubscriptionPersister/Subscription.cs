@@ -28,86 +28,51 @@
 
 namespace NServiceBus.MongoDB.SubscriptionPersister
 {
-    using System;
     using System.Collections.Generic;
     using System.Diagnostics.Contracts;
-    using System.Linq;
 
-    using NServiceBus.MongoDB.Internals;
+    using NServiceBus.MongoDB.Tests.SubscriptionPersister;
     using NServiceBus.Unicast.Subscriptions;
     using NServiceBus.Unicast.Subscriptions.MessageDrivenSubscriptions;
 
-    internal sealed class Subscription : IHaveDocumentVersion
+    internal sealed class Subscription
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="Subscription"/> class.
         /// </summary>
         public Subscription()
         {
-            this.Id = string.Empty;
-            this.DocumentVersion = 0;
-            this.MessageType = new MessageType(typeof(object));
+            this.Id = new SubscriptionKey();
             this.Subscribers = new List<Subscriber>();
         }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Subscription"/> class.
-        /// </summary>
-        /// <param name="messageType">
-        /// The message type.
-        /// </param>
-        public Subscription(MessageType messageType)
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Subscription"/> class.
+    /// </summary>
+    /// <param name="messageType">
+    /// The message type.
+    /// </param>
+    public Subscription(MessageType messageType)
         {
             Contract.Requires(messageType != null, "messageType != null");
 
-            this.Id = FormatId(messageType);
-            this.MessageType = messageType;
-            this.Subscribers = new List<Subscriber>();
+            this.Id = new SubscriptionKey(messageType);
         }
 
         /// <summary>
         /// Gets or sets the id.
         /// </summary>
-        public string Id { get; set; }
-
-        /// <summary>
-        /// Gets or sets the document version.
-        /// </summary>
-        public int DocumentVersion { get; set; }
-
-        /// <summary>
-        /// Gets or sets the message type.
-        /// </summary>
-        public MessageType MessageType { get; set; }
+        public SubscriptionKey Id { get; set; }
 
         /// <summary>
         /// Gets or sets the subscribers
         /// </summary>
         public List<Subscriber> Subscribers { get; set; }
 
-        /// <summary>
-        /// The format id.
-        /// </summary>
-        /// <param name="messageType">
-        /// The message type.
-        /// </param>
-        /// <returns>
-        /// The <see cref="string"/>.
-        /// </returns>
-        public static string FormatId(MessageType messageType)
-        {
-            Contract.Requires<ArgumentNullException>(messageType != null, "messageType != null");
-            Contract.Ensures(Contract.Result<string>() != null);
-
-            var id = DeterministicGuid.Create(messageType.TypeName, "/", messageType.Version.Major);
-            return string.Format("Subscriptions/{0}", id);
-        }
-
         [ContractInvariantMethod]
         private void ObjectInvariants()
         {
             Contract.Invariant(this.Id != null);
-            Contract.Invariant(this.MessageType != null);
             Contract.Invariant(this.Subscribers != null);
         }
     }

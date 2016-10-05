@@ -39,6 +39,7 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
     using NServiceBus.Extensibility;
     using NServiceBus.MongoDB.Extensions;
     using NServiceBus.MongoDB.Internals;
+    using NServiceBus.MongoDB.Tests.SubscriptionPersister;
     using NServiceBus.Unicast.Subscriptions;
     using NServiceBus.Unicast.Subscriptions.MessageDrivenSubscriptions;
 
@@ -88,31 +89,15 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
         /// </returns>
         public Task Subscribe(Subscriber subscriber, MessageType messageType, ContextBag context)
         {
-            var existingSubscription = this.GetSubscription(messageType);
-
             var collection = this.mongoDatabase.GetCollection<Subscription>(SubscriptionName).AssumedNotNull();
 
-            if (!existingSubscription.Any())
-            {
-                var newSubscription = new Subscription(messageType);
-                newSubscription.Subscribers.Add(subscriber);
+            var subscriptionKey = new SubscriptionKey(messageType);
+            var update = new UpdateDefinitionBuilder<Subscription>().AddToSet(s => s.Subscribers, subscriber);
 
-                return collection.InsertOneAsync(newSubscription);
-            }
-            
-            var theSubscription = existingSubscription.First();
-
-            if (
-                theSubscription.Subscribers.Exists(
-                    c => c.TransportAddress == subscriber.TransportAddress && c.Endpoint == subscriber.Endpoint))
-            {
-                return Task.FromResult(0);
-            }
-
-            theSubscription.Subscribers.Add(subscriber);
-
-            var query = theSubscription.MongoUpdateQuery();
-            return collection.ReplaceOneAsync(query, theSubscription);
+            return collection.UpdateOneAsync(
+                s => s.Id == subscriptionKey,
+                update,
+                new UpdateOptions() { IsUpsert = true });
         }
 
         /// <summary>
@@ -132,11 +117,16 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
         /// </returns>
         public Task Unsubscribe(Subscriber subscriber, MessageType messageType, ContextBag context)
         {
-            var query = Builders<Subscription>.Filter.Eq(s => s.Id, Subscription.FormatId(messageType));
-            var update = Builders<Subscription>.Update.Pull(s => s.Subscribers, subscriber);
-
             var collection = this.mongoDatabase.GetCollection<Subscription>(SubscriptionName).AssumedNotNull();
-            return collection.UpdateOneAsync(query, update);
+
+            var subscriptionKey = new SubscriptionKey(messageType);
+
+            var update = new UpdateDefinitionBuilder<Subscription>().Pull(s => s.Subscribers, subscriber);
+
+            return collection.UpdateOneAsync(
+                s => s.Id == subscriptionKey && s.Subscribers.Contains(subscriber),
+                update,
+                new UpdateOptions() { IsUpsert = false });
         }
 
         /// <summary>
@@ -165,7 +155,7 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
 
             var collection = this.mongoDatabase.GetCollection<Subscription>(SubscriptionName).AssumedNotNull();
 
-            var ids = messageTypes.Select(Subscription.FormatId);
+            var ids = messageTypes.Select(mt => new SubscriptionKey(mt));
             var query = Builders<Subscription>.Filter.In(p => p.Id, ids);
             var result = collection.FindAsync(query).Result.ToList();
 
@@ -174,12 +164,12 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
 
         internal IEnumerable<Subscription> GetSubscription(MessageType messageType)
         {
-            Contract.Requires(messageType != null);
+                                              Contract.Requires(messageType != null);
             Contract.Ensures(Contract.Result<IEnumerable<Subscription>>() != null);
 
             var collection = this.mongoDatabase.GetCollection<Subscription>(SubscriptionName).AssumedNotNull();
 
-            var query = Builders<Subscription>.Filter.Eq(p => p.Id, Subscription.FormatId(messageType.AssumedNotNull()));
+            var query = Builders<Subscription>.Filter.Eq(p => p.Id, new SubscriptionKey(messageType));
             var subscription = collection.FindAsync(query).Result.ToList();
 
             return subscription ?? new List<Subscription>();
