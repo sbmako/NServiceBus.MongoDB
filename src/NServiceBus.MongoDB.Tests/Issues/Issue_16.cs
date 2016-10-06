@@ -45,10 +45,10 @@ namespace NServiceBus.MongoDB.Tests.Issues
         public void SaveSagaData(
             MongoSagaPersister sut,
             DeviceCommandSagaState state,
-            SagaCorrelationProperty correlationProperty,
             SynchronizedStorageSession session,
             ContextBag context)
         {
+            var correlationProperty = new SagaCorrelationProperty("SagaKey", state.SagaKey);
             sut.Save(state, correlationProperty, session, context).Wait();
         }
 
@@ -58,10 +58,11 @@ namespace NServiceBus.MongoDB.Tests.Issues
         public void UpdateSagaData(
             MongoSagaPersister sut,
             DeviceCommandSagaState state,
-            SagaCorrelationProperty correlationProperty,
             SynchronizedStorageSession session,
             ContextBag context)
         {
+            var correlationProperty = new SagaCorrelationProperty("SagaKey", state.SagaKey);
+
             sut.Save(state, correlationProperty, session, context).Wait();
 
             sut.Update(state, session, context).Wait();
