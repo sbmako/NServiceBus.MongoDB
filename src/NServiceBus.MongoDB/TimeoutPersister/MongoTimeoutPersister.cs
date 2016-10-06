@@ -94,14 +94,6 @@ namespace NServiceBus.MongoDB.TimeoutPersister
                     .ToListAsync()
                     .ConfigureAwait(false);
 
-            ////var results = from data in collection.AsQueryable().AssumedNotNull()
-            ////              where data.Time > startSlice && data.Time <= now
-            ////              where
-            ////                  data.OwningTimeoutManager == string.Empty
-            ////                  || data.OwningTimeoutManager == this.endpointName
-            ////              orderby data.Time ascending
-            ////              select new TimeoutsChunk.Timeout(data.Id, data.Time);
-
             var nextTimeout = from data in this.collection.AsQueryable().AssumedNotNull()
                               where data.Time > now
                               orderby data.Time ascending
@@ -129,16 +121,18 @@ namespace NServiceBus.MongoDB.TimeoutPersister
             var data = this.collection.AsQueryable().SingleOrDefault(e => e.Id == timeoutId);
             if (data != null)
             {
-                return Task.FromResult<TimeoutData>(new TimeoutData
-                {
-                    Id = data.Id,
-                    Destination = data.Destination,
-                    SagaId = data.SagaId,
-                    State = data.State,
-                    Time = data.Time,
-                    Headers = data.Headers,
-                    OwningTimeoutManager = data.OwningTimeoutManager
-                });
+                return
+                    Task.FromResult(
+                        new TimeoutData
+                            {
+                                Id = data.Id,
+                                Destination = data.Destination,
+                                SagaId = data.SagaId,
+                                State = data.State,
+                                Time = data.Time,
+                                Headers = data.Headers,
+                                OwningTimeoutManager = data.OwningTimeoutManager
+                            });
             }
 
             return Task.FromResult<TimeoutData>(null);

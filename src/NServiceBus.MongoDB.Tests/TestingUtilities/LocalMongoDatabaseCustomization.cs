@@ -57,7 +57,7 @@ namespace NServiceBus.MongoDB.Tests.TestingUtilities
             fixture.Register(() => clientAccessor);
             fixture.Register(() => databaseFactory);
             fixture.Register(() => new ContextBag());
-            fixture.Register(() => new SagaCorrelationProperty("Name", "Value"));
+            fixture.Register(() => new SagaCorrelationProperty("NonUniqueProperty", "Value"));
 
             fixture.Customize(new AutoMoqCustomization());
 

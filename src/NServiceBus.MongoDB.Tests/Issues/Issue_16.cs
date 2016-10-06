@@ -30,7 +30,6 @@ namespace NServiceBus.MongoDB.Tests.Issues
     using CategoryTraits.Xunit2;
 
     using NServiceBus.Extensibility;
-    using NServiceBus.MongoDB.Internals;
     using NServiceBus.MongoDB.SagaPersister;
     using NServiceBus.MongoDB.Tests.TestingUtilities;
     using NServiceBus.Persistence;
@@ -50,7 +49,7 @@ namespace NServiceBus.MongoDB.Tests.Issues
             SynchronizedStorageSession session,
             ContextBag context)
         {
-            sut.Save(state, correlationProperty, session, context);
+            sut.Save(state, correlationProperty, session, context).Wait();
         }
 
         [Theory]

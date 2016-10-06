@@ -29,6 +29,7 @@
 namespace NServiceBus.MongoDB.SagaPersister
 {
     using System;
+    using System.Collections.Generic;
     using System.Diagnostics.Contracts;
     using System.Threading.Tasks;
 
@@ -79,13 +80,10 @@ namespace NServiceBus.MongoDB.SagaPersister
             var sagaDataWithVersion = (IHaveDocumentVersion)sagaData;
             sagaDataWithVersion.DocumentVersion = 0;
 
-            //// TODO: need to find the correlation property and ensure unique index on that
-            ////var uniqueProperty = UniqueAttribute.GetUniqueProperty(sagaData);
-            ////if (correlationProperty != null)
-            ////{
-            ////    this.EnsureUniqueIndex(sagaData, uniqueProperty.Value);
-            ////    CheckUniqueProperty(sagaData, uniqueProperty.Value);
-            ////}
+            if (correlationProperty != null)
+            {
+                await this.EnsureUniqueIndex(sagaData, correlationProperty);
+            }
 
             var collection = this.mongoDatabase.GetCollection<BsonDocument>(sagaTypeName);
             await collection.InsertOneAsync(sagaData.ToBsonDocument()).ConfigureAwait(false);
@@ -133,38 +131,22 @@ namespace NServiceBus.MongoDB.SagaPersister
 
         public async Task Complete(IContainSagaData sagaData, SynchronizedStorageSession session, ContextBag context)
         {
-            ////var query = Query.EQ("_id", sagaData.Id);
             var query = Builders<BsonDocument>.Filter.Eq("_id", sagaData.Id);
 
             var collection = this.mongoDatabase.GetCollection<BsonDocument>(sagaData.GetType().Name);
             await collection.DeleteOneAsync(query).ConfigureAwait(false);
         }
 
-        ////private static void CheckUniqueProperty(IContainSagaData sagaData, KeyValuePair<string, object> uniqueProperty)
-        ////{
-        ////    Contract.Requires(sagaData != null);
+        private Task EnsureUniqueIndex(IContainSagaData saga, SagaCorrelationProperty correlationProperty)
+        {
+            Contract.Requires(saga != null);
 
-        ////    if (uniqueProperty.Value == null)
-        ////    {
-        ////        throw new ArgumentNullException(
-        ////            "uniqueProperty",
-        ////            "Property {uniqueProperty.Key} is marked with the [Unique] attribute on {sagaData.GetType().Name} but contains a null propertyValue.");
-        ////    }
-        ////}
+            var collection = this.mongoDatabase.GetCollection<BsonDocument>(saga.GetType().Name);
 
-        ////private void EnsureUniqueIndex(IContainSagaData saga, KeyValuePair<string, object> uniqueProperty)
-        ////{
-        ////    Contract.Requires(saga != null);
-
-        ////    var collection = this.mongoDatabase.GetCollection(saga.GetType().Name);
-        ////    var indexOptions = IndexOptions.SetName(uniqueProperty.Key).SetUnique(true).SetSparse(true);
-        ////    var result = collection.CreateIndex(IndexKeys.Ascending(uniqueProperty.Key), indexOptions);
-
-        ////    if (result.HasLastErrorMessage)
-        ////    {
-        ////        throw new InvalidOperationException(
-        ////            string.Format("Unable to create unique index on {0}: {1}", saga.GetType().Name, uniqueProperty.Key));
-        ////    }
-        ////}
+            return
+                collection.Indexes.CreateOneAsync(
+                    new BsonDocumentIndexKeysDefinition<BsonDocument>(new BsonDocument(correlationProperty.Name, 1)),
+                    new CreateIndexOptions() { Unique = true });
+        }
     }
 }

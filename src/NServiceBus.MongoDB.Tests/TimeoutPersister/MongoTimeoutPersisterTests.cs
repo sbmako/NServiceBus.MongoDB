@@ -93,21 +93,22 @@ namespace NServiceBus.MongoDB.Tests.TimeoutPersister
         public void GetNextChunkReturnsOneTimeoutWhenCollectionHasOneTimeoutBetweenStartSliceAndUtcNowAndOneAfterUtcNow(
             MongoTimeoutPersister sut,
             MongoDatabaseFactory factory,
-            Timeout.Core.TimeoutData timeoutData,
+            Timeout.Core.TimeoutData timeoutData1,
+            Timeout.Core.TimeoutData timeoutData2,
             ContextBag context)
         {
             factory.ResetTimeoutCollection();
 
-            timeoutData.Time = DateTime.UtcNow.AddMinutes(-1);
-            sut.Add(timeoutData, context).Wait();
-            timeoutData.Time = DateTime.UtcNow.AddMinutes(1);
-            sut.Add(timeoutData, context).Wait();
+            timeoutData1.Time = DateTime.UtcNow.AddMinutes(-1);
+            sut.Add(timeoutData1, context).Wait();
+            timeoutData2.Time = DateTime.UtcNow.AddMinutes(1);
+            sut.Add(timeoutData2, context).Wait();
 
             var startSlice = DateTime.UtcNow.AddMinutes(-5);
             var result = sut.GetNextChunk(startSlice).Result;
 
             result.DueTimeouts.Should().HaveCount(1);
-            result.NextTimeToQuery.Should().BeOnOrBefore(timeoutData.Time);
+            result.NextTimeToQuery.Should().BeOnOrBefore(timeoutData2.Time);
         }
 
         [Theory, IntegrationTest]
@@ -115,20 +116,22 @@ namespace NServiceBus.MongoDB.Tests.TimeoutPersister
         public void GetNextChunkReturnsEmptyListWhenCollectionHasTwoTimeoutsAfterUtcNow(
             MongoTimeoutPersister sut,
             MongoDatabaseFactory factory,
-            Timeout.Core.TimeoutData timeoutData,
+            Timeout.Core.TimeoutData timeoutData1,
+            Timeout.Core.TimeoutData timeoutData2,
             ContextBag context)
         {
             factory.ResetTimeoutCollection();
 
-            timeoutData.Time = DateTime.UtcNow.AddMinutes(1);
-            sut.Add(timeoutData, context).Wait();
-            sut.Add(timeoutData, context).Wait();
+            timeoutData1.Time = DateTime.UtcNow.AddMinutes(1);
+            timeoutData2.Time = DateTime.UtcNow.AddMinutes(1);
+            sut.Add(timeoutData1, context).Wait();
+            sut.Add(timeoutData2, context).Wait();
 
             var startSlice = DateTime.UtcNow.AddMinutes(-5);
             var result = sut.GetNextChunk(startSlice).Result;
 
             result.DueTimeouts.Should().HaveCount(0);
-            result.NextTimeToQuery.Should().Be(timeoutData.Time);
+            result.NextTimeToQuery.Should().Be(timeoutData2.Time);
         }
 
         [Theory, IntegrationTest]
@@ -166,6 +169,27 @@ namespace NServiceBus.MongoDB.Tests.TimeoutPersister
 
             result.Should().HaveCount(2);
         }
+
+        [Theory, IntegrationTest]
+        [AutoDatabase]
+        public void PeekExistingTimeout(
+            MongoTimeoutPersister sut,
+            MongoDatabaseFactory factory,
+            Timeout.Core.TimeoutData timeout1,
+            ContextBag context)
+        {
+            factory.ResetTimeoutCollection();
+
+            sut.Add(timeout1, context).Wait();
+
+            var peeked = sut.Peek(timeout1.Id, context).Result;
+            var result = factory.RetrieveAllTimeouts();
+
+            peeked.ShouldBeEquivalentTo(timeout1);
+            result.Should().HaveCount(1);
+        }
+
+
 
         [Theory, IntegrationTest]
         [AutoDatabase]
