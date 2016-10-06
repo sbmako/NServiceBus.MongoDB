@@ -91,8 +91,8 @@ namespace NServiceBus.MongoDB.SagaPersister
 
         public Task Update(IContainSagaData sagaData, SynchronizedStorageSession session, ContextBag context)
         {
-            var query = sagaData.MongoUpdateQuery();
-            var update = sagaData.MongoUpdate();
+            var query = sagaData.AssumedNotNull().MongoUpdateQuery();
+            var update = sagaData.AssumedNotNull().MongoUpdate();
 
             var collection = this.mongoDatabase.GetCollection<BsonDocument>(sagaData.GetType().Name);
 

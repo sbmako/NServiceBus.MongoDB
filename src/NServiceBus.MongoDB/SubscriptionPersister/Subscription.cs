@@ -57,6 +57,7 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
             Contract.Requires(messageType != null, "messageType != null");
 
             this.Id = new SubscriptionKey(messageType);
+            this.Subscribers = new List<Subscriber>();
         }
 
         /// <summary>
