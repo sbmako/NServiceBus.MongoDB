@@ -141,7 +141,7 @@ namespace NServiceBus.MongoDB.SagaPersister
 
         public async Task Complete(IContainSagaData sagaData, SynchronizedStorageSession session, ContextBag context)
         {
-            var query = Builders<BsonDocument>.Filter.Eq("_id", sagaData.Id);
+            var query = Builders<BsonDocument>.Filter.Eq(MongoPersistenceConstants.IdPropertyName, sagaData.Id);
 
             var collection = this.mongoDatabase.GetCollection<BsonDocument>(sagaData.GetType().Name);
             await collection.DeleteOneAsync(query).ConfigureAwait(false);
