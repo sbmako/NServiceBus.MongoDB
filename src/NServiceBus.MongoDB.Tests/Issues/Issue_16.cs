@@ -80,5 +80,6 @@ namespace NServiceBus.MongoDB.Tests.Issues
 
         //IHaveDocumentVersion properties
         public int DocumentVersion { get; set; }
+        public int ETag { get; set; }
     }
 }

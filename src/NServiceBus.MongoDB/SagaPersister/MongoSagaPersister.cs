@@ -78,7 +78,9 @@ namespace NServiceBus.MongoDB.SagaPersister
             }
 
             var sagaDataWithVersion = (IHaveDocumentVersion)sagaData;
+
             sagaDataWithVersion.DocumentVersion = 0;
+            sagaDataWithVersion.ETag = sagaData.ComputeETag();
 
             if (correlationProperty != null)
             {
@@ -91,8 +93,16 @@ namespace NServiceBus.MongoDB.SagaPersister
 
         public Task Update(IContainSagaData sagaData, SynchronizedStorageSession session, ContextBag context)
         {
-            var query = sagaData.AssumedNotNull().MongoUpdateQuery();
-            var update = sagaData.AssumedNotNull().MongoUpdate();
+            var newETag = sagaData.AssumedNotNull().ComputeETag();
+
+            var versionedDocument = (IHaveDocumentVersion)sagaData;
+            if (versionedDocument.ETag == newETag)
+            {
+                return Task.FromResult(0);
+            }
+
+            var query = sagaData.MongoUpdateQuery(versionedDocument.DocumentVersion);
+            var update = sagaData.MongoUpdate(newETag);
 
             var collection = this.mongoDatabase.GetCollection<BsonDocument>(sagaData.GetType().Name);
 

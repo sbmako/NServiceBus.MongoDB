@@ -33,6 +33,7 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
     using CategoryTraits.Xunit2;
 
     using FluentAssertions;
+
     using global::MongoDB.Driver;
 
     using NServiceBus.Extensibility;
@@ -247,6 +248,46 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
             ContextBag context)
         {
             sut.Invoking(s => s.Update(sagaData, session, context).Wait()).ShouldThrow<InvalidOperationException>();
+        }
+
+        [Theory, IntegrationTest]
+        [AutoDatabase]
+        public void UpdatingSagaWithNoChangesShouldNotUpdateVersion(
+            MongoSagaPersister sut,
+            MongoDatabaseFactory factory,
+            SagaWithoutUniqueProperties sagaData,
+            SagaCorrelationProperty correlationProperty,
+            SynchronizedStorageSession session,
+            ContextBag context)
+        {
+            sut.Save(sagaData, correlationProperty, session, context).Wait();
+            var saga1 = factory.RetrieveSagaData(sagaData);
+
+            sut.Update(saga1, session, context).Wait();
+
+            var saga2 = factory.RetrieveSagaData(sagaData);
+            saga2.DocumentVersion.Should().Be(saga1.DocumentVersion);
+        }
+
+        [Theory, IntegrationTest]
+        [AutoDatabase]
+        public void UpdatingSagaWithChangesShouldUpdateVersion(
+                MongoSagaPersister sut,
+                MongoDatabaseFactory factory,
+                SagaWithoutUniqueProperties sagaData,
+                SagaCorrelationProperty correlationProperty,
+                SynchronizedStorageSession session,
+                ContextBag context)
+        {
+            sut.Save(sagaData, correlationProperty, session, context).Wait();
+            var saga1 = factory.RetrieveSagaData(sagaData);
+
+            saga1.UniqueProperty = "NewValue";
+            sut.Update(saga1, session, context).Wait();
+
+            var saga2 = factory.RetrieveSagaData(sagaData);
+            saga2.DocumentVersion.Should().Be(saga1.DocumentVersion + 1);
+            saga2.UniqueProperty.Should().Be(saga1.UniqueProperty);
         }
 
         [Theory, IntegrationTest]
