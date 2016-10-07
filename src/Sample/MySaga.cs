@@ -29,6 +29,8 @@
 namespace Sample
 {
     using System;
+    using System.Threading.Tasks;
+
     using NServiceBus;
     using NServiceBus.Logging;
 
@@ -42,45 +44,38 @@ namespace Sample
     {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(MySaga));
 
-        /// <summary>
-        /// The handle.
-        /// </summary>
-        /// <param name="message">
-        /// The message.
-        /// </param>
-        public void Handle(MyMessage message)
+        public Task Handle(MyMessage message, IMessageHandlerContext context)
         {
             Logger.Info("Hello from MySaga");
 
             this.Data.SomeId = message.SomeId;
             this.Data.Count = 0;
 
-            this.RequestTimeout(TimeSpan.FromMinutes(1), new MyTimeout() { HowLong = 5 });
+            return this.RequestTimeout(context, TimeSpan.FromMinutes(1), new MyTimeout() { HowLong = 5 });
         }
 
-        /// <summary>
-        /// The handle.
-        /// </summary>
-        /// <param name="message">
-        /// The message.
-        /// </param>
-        public void Handle(AnotherSagaCommand message)
+        public Task Handle(AnotherSagaCommand message, IMessageHandlerContext context)
         {
             this.Data.Count += 1;
             Logger.InfoFormat("Hello from AnotherSagaCommand: {0}", this.Data.Count);
+
+            return Task.FromResult(0);
         }
 
-        /// <summary>
-        /// The timeout.
-        /// </summary>
-        /// <param name="state">
-        /// The state.
-        /// </param>
-        public void Timeout(MyTimeout state)
+        public Task Timeout(MyTimeout state, IMessageHandlerContext context)
         {
             Logger.InfoFormat("Timeout reached with a count of: {0}", this.Data.Count);
             this.MarkAsComplete();
+
+            return Task.FromResult(0);
         }
+
+        ////protected override void ConfigureHowToFindSaga(IConfigureHowToFindSagaWithMessage sagaMessageFindingConfiguration)
+        ////{
+        ////    Logger.Info("Configuring now to find saga");
+        ////    sagaMessageFindingConfiguration.ConfigureMapping<MySagaData, MyMessage>(s => s.Id, m => m.SomeId);
+        ////    sagaMessageFindingConfiguration.ConfigureMapping<MySagaData, AnotherSagaCommand>(s => s.SomeId, m => m.SomeId);
+        ////}
 
         /// <summary>
         /// A generic version of <see cref="M:NServiceBus.Saga.Saga`1.ConfigureHowToFindSaga(NServiceBus.Saga.IConfigureHowToFindSagaWithMessage)"/> wraps <see cref="T:NServiceBus.Saga.IConfigureHowToFindSagaWithMessage"/> in a generic helper class (<see cref="T:NServiceBus.Saga.SagaPropertyMapper`1"/>) to provide mappings specific to <typeparamref name="TSagaData"/>.

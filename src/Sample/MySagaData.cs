@@ -36,7 +36,6 @@ namespace Sample
     /// </summary>
     public class MySagaData : ContainMongoSagaData
     {
-        [Unique]
         public string SomeId { get; set; }
 
         public int Count { get; set; }
