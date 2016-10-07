@@ -36,7 +36,7 @@ Task BuildContracts { BuildSolution $allSolution '/property:Configuration=DebugC
 
 task Build -depends BuildDebug {}
 
-task BuildPackage -Depends BuildRelease {
+task Package -Depends BuildRelease {
 	Remove-Item $baseDir\packaging\*.nupkg
 	exec { & "$nugetExecutable" pack $nuspecFile -OutputDirectory $nugetOutDir }
 }
