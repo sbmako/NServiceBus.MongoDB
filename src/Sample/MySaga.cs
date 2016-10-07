@@ -70,13 +70,6 @@ namespace Sample
             return Task.FromResult(0);
         }
 
-        ////protected override void ConfigureHowToFindSaga(IConfigureHowToFindSagaWithMessage sagaMessageFindingConfiguration)
-        ////{
-        ////    Logger.Info("Configuring now to find saga");
-        ////    sagaMessageFindingConfiguration.ConfigureMapping<MySagaData, MyMessage>(s => s.Id, m => m.SomeId);
-        ////    sagaMessageFindingConfiguration.ConfigureMapping<MySagaData, AnotherSagaCommand>(s => s.SomeId, m => m.SomeId);
-        ////}
-
         /// <summary>
         /// A generic version of <see cref="M:NServiceBus.Saga.Saga`1.ConfigureHowToFindSaga(NServiceBus.Saga.IConfigureHowToFindSagaWithMessage)"/> wraps <see cref="T:NServiceBus.Saga.IConfigureHowToFindSagaWithMessage"/> in a generic helper class (<see cref="T:NServiceBus.Saga.SagaPropertyMapper`1"/>) to provide mappings specific to <typeparamref name="TSagaData"/>.
         /// </summary>
