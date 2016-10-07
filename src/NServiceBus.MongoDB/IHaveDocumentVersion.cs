@@ -39,7 +39,7 @@ namespace NServiceBus.MongoDB
         int DocumentVersion { get; set; }
 
         /// <summary>
-        /// Gets or sets the e tag.
+        /// Gets or sets the document etag value
         /// </summary>
         int ETag { get; set; }
     }

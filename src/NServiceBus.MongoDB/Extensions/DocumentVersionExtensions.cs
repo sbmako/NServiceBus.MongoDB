@@ -35,46 +35,53 @@ namespace NServiceBus.MongoDB.Extensions
     using global::MongoDB.Driver;
 
     using NServiceBus.MongoDB.Internals;
-    using NServiceBus.MongoDB.SubscriptionPersister;
 
     internal static class DocumentVersionExtensions
     {
-        public static FilterDefinition<BsonDocument> MongoUpdateQuery(this IContainSagaData saga)
+        public static FilterDefinition<BsonDocument> MongoUpdateQuery<T>(this T sagaData, int oldDocumentVersion)
+            where T : IContainSagaData
         {
-            Contract.Requires(saga != null);
+            Contract.Requires(sagaData != null);
             Contract.Ensures(Contract.Result<FilterDefinition<BsonDocument>>() != null);
 
-            var versionedDocument = saga as IHaveDocumentVersion;
-
-            if (versionedDocument == null)
-            {
-                throw new InvalidOperationException(
-                    string.Format("Saga type {0} does not implement IHaveDocumentVersion", saga.GetType().Name));
-            }
-
             var builder = Builders<BsonDocument>.Filter;
-            var filter = builder.Eq("_id", saga.Id)
-                         & builder.Eq(MongoPersistenceConstants.VersionPropertyName, versionedDocument.DocumentVersion);
+            var filter = builder.Eq("_id", sagaData.Id)
+                         & builder.Eq(MongoPersistenceConstants.VersionPropertyName, oldDocumentVersion);
 
             return filter.AssumedNotNull();
         }
 
-        public static UpdateDefinition<BsonDocument> MongoUpdate<T>(this T saga) where T : IContainSagaData
+        public static UpdateDefinition<BsonDocument> MongoUpdate<T>(this T sagaData, int newETag)
+            where T : IContainSagaData
         {
-            Contract.Requires(saga != null);
+            Contract.Requires(sagaData != null);
             Contract.Ensures(Contract.Result<UpdateDefinition<BsonDocument>>() != null);
 
-            var classMap = saga.ToBsonDocument();
+            var classMap = sagaData.ToBsonDocument();
 
-            classMap.Remove("_id");
+            classMap.Remove(MongoPersistenceConstants.IdPropertyName);
             classMap.Remove(MongoPersistenceConstants.VersionPropertyName);
+            classMap.Remove(MongoPersistenceConstants.ETagPropertyName);
 
             var builder = Builders<BsonDocument>.Update;
             var update = builder.Inc(MongoPersistenceConstants.VersionPropertyName, 1);
+            update = update.Set(MongoPersistenceConstants.ETagPropertyName, newETag);
 
             classMap.ToList().ForEach(f => update = update.Set(f.Name, f.Value));
 
             return update.AssumedNotNull();
+        }
+
+        public static int ComputeETag<T>(this T sagaData) where T : IContainSagaData
+        {
+            Contract.Requires(sagaData != null);
+
+            var bsonDocument = sagaData.ToBsonDocument();
+
+            bsonDocument.Remove(MongoPersistenceConstants.VersionPropertyName);
+            bsonDocument.Remove(MongoPersistenceConstants.ETagPropertyName);
+
+            return bsonDocument.GetHashCode();
         }
     }
 }

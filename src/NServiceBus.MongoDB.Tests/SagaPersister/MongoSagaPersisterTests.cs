@@ -33,6 +33,7 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
     using CategoryTraits.Xunit2;
 
     using FluentAssertions;
+
     using global::MongoDB.Driver;
 
     using NServiceBus.Extensibility;
@@ -254,12 +255,15 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
         public void UpdatingSagaWithNoChangesShouldNotUpdateVersion(
             MongoSagaPersister sut,
             MongoDatabaseFactory factory,
-            SagaWithoutUniqueProperties sagaData)
+            SagaWithoutUniqueProperties sagaData,
+            SagaCorrelationProperty correlationProperty,
+            SynchronizedStorageSession session,
+            ContextBag context)
         {
-            sut.Save(sagaData);
+            sut.Save(sagaData, correlationProperty, session, context).Wait();
             var saga1 = factory.RetrieveSagaData(sagaData);
 
-            sut.Update(saga1);
+            sut.Update(saga1, session, context).Wait();
 
             var saga2 = factory.RetrieveSagaData(sagaData);
             saga2.DocumentVersion.Should().Be(saga1.DocumentVersion);
@@ -270,13 +274,16 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
         public void UpdatingSagaWithChangesShouldUpdateVersion(
                 MongoSagaPersister sut,
                 MongoDatabaseFactory factory,
-                SagaWithoutUniqueProperties sagaData)
+                SagaWithoutUniqueProperties sagaData,
+                SagaCorrelationProperty correlationProperty,
+                SynchronizedStorageSession session,
+                ContextBag context)
         {
-            sut.Save(sagaData);
+            sut.Save(sagaData, correlationProperty, session, context).Wait();
             var saga1 = factory.RetrieveSagaData(sagaData);
 
             saga1.UniqueProperty = "NewValue";
-            sut.Update(saga1);
+            sut.Update(saga1, session, context).Wait();
 
             var saga2 = factory.RetrieveSagaData(sagaData);
             saga2.DocumentVersion.Should().Be(saga1.DocumentVersion + 1);

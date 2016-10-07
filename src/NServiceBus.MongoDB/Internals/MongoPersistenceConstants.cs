@@ -34,6 +34,8 @@ namespace NServiceBus.MongoDB.Internals
     {
         public const int DefaultNextTimeoutIncrementMinutes = 10;
 
+        public const string IdPropertyName = "_id";
+
         public const string VersionPropertyName = "DocumentVersion";
 
         public const string ETagPropertyName = "ETag";
