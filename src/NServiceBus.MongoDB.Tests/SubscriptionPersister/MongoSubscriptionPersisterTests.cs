@@ -65,7 +65,7 @@ namespace NServiceBus.MongoDB.Tests.SubscriptionPersister
 
             sut.Subscribe(subscriber, messageType, context).Wait();
 
-            var subscriptions = storage.GetSubscription(messageType).ToList();
+            var subscriptions = storage.GetSubscription(messageType).Result.ToList();
             subscriptions.Should().HaveCount(1);
 
             var subscription = subscriptions.First();
@@ -92,7 +92,7 @@ namespace NServiceBus.MongoDB.Tests.SubscriptionPersister
             sut.Subscribe(subscriber, messageType, context).Wait();
             sut.Subscribe(subscriber, messageType, context).Wait();
 
-            var subscriptions = storage.GetSubscription(messageType).ToList();
+            var subscriptions = storage.GetSubscription(messageType).Result.ToList();
             subscriptions.Should().HaveCount(1);
 
             var subscription = subscriptions.First();
@@ -121,7 +121,7 @@ namespace NServiceBus.MongoDB.Tests.SubscriptionPersister
             sut.Subscribe(subscriber, messageType1, context).Wait();
             sut.Subscribe(subscriber, messageType2, context).Wait();
 
-            var subscriptions = storage.GetSubscription(messageType1).ToList();
+            var subscriptions = storage.GetSubscription(messageType1).Result.ToList();
             subscriptions.Should().HaveCount(1);
 
             var subscription = subscriptions.First();
@@ -129,7 +129,7 @@ namespace NServiceBus.MongoDB.Tests.SubscriptionPersister
             subscription.Id.Version.Should().Be(messageType1.Version.ToString());
             subscription.Subscribers.Should().HaveCount(1);
 
-            subscriptions = storage.GetSubscription(messageType2).ToList();
+            subscriptions = storage.GetSubscription(messageType2).Result.ToList();
             subscriptions.Should().HaveCount(1);
 
             subscription = subscriptions.First();
@@ -176,7 +176,7 @@ namespace NServiceBus.MongoDB.Tests.SubscriptionPersister
 
             sut.Unsubscribe(subscriber, messageType, context).Wait();
 
-            var subscriptions = storage.GetSubscription(messageType).ToList();
+            var subscriptions = storage.GetSubscription(messageType).Result.ToList();
 
             subscriptions.Should().BeEmpty();
         }
@@ -221,13 +221,13 @@ namespace NServiceBus.MongoDB.Tests.SubscriptionPersister
             var messageType = new MessageType(messageTypeString, "1.0.0.0");
 
             sut.Subscribe(subscriber, messageType, context).Wait();
-            storage.GetSubscription(messageType).Should().HaveCount(1);
+            storage.GetSubscription(messageType).Result.Should().HaveCount(1);
             sut.GetSubscriberAddressesForMessage(new List<MessageType>() { messageType }, context)
                 .Result.Should()
                 .HaveCount(1);
 
             sut.Unsubscribe(subscriber, messageType, context).Wait();
-            storage.GetSubscription(messageType).Should().HaveCount(1);
+            storage.GetSubscription(messageType).Result.Should().HaveCount(1);
 
             sut.GetSubscriberAddressesForMessage(new List<MessageType>() { messageType }, context)
                 .Result.Should()

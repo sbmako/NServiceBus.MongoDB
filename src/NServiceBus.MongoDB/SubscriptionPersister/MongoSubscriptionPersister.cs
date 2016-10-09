@@ -87,15 +87,16 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
         /// <returns>
         /// The task
         /// </returns>
-        public Task Subscribe(Subscriber subscriber, MessageType messageType, ContextBag context)
+        public async Task Subscribe(Subscriber subscriber, MessageType messageType, ContextBag context)
         {
             var subscriptionKey = new SubscriptionKey(messageType);
             var update = new UpdateDefinitionBuilder<Subscription>().AddToSet(s => s.Subscribers, subscriber);
 
-            return this.collection.UpdateOneAsync(
-                s => s.Id == subscriptionKey,
-                update,
-                new UpdateOptions() { IsUpsert = true });
+            await
+                this.collection.UpdateOneAsync(
+                    s => s.Id == subscriptionKey,
+                    update,
+                    new UpdateOptions() { IsUpsert = true });
         }
 
         /// <summary>
@@ -113,16 +114,17 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
         /// <returns>
         /// The task
         /// </returns>
-        public Task Unsubscribe(Subscriber subscriber, MessageType messageType, ContextBag context)
+        public async Task Unsubscribe(Subscriber subscriber, MessageType messageType, ContextBag context)
         {
             var subscriptionKey = new SubscriptionKey(messageType);
 
             var update = new UpdateDefinitionBuilder<Subscription>().Pull(s => s.Subscribers, subscriber);
 
-            return this.collection.UpdateOneAsync(
-                s => s.Id == subscriptionKey && s.Subscribers.Contains(subscriber),
-                update,
-                new UpdateOptions() { IsUpsert = false });
+            await
+                this.collection.UpdateOneAsync(
+                    s => s.Id == subscriptionKey && s.Subscribers.Contains(subscriber),
+                    update,
+                    new UpdateOptions() { IsUpsert = false });
         }
 
         /// <summary>
@@ -156,13 +158,13 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
             return result.AssumedNotNull();
         }
 
-        internal IEnumerable<Subscription> GetSubscription(MessageType messageType)
+        internal async Task<IEnumerable<Subscription>> GetSubscription(MessageType messageType)
         {
                                               Contract.Requires(messageType != null);
             Contract.Ensures(Contract.Result<IEnumerable<Subscription>>() != null);
 
             var query = Builders<Subscription>.Filter.Eq(p => p.Id, new SubscriptionKey(messageType));
-            var subscription = this.collection.FindAsync(query).Result.ToList();
+            var subscription = await this.collection.Find(query).ToListAsync();
 
             return subscription ?? new List<Subscription>();
         }
