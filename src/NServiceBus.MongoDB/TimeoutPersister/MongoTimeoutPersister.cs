@@ -94,10 +94,12 @@ namespace NServiceBus.MongoDB.TimeoutPersister
                     .ToListAsync()
                     .ConfigureAwait(false);
 
-            var nextTimeout = from data in this.collection.AsQueryable().AssumedNotNull()
-                              where data.Time > now
-                              orderby data.Time ascending
-                              select data;
+            var nextTimeoutQuery = Builders<TimeoutEntity>.Filter.Gt(t => t.Time, now);
+            var nextTimeout =
+                await this.collection.Find(nextTimeoutQuery)
+                    .Sort(Builders<TimeoutEntity>.Sort.Ascending(t => t.Time))
+                    .ToListAsync()
+                    .ConfigureAwait(false);
 
             var nextTimeTorunQuery = nextTimeout.Any()
                                          ? nextTimeout.First().Time
