@@ -30,63 +30,52 @@ namespace Sample
 {
     using System;
     using System.Threading;
+    using System.Threading.Tasks;
 
     using NServiceBus;
-    using NServiceBus.Config;
     using NServiceBus.Logging;
 
     /// <summary>
     /// The startup.
     /// </summary>
-    public class Startup : IWantToRunWhenConfigurationIsComplete, Iwanttorunwhencon
+    public class Startup : IWantToRunWhenEndpointStartsAndStops
     {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(Startup));
 
-        private readonly IBus bus;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Startup"/> class.
-        /// </summary>
-        /// <param name="bus">
-        /// The bus.
-        /// </param>
-        public Startup(IBus bus)
-        {
-            this.bus = bus;
-        }
-
-        /// <summary>
-        /// The run method
-        /// </summary>
-        /// <param name="config">
-        /// The config.
-        /// </param>
-        public void Run(Configure config)
+        public Task Start(IMessageSession session)
         {
             Logger.Info("Statup.Run()");
 
             var initMessage = new MyMessage
-                                  {
-                                      SomeId = "carlos",
-                                      LargeBlob = new DataBusProperty<byte[]>(Guid.NewGuid().ToByteArray())
-                                  };
+            {
+                SomeId = "carlos",
+                LargeBlob = new DataBusProperty<byte[]>(Guid.NewGuid().ToByteArray())
+            };
             var anotherMessage = new AnotherSagaCommand { SomeId = initMessage.SomeId, SleepHowLong = 2000 };
 
             Thread.Sleep(5000);
-            this.bus.Send(initMessage);
+            session.Send(initMessage);
 
             Thread.Sleep(1000);
 
             for (var i = 0; i < 5; i++)
             {
                 anotherMessage.SleepHowLong = i;
-                this.bus.SendLocal(anotherMessage);
+                session.SendLocal(anotherMessage);
             }
 
             anotherMessage.SleepHowLong = 0;
-            this.bus.SendLocal(anotherMessage);
-            this.bus.SendLocal(anotherMessage);
-            this.bus.SendLocal(anotherMessage);
+            session.SendLocal(anotherMessage);
+            session.SendLocal(anotherMessage);
+            session.SendLocal(anotherMessage);
+
+            return Task.FromResult(0);
+        }
+
+        public Task Stop(IMessageSession session)
+        {
+            return Task.FromResult(0);
         }
     }
 }

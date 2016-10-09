@@ -45,7 +45,7 @@ namespace NServiceBus.MongoDB.Extensions
             Contract.Ensures(Contract.Result<FilterDefinition<BsonDocument>>() != null);
 
             var builder = Builders<BsonDocument>.Filter;
-            var filter = builder.Eq("_id", sagaData.Id)
+            var filter = builder.Eq(MongoPersistenceConstants.IdPropertyName, sagaData.Id)
                          & builder.Eq(MongoPersistenceConstants.VersionPropertyName, oldDocumentVersion);
 
             return filter.AssumedNotNull();
