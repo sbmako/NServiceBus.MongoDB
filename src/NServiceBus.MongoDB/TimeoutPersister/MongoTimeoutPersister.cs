@@ -118,7 +118,7 @@ namespace NServiceBus.MongoDB.TimeoutPersister
         /// </returns>
         public Task<TimeoutData> Peek(string timeoutId, ContextBag context)
         {
-            var data = this.collection.AsQueryable().SingleOrDefault(e => e.Id == timeoutId);
+            var data = this.collection.AsQueryable().SingleOrDefaultAsync(e => e.Id == timeoutId).Result;
             if (data != null)
             {
                 return
