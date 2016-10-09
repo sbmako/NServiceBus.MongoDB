@@ -68,11 +68,16 @@ namespace NServiceBus.MongoDB.SagaPersister
         {
             var sagaTypeName = saga.GetType().Name;
 
-            if (!(saga is IHaveDocumentVersion))
+            var sagaDataWithVersion = saga as IHaveDocumentVersion;
+
+            if (sagaDataWithVersion  == null)
             {
                 throw new InvalidOperationException(
                     string.Format("Saga type {0} does not implement IHaveDocumentVersion", sagaTypeName));
             }
+
+            sagaDataWithVersion.DocumentVersion = 0;
+            sagaDataWithVersion.ETag = saga.ComputeETag();
 
             var uniqueProperty = UniqueAttribute.GetUniqueProperty(saga);
             if (uniqueProperty.HasValue)
@@ -96,6 +101,14 @@ namespace NServiceBus.MongoDB.SagaPersister
         /// <param name="saga">The saga entity to updated.</param>
         public void Update(IContainSagaData saga)
         {
+            var newETag = saga.AssumedNotNull().ComputeETag();
+
+            var versionedDocument = (IHaveDocumentVersion)saga;
+            if (versionedDocument.ETag == newETag)
+            {
+                return;
+            }
+
             var collection = this.mongoDatabase.GetCollection(saga.GetType().Name);
 
             var query = saga.MongoUpdateQuery();

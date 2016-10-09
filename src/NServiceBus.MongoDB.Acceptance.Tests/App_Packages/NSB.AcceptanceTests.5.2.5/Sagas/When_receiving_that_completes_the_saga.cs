@@ -148,6 +148,7 @@
                 public virtual Guid SomeId { get; set; }
 
                 public int DocumentVersion { get; set; }
+                public int ETag { get; set; }
             }
         }
 
