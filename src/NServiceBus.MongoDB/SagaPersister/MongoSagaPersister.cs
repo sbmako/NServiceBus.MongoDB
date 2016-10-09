@@ -29,7 +29,6 @@
 namespace NServiceBus.MongoDB.SagaPersister
 {
     using System;
-    using System.Collections.Generic;
     using System.Diagnostics.Contracts;
     using System.Threading.Tasks;
 
@@ -71,13 +70,13 @@ namespace NServiceBus.MongoDB.SagaPersister
         {
             var sagaTypeName = sagaData.GetType().Name;
 
+            var sagaDataWithVersion = sagaData as IHaveDocumentVersion;
+
             if (!(sagaData is IHaveDocumentVersion))
             {
                 throw new InvalidOperationException(
                     string.Format("Saga type {0} does not implement IHaveDocumentVersion", sagaTypeName));
             }
-
-            var sagaDataWithVersion = (IHaveDocumentVersion)sagaData;
 
             sagaDataWithVersion.DocumentVersion = 0;
             sagaDataWithVersion.ETag = sagaData.ComputeETag();
@@ -88,55 +87,50 @@ namespace NServiceBus.MongoDB.SagaPersister
             }
 
             var collection = this.mongoDatabase.GetCollection<BsonDocument>(sagaTypeName);
-            await collection.InsertOneAsync(sagaData.ToBsonDocument()).ConfigureAwait(false);
+            await collection.InsertOneAsync(sagaData.ToBsonDocument());
         }
 
-        public Task Update(IContainSagaData sagaData, SynchronizedStorageSession session, ContextBag context)
+        public async Task Update(IContainSagaData sagaData, SynchronizedStorageSession session, ContextBag context)
         {
             var newETag = sagaData.AssumedNotNull().ComputeETag();
 
             var versionedDocument = (IHaveDocumentVersion)sagaData;
             if (versionedDocument.ETag == newETag)
             {
-                return Task.FromResult(0);
+                return;
             }
 
             var query = sagaData.MongoUpdateQuery(versionedDocument.DocumentVersion);
             var update = sagaData.MongoUpdate(newETag);
 
             var collection = this.mongoDatabase.GetCollection<BsonDocument>(sagaData.GetType().Name);
-
-            var result = collection.UpdateOneAsync(query, update).Result;
+            var result = await collection.UpdateOneAsync(query, update);
 
             if (result.ModifiedCount != 1)
             {
                 throw new InvalidOperationException(string.Format("Unable to update saga with id {0}", sagaData.Id));
             }
-
-            return Task.FromResult(0);
         }
 
-        public Task<TSagaData> Get<TSagaData>(
+        public async Task<TSagaData> Get<TSagaData>(
             Guid sagaId, 
             SynchronizedStorageSession session, 
             ContextBag context) where TSagaData : IContainSagaData
         {
             var collection = this.mongoDatabase.GetCollection<TSagaData>(typeof(TSagaData).Name);
-
-            var query = Builders<TSagaData>.Filter.Eq(e => e.Id, sagaId);
-            return collection.FindAsync(query).Result.FirstAsync();
+            return await collection.Find(_ => _.Id == sagaId).SingleAsync();
         }
 
-        public Task<TSagaData> Get<TSagaData>(
+        public async Task<TSagaData> Get<TSagaData>(
             string propertyName, 
             object propertyValue, 
             SynchronizedStorageSession session, 
             ContextBag context) where TSagaData : IContainSagaData
         {
-            var collection = this.mongoDatabase.GetCollection<TSagaData>(typeof(TSagaData).Name);
-
             var query = Builders<TSagaData>.Filter.Eq(propertyName, BsonValue.Create(propertyValue));
-            return collection.FindAsync(query).Result.FirstAsync();
+
+            var collection = this.mongoDatabase.GetCollection<TSagaData>(typeof(TSagaData).Name);
+            return await collection.Find(query).SingleAsync();
         }
 
         public async Task Complete(IContainSagaData sagaData, SynchronizedStorageSession session, ContextBag context)
@@ -144,16 +138,16 @@ namespace NServiceBus.MongoDB.SagaPersister
             var query = Builders<BsonDocument>.Filter.Eq(MongoPersistenceConstants.IdPropertyName, sagaData.Id);
 
             var collection = this.mongoDatabase.GetCollection<BsonDocument>(sagaData.GetType().Name);
-            await collection.DeleteOneAsync(query).ConfigureAwait(false);
+            await collection.DeleteOneAsync(query);
         }
 
-        private Task EnsureUniqueIndex(IContainSagaData saga, SagaCorrelationProperty correlationProperty)
+        private async Task EnsureUniqueIndex(IContainSagaData saga, SagaCorrelationProperty correlationProperty)
         {
             Contract.Requires(saga != null);
 
             var collection = this.mongoDatabase.GetCollection<BsonDocument>(saga.GetType().Name);
 
-            return
+            await
                 collection.Indexes.CreateOneAsync(
                     new BsonDocumentIndexKeysDefinition<BsonDocument>(new BsonDocument(correlationProperty.Name, 1)),
                     new CreateIndexOptions() { Unique = true });
