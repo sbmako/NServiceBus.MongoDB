@@ -70,6 +70,7 @@
                 public virtual string KeyValue { get; set; }
 
                 public int DocumentVersion { get; set; }
+                public int ETag { get; set; }
             }
         }
 

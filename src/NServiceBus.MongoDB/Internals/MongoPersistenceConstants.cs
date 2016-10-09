@@ -36,6 +36,8 @@ namespace NServiceBus.MongoDB.Internals
 
         public const string VersionPropertyName = "DocumentVersion";
 
+        public const string ETagPropertyName = "ETag";
+
         public const string OwningTimeoutManagerAndTimeName = "OwningTimeoutManagerAndTime";
 
         public const string OwningTimeoutManagerAndSagaIdAndTimeName = "OwningTimeoutManagerAndSagaIdAndTime";
