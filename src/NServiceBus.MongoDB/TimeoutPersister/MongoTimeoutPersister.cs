@@ -118,14 +118,12 @@ namespace NServiceBus.MongoDB.TimeoutPersister
         /// <returns>
         /// <see cref="T:NServiceBus.Timeout.Core.TimeoutEntity"/> of the timeout if it was found. <c>null</c> otherwise.
         /// </returns>
-        public Task<TimeoutData> Peek(string timeoutId, ContextBag context)
+        public async Task<TimeoutData> Peek(string timeoutId, ContextBag context)
         {
-            var data = this.collection.AsQueryable().SingleOrDefaultAsync(e => e.Id == timeoutId).Result;
+            var data = await this.collection.AsQueryable().SingleOrDefaultAsync(e => e.Id == timeoutId);
             if (data != null)
             {
-                return
-                    Task.FromResult(
-                        new TimeoutData
+                return new TimeoutData
                             {
                                 Id = data.Id,
                                 Destination = data.Destination,
@@ -134,10 +132,10 @@ namespace NServiceBus.MongoDB.TimeoutPersister
                                 Time = data.Time,
                                 Headers = data.Headers,
                                 OwningTimeoutManager = data.OwningTimeoutManager
-                            });
+                            };
             }
 
-            return Task.FromResult<TimeoutData>(null);
+            return null;
         }
         
         /// <summary>
@@ -170,10 +168,12 @@ namespace NServiceBus.MongoDB.TimeoutPersister
         /// <returns>
         /// <c>true</c> it the timeout was successfully removed.
         /// </returns>
-        public Task<bool> TryRemove(string timeoutId, ContextBag context)
+        public async Task<bool> TryRemove(string timeoutId, ContextBag context)
         {
             var query = Builders<TimeoutEntity>.Filter.Eq(e => e.Id, timeoutId);
-            return Task.FromResult(this.collection.DeleteOneAsync(query).Result.DeletedCount != 0);
+
+            var result = await this.collection.DeleteOneAsync(query).ConfigureAwait(false);
+            return result.DeletedCount != 0;
         }
 
         /// <summary>
