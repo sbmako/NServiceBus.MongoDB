@@ -89,17 +89,14 @@ namespace NServiceBus.MongoDB.TimeoutPersister
 
             var results =
                 await
-                this.collection.Find(query)
-                    .Sort(Builders<TimeoutEntity>.Sort.Ascending(t => t.Time))
-                    .ToListAsync()
-                    .ConfigureAwait(false);
+                this.collection.Find(query).Sort(Builders<TimeoutEntity>.Sort.Ascending(t => t.Time)).ToListAsync();
 
             var nextTimeoutQuery = Builders<TimeoutEntity>.Filter.Gt(t => t.Time, now);
             var nextTimeout =
-                await this.collection.Find(nextTimeoutQuery)
+                await
+                this.collection.Find(nextTimeoutQuery)
                     .Sort(Builders<TimeoutEntity>.Sort.Ascending(t => t.Time))
-                    .ToListAsync()
-                    .ConfigureAwait(false);
+                    .ToListAsync();
 
             var nextTimeTorunQuery = nextTimeout.Any()
                                          ? nextTimeout.First().Time
