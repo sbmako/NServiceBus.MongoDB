@@ -218,7 +218,8 @@ namespace NServiceBus.MongoDB.SagaPersister
                 return;
             }
 
-            var indexOptions = IndexOptions.SetName(uniqueProperty.Key).SetUnique(true).SetSparse(true);
+            var indexOptions =
+                IndexOptions.SetName(uniqueProperty.Key).SetUnique(true).SetSparse(true).SetBackground(true);
             var result = collection.CreateIndex(indexKeys, indexOptions);
 
             if (result.HasLastErrorMessage)
