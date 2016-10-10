@@ -84,7 +84,7 @@ namespace NServiceBus.MongoDB.TimeoutPersister
             var now = DateTime.UtcNow;
 
             var results = from data in collection.AsQueryable().AssumedNotNull()
-                          where data.Time >= startSlice && data.Time <= now
+                          where data.Time > startSlice && data.Time <= now
                           where
                               data.OwningTimeoutManager == string.Empty
                               || data.OwningTimeoutManager == this.EndpointName

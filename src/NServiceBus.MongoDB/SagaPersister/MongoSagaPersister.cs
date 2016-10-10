@@ -29,6 +29,7 @@
 namespace NServiceBus.MongoDB.SagaPersister
 {
     using System;
+    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Diagnostics.Contracts;
 
@@ -44,7 +45,7 @@ namespace NServiceBus.MongoDB.SagaPersister
     /// </summary>
     public class MongoSagaPersister : ISagaPersister
     {
-        ////private static ConcurrentDictionary<Type, string> indexes = new ConcurrentDictionary<Type, string>();
+        private static readonly ConcurrentDictionary<Type, string> Indexes = new ConcurrentDictionary<Type, string>();
 
         private readonly MongoDatabase mongoDatabase;
 
@@ -202,9 +203,23 @@ namespace NServiceBus.MongoDB.SagaPersister
         {
             Contract.Requires(saga != null);
 
+            if (Indexes.ContainsKey(saga.GetType()))
+            {
+                return;
+            }
+
             var collection = this.mongoDatabase.GetCollection(saga.GetType().Name);
+            var indexKeys = IndexKeys.Ascending(uniqueProperty.Key);
+
+            var found = collection.IndexExistsByName(uniqueProperty.Key);
+            if (found)
+            {
+                Indexes.TryAdd(saga.GetType(), uniqueProperty.Key);
+                return;
+            }
+
             var indexOptions = IndexOptions.SetName(uniqueProperty.Key).SetUnique(true).SetSparse(true);
-            var result = collection.CreateIndex(IndexKeys.Ascending(uniqueProperty.Key), indexOptions);
+            var result = collection.CreateIndex(indexKeys, indexOptions);
 
             if (result.HasLastErrorMessage)
             {
@@ -212,6 +227,8 @@ namespace NServiceBus.MongoDB.SagaPersister
                     string.Format(
                         "Unable to create unique index on {0}: {1}", saga.GetType().Name, uniqueProperty.Key));
             }
+
+            Indexes.TryAdd(saga.GetType(), uniqueProperty.Key);
         }
     }
 }
