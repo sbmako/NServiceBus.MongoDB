@@ -239,7 +239,8 @@ namespace NServiceBus.MongoDB.TimeoutPersister
         {
             var collection = this.mongoDatabase.GetCollection<TimeoutData>(TimeoutDataName);
 
-            var indexOptions = IndexOptions.SetName(MongoPersistenceConstants.OwningTimeoutManagerAndTimeName);
+            var indexOptions =
+                IndexOptions.SetName(MongoPersistenceConstants.OwningTimeoutManagerAndTimeName).SetBackground(true);
             var result =
                 collection.CreateIndex(
                     IndexKeys<TimeoutData>.Ascending(t => t.Time, t => t.OwningTimeoutManager),
