@@ -31,7 +31,6 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
     using System.Collections.Generic;
     using System.Diagnostics.Contracts;
 
-    using NServiceBus.MongoDB.Tests.SubscriptionPersister;
     using NServiceBus.Unicast.Subscriptions;
     using NServiceBus.Unicast.Subscriptions.MessageDrivenSubscriptions;
 

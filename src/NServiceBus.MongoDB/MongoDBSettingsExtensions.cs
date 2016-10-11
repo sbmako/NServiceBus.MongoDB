@@ -33,7 +33,6 @@ namespace NServiceBus.MongoDB
 
     using NServiceBus.Configuration.AdvanceExtensibility;
     using NServiceBus.MongoDB.Internals;
-    using NServiceBus.Persistence;
 
     /// <summary>
     /// The MongoDB settings extensions.
