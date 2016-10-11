@@ -89,7 +89,7 @@ namespace NServiceBus.MongoDB.TimeoutPersister
                               data.OwningTimeoutManager == string.Empty
                               || data.OwningTimeoutManager == this.EndpointName
                           orderby data.Time ascending 
-                          select new Tuple<string, DateTime>(data.Id.ToString(), data.Time);
+                          select new Tuple<string, DateTime>(data.Id, data.Time);
 
             var nextTimeout = from data in collection.AsQueryable().AssumedNotNull()
                               where data.Time > now

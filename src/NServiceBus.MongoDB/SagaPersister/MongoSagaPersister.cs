@@ -209,8 +209,6 @@ namespace NServiceBus.MongoDB.SagaPersister
             }
 
             var collection = this.mongoDatabase.GetCollection(saga.GetType().Name);
-            var indexKeys = IndexKeys.Ascending(uniqueProperty.Key);
-
             var found = collection.IndexExistsByName(uniqueProperty.Key);
             if (found)
             {
@@ -220,6 +218,7 @@ namespace NServiceBus.MongoDB.SagaPersister
 
             var indexOptions =
                 IndexOptions.SetName(uniqueProperty.Key).SetUnique(true).SetSparse(true).SetBackground(true);
+            var indexKeys = IndexKeys.Ascending(uniqueProperty.Key);
             var result = collection.CreateIndex(indexKeys, indexOptions);
 
             if (result.HasLastErrorMessage)
