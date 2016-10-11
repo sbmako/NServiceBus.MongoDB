@@ -57,9 +57,7 @@ namespace NServiceBus.MongoDB
             string databaseName)
         {
             Contract.Requires<ArgumentNullException>(config != null, "config != null");
-            Contract.Requires<ArgumentNullException>(
-                !string.IsNullOrWhiteSpace(databaseName), 
-                "!string.IsNullOrWhiteSpace(databaseName)");
+            Contract.Requires<ArgumentNullException>(databaseName != null, "databaseName != null");
             Contract.Ensures(Contract.Result<PersistenceExtentions<MongoDBPersistence>>() != null);
 
             config.GetSettings().Set(MongoPersistenceConstants.DatabaseNameKey, databaseName);
@@ -84,9 +82,7 @@ namespace NServiceBus.MongoDB
             string connectionString)
         {
             Contract.Requires<ArgumentNullException>(config != null, "config != null");
-            Contract.Requires<ArgumentNullException>(
-                !string.IsNullOrWhiteSpace(connectionString),
-                "!string.IsNullOrWhiteSpace(connectionString)");
+            Contract.Requires<ArgumentNullException>(connectionString != null, "connectionString != null");
             Contract.Ensures(Contract.Result<PersistenceExtentions<MongoDBPersistence>>() != null);
 
             config.GetSettings().Set(MongoPersistenceConstants.ConnectionStringKey, connectionString);

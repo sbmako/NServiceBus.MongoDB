@@ -60,9 +60,9 @@ namespace NServiceBus.MongoDB.Internals
         {
             get
             {
-                Contract.Ensures(!string.IsNullOrWhiteSpace(Contract.Result<string>()));
+                Contract.Ensures(Contract.Result<string>() != null);
                 var connectionString = string.Format("mongodb://{0}:{1}", DefaultHost, DefaultPort);
-                return connectionString.AssumedNotNullOrWhiteSpace();
+                return connectionString.AssumedNotNull();
             }
         }
     }

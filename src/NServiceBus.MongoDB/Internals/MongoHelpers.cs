@@ -37,12 +37,12 @@ namespace NServiceBus.MongoDB.Internals
         public static string GetConnectionString(ReadOnlySettings settings)
         {
             Contract.Requires(settings != null);
-            Contract.Ensures(!string.IsNullOrWhiteSpace(Contract.Result<string>()));
+            Contract.Ensures(Contract.Result<string>() != null);
 
             if (settings.HasSetting(MongoPersistenceConstants.ConnectionStringKey))
             {
                 var connectionString =
-                    settings.Get<string>(MongoPersistenceConstants.ConnectionStringKey).AssumedNotNullOrWhiteSpace();
+                    settings.Get<string>(MongoPersistenceConstants.ConnectionStringKey).AssumedNotNull();
 
                 return connectionString;
             }
@@ -62,8 +62,8 @@ namespace NServiceBus.MongoDB.Internals
 
         public static string GetConnectionStringFromConfig(string connectionStringName)
         {
-            Contract.Requires(!string.IsNullOrWhiteSpace(connectionStringName));
-            Contract.Ensures(!string.IsNullOrWhiteSpace(Contract.Result<string>()));
+            Contract.Requires(connectionStringName != null);
+            Contract.Ensures(Contract.Result<string>() != null);
 
             var connectionStringSettings = ConfigurationManager.ConnectionStrings[connectionStringName];
 
@@ -75,7 +75,7 @@ namespace NServiceBus.MongoDB.Internals
                         connectionStringName));
             }
 
-            if (string.IsNullOrWhiteSpace(connectionStringSettings.ConnectionString))
+            if (connectionStringSettings.ConnectionString == null)
             {
                 throw new ConfigurationErrorsException(
                     string.Format("Connection string named {0} has a null or empty value", connectionStringName));
