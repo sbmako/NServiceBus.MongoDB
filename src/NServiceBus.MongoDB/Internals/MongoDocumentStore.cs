@@ -77,8 +77,8 @@ namespace NServiceBus.MongoDB.Internals
             string connectionString, 
             string databaseName)
         {
-            Contract.Requires(!string.IsNullOrWhiteSpace(connectionString));
-            Contract.Requires(!string.IsNullOrWhiteSpace(databaseName));
+            Contract.Requires(connectionString != null);
+            Contract.Requires(databaseName != null);
             Contract.Ensures(Contract.Result<MongoClientAccessor>() != null);
 
             var client = new MongoClient(connectionString);

@@ -45,10 +45,10 @@ namespace NServiceBus.MongoDB.Extensions
         /// </returns>
         public static string AsValidDatabaseName(this string endpointName)
         {
-            Contract.Requires(!string.IsNullOrWhiteSpace(endpointName));
-            Contract.Ensures(!string.IsNullOrWhiteSpace(Contract.Result<string>()));
+            Contract.Requires(endpointName != null);
+            Contract.Ensures(Contract.Result<string>() != null);
 
-            return endpointName.Replace('.', '_').AssumedNotNullOrWhiteSpace();
+            return endpointName.Replace('.', '_').AssumedNotNull();
         }
 
         /// <summary>
@@ -63,10 +63,10 @@ namespace NServiceBus.MongoDB.Extensions
         public static string DatabaseNameFromEndpointName(this SettingsHolder settings)
         {
             Contract.Requires(settings != null);
-            Contract.Ensures(!string.IsNullOrWhiteSpace(Contract.Result<string>()));
+            Contract.Ensures(Contract.Result<string>() != null);
 
             var endpointName = settings.EndpointName();
-            return endpointName.ToString().AssumedNotNullOrWhiteSpace().AsValidDatabaseName();
+            return endpointName.ToString().AssumedNotNull().AsValidDatabaseName();
         }
     }
 }

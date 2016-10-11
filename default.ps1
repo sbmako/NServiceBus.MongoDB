@@ -57,7 +57,7 @@ Task CleanAll -Depends Clean
 function BuildSolution([ValidateScript( { Test-Path $_ -PathType Leaf } )][string]$solutionFile, [string[]] $msbuildArguments = @(), [string] $target = 'Build')
 {
     $private:commonMsbuildArguments = $solutionFile, "/target:$target", "/verbosity:$msbuildVerbosity", '/maxcpucount', '/nodeReuse:false',
-        '/fileLogger', '/property:WarningLevel=4;TreatWarningsAsErrors=False'
+        '/fileLogger'
 
     $arguments = $commonMsbuildArguments + $msbuildArguments
     Write-Output "$msbuildCommand $arguments"

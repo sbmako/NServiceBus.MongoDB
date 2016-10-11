@@ -50,9 +50,7 @@ namespace NServiceBus.MongoDB.Internals
         public MongoClientAccessor(MongoClient mongoClient, string databaseName)
         {
             Contract.Requires<ArgumentNullException>(mongoClient != null, "mongoClient != null");
-            Contract.Requires<ArgumentNullException>(
-                !string.IsNullOrWhiteSpace(databaseName),
-                "!string.IsNullOrWhiteSpace(databaseName)");
+            Contract.Requires<ArgumentNullException>(databaseName != null, "databaseName != null");
 
             this.MongoClient = mongoClient;
             this.DatabaseName = databaseName;
@@ -72,7 +70,7 @@ namespace NServiceBus.MongoDB.Internals
         private void ObjectInvariants()
         {
             Contract.Invariant(this.MongoClient != null);
-            Contract.Invariant(!string.IsNullOrWhiteSpace(this.DatabaseName));
+            Contract.Invariant(this.DatabaseName != null);
         }
     }
 }

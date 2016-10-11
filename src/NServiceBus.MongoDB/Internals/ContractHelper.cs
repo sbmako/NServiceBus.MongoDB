@@ -73,22 +73,5 @@ namespace NServiceBus.MongoDB.Internals
             Contract.Assume(obj != null);
             return obj;
         }
-
-        /// <summary>
-        /// The is null or whitespace checked.
-        /// </summary>
-        /// <param name="value">
-        /// The value.
-        /// </param>
-        /// <returns>
-        /// The <see cref="string"/>.
-        /// </returns>
-        public static string AssumedNotNullOrWhiteSpace(this string value)
-        {
-            Contract.Ensures(!string.IsNullOrWhiteSpace(Contract.Result<string>()));
-
-            Contract.Assume(!string.IsNullOrWhiteSpace(value));
-            return value;
-        }
     }
 }

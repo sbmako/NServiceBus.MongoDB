@@ -31,6 +31,7 @@ namespace NServiceBus.MongoDB.TimeoutPersister
     using System;
     using System.Diagnostics.Contracts;
     using System.Linq;
+    using System.Runtime.InteropServices;
     using System.Threading.Tasks;
 
     using global::MongoDB.Driver;
@@ -67,7 +68,7 @@ namespace NServiceBus.MongoDB.TimeoutPersister
             this.collection = mongoFactory.GetDatabase().GetCollection<TimeoutEntity>(TimeoutEntityName);
 
             this.endpointName = endpointName;
-            this.EnsureTimeoutIndexes();
+            this.EnsureTimeoutIndexes().Wait();
         }
 
         /// <summary>
@@ -187,15 +188,17 @@ namespace NServiceBus.MongoDB.TimeoutPersister
             await this.collection.DeleteManyAsync(t => t.SagaId == sagaId).ConfigureAwait(false);
         }
 
-        private void EnsureTimeoutIndexes()
+        private async Task EnsureTimeoutIndexes()
         {
-            this.collection.Indexes.CreateOneAsync(
-                Builders<TimeoutEntity>.IndexKeys.Ascending(t => t.SagaId),
-                new CreateIndexOptions { Background = true }).Wait();
+            await
+                this.collection.Indexes.CreateOneAsync(
+                    Builders<TimeoutEntity>.IndexKeys.Ascending(t => t.SagaId),
+                    new CreateIndexOptions { Background = true }).ConfigureAwait(false);
 
-            this.collection.Indexes.CreateOneAsync(
-                Builders<TimeoutEntity>.IndexKeys.Ascending(t => t.OwningTimeoutManager),
-                new CreateIndexOptions { Background = true }).Wait();
+            await
+                this.collection.Indexes.CreateOneAsync(
+                    Builders<TimeoutEntity>.IndexKeys.Ascending(t => t.OwningTimeoutManager),
+                    new CreateIndexOptions { Background = true }).ConfigureAwait(false);
         }
 
         [ContractInvariantMethod]
