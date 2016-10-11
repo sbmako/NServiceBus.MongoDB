@@ -43,7 +43,7 @@ namespace Sample
         private static readonly ILog Logger = LogManager.GetLogger(typeof(Startup));
 
 
-        public Task Start(IMessageSession session)
+        public async Task Start(IMessageSession session)
         {
             Logger.Info("Statup.Run()");
 
@@ -52,25 +52,23 @@ namespace Sample
                 SomeId = "carlos",
                 LargeBlob = new DataBusProperty<byte[]>(Guid.NewGuid().ToByteArray())
             };
-            var anotherMessage = new AnotherSagaCommand { SomeId = initMessage.SomeId, SleepHowLong = 2000 };
+            ////var anotherMessage = new AnotherSagaCommand { SomeId = initMessage.SomeId, SleepHowLong = 2000 };
 
             Thread.Sleep(5000);
-            session.Send(initMessage);
+            await session.Send(initMessage).ConfigureAwait(false);
 
-            Thread.Sleep(1000);
+            ////Thread.Sleep(1000);
 
-            for (var i = 0; i < 5; i++)
-            {
-                anotherMessage.SleepHowLong = i;
-                session.SendLocal(anotherMessage);
-            }
+            ////for (var i = 0; i < 5; i++)
+            ////{
+            ////    anotherMessage.SleepHowLong = i;
+            ////    await session.SendLocal(anotherMessage).ConfigureAwait(false);
+            ////}
 
-            anotherMessage.SleepHowLong = 0;
-            session.SendLocal(anotherMessage);
-            session.SendLocal(anotherMessage);
-            session.SendLocal(anotherMessage);
-
-            return Task.FromResult(0);
+            ////anotherMessage.SleepHowLong = 0;
+            ////await session.SendLocal(anotherMessage).ConfigureAwait(false);
+            ////await session.SendLocal(anotherMessage).ConfigureAwait(false);
+            ////await session.SendLocal(anotherMessage).ConfigureAwait(false);
         }
 
         public Task Stop(IMessageSession session)

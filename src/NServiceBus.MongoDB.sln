@@ -19,8 +19,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NServiceBus.MongoDB.Tests", "NServiceBus.MongoDB.Tests\NServiceBus.MongoDB.Tests.csproj", "{02524712-C2B5-482F-A475-0C1EAF78B6FC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample", "Sample\Sample.csproj", "{12BD6A30-BA71-4EC4-B931-4D4F8D1D81AD}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -40,12 +38,6 @@ Global
 		{02524712-C2B5-482F-A475-0C1EAF78B6FC}.DebugContracts|Any CPU.Build.0 = DebugContracts|Any CPU
 		{02524712-C2B5-482F-A475-0C1EAF78B6FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{02524712-C2B5-482F-A475-0C1EAF78B6FC}.Release|Any CPU.Build.0 = Release|Any CPU
-		{12BD6A30-BA71-4EC4-B931-4D4F8D1D81AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{12BD6A30-BA71-4EC4-B931-4D4F8D1D81AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{12BD6A30-BA71-4EC4-B931-4D4F8D1D81AD}.DebugContracts|Any CPU.ActiveCfg = DebugContracts|Any CPU
-		{12BD6A30-BA71-4EC4-B931-4D4F8D1D81AD}.DebugContracts|Any CPU.Build.0 = DebugContracts|Any CPU
-		{12BD6A30-BA71-4EC4-B931-4D4F8D1D81AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{12BD6A30-BA71-4EC4-B931-4D4F8D1D81AD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
