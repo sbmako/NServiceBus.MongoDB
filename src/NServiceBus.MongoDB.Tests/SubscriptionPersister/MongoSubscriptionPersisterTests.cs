@@ -201,11 +201,11 @@ namespace NServiceBus.MongoDB.Tests.SubscriptionPersister
                                    };
 
             messageTypes.ForEach(mt => sut.Subscribe(subscriber, mt, context).Wait());
-            storage.GetSubscriptions(messageTypes).Should().HaveCount(3);
+            storage.GetSubscriptions(messageTypes).Result.Should().HaveCount(3);
 
             messageTypes.ForEach(mt => sut.Unsubscribe(subscriber, mt, context).Wait());
 
-            storage.GetSubscriptions(messageTypes).ToList().ForEach(s => s.Subscribers.Should().HaveCount(0));
+            storage.GetSubscriptions(messageTypes).Result.ToList().ForEach(s => s.Subscribers.Should().HaveCount(0));
         }
 
         [Theory, IntegrationTest]

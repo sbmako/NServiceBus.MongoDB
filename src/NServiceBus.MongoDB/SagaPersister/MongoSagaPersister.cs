@@ -83,11 +83,11 @@ namespace NServiceBus.MongoDB.SagaPersister
 
             if (correlationProperty != null)
             {
-                await this.EnsureUniqueIndex(sagaData, correlationProperty);
+                await this.EnsureUniqueIndex(sagaData, correlationProperty).ConfigureAwait(false);
             }
 
             var collection = this.mongoDatabase.GetCollection<BsonDocument>(sagaTypeName);
-            await collection.InsertOneAsync(sagaData.ToBsonDocument());
+            await collection.InsertOneAsync(sagaData.ToBsonDocument()).ConfigureAwait(false);
         }
 
         public async Task Update(IContainSagaData sagaData, SynchronizedStorageSession session, ContextBag context)
@@ -104,7 +104,7 @@ namespace NServiceBus.MongoDB.SagaPersister
             var update = sagaData.MongoUpdate(newETag);
 
             var collection = this.mongoDatabase.GetCollection<BsonDocument>(sagaData.GetType().Name);
-            var result = await collection.UpdateOneAsync(query, update);
+            var result = await collection.UpdateOneAsync(query, update).ConfigureAwait(false);
 
             if (result.ModifiedCount != 1)
             {
@@ -118,7 +118,7 @@ namespace NServiceBus.MongoDB.SagaPersister
             ContextBag context) where TSagaData : IContainSagaData
         {
             var collection = this.mongoDatabase.GetCollection<TSagaData>(typeof(TSagaData).Name);
-            return await collection.Find(_ => _.Id == sagaId).SingleAsync();
+            return await collection.Find(_ => _.Id == sagaId).SingleAsync().ConfigureAwait(false);
         }
 
         public async Task<TSagaData> Get<TSagaData>(
@@ -130,7 +130,7 @@ namespace NServiceBus.MongoDB.SagaPersister
             var query = Builders<TSagaData>.Filter.Eq(propertyName, BsonValue.Create(propertyValue));
 
             var collection = this.mongoDatabase.GetCollection<TSagaData>(typeof(TSagaData).Name);
-            return await collection.Find(query).SingleAsync();
+            return await collection.Find(query).SingleAsync().ConfigureAwait(false);
         }
 
         public async Task Complete(IContainSagaData sagaData, SynchronizedStorageSession session, ContextBag context)
@@ -138,19 +138,20 @@ namespace NServiceBus.MongoDB.SagaPersister
             var query = Builders<BsonDocument>.Filter.Eq(MongoPersistenceConstants.IdPropertyName, sagaData.Id);
 
             var collection = this.mongoDatabase.GetCollection<BsonDocument>(sagaData.GetType().Name);
-            await collection.DeleteOneAsync(query);
+            await collection.DeleteOneAsync(query).ConfigureAwait(false);
         }
 
         private async Task EnsureUniqueIndex(IContainSagaData saga, SagaCorrelationProperty correlationProperty)
         {
             Contract.Requires(saga != null);
+            Contract.Requires(correlationProperty != null);
 
             var collection = this.mongoDatabase.GetCollection<BsonDocument>(saga.GetType().Name);
 
             await
                 collection.Indexes.CreateOneAsync(
                     new BsonDocumentIndexKeysDefinition<BsonDocument>(new BsonDocument(correlationProperty.Name, 1)),
-                    new CreateIndexOptions() { Unique = true });
+                    new CreateIndexOptions() { Unique = true }).ConfigureAwait(false);
         }
     }
 }

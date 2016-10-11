@@ -29,8 +29,6 @@
 namespace NServiceBus.MongoDB.TimeoutPersister
 {
     using System;
-    using System.Collections.Generic;
-    using System.ComponentModel;
     using System.Diagnostics.Contracts;
     using System.Linq;
     using System.Threading.Tasks;
@@ -89,14 +87,18 @@ namespace NServiceBus.MongoDB.TimeoutPersister
 
             var results =
                 await
-                this.collection.Find(query).Sort(Builders<TimeoutEntity>.Sort.Ascending(t => t.Time)).ToListAsync();
+                this.collection.Find(query)
+                    .Sort(Builders<TimeoutEntity>.Sort.Ascending(t => t.Time))
+                    .ToListAsync()
+                    .ConfigureAwait(false);
 
             var nextTimeoutQuery = Builders<TimeoutEntity>.Filter.Gt(t => t.Time, now);
             var nextTimeout =
                 await
                 this.collection.Find(nextTimeoutQuery)
                     .Sort(Builders<TimeoutEntity>.Sort.Ascending(t => t.Time))
-                    .ToListAsync();
+                    .ToListAsync()
+                    .ConfigureAwait(false);
 
             var nextTimeTorunQuery = nextTimeout.Any()
                                          ? nextTimeout.First().Time
@@ -117,7 +119,8 @@ namespace NServiceBus.MongoDB.TimeoutPersister
         /// </returns>
         public async Task<TimeoutData> Peek(string timeoutId, ContextBag context)
         {
-            var data = await this.collection.AsQueryable().SingleOrDefaultAsync(e => e.Id == timeoutId);
+            var data =
+                await this.collection.AsQueryable().SingleOrDefaultAsync(e => e.Id == timeoutId).ConfigureAwait(false);
             if (data != null)
             {
                 return new TimeoutData
@@ -179,9 +182,9 @@ namespace NServiceBus.MongoDB.TimeoutPersister
         /// <param name="sagaId">The saga id of the timeouts to remove.</param>
         /// <param name="context">The context</param>
         /// <returns>The task</returns>
-        public Task RemoveTimeoutBy(Guid sagaId, ContextBag context)
+        public async Task RemoveTimeoutBy(Guid sagaId, ContextBag context)
         {
-            return this.collection.DeleteManyAsync(t => t.SagaId == sagaId);
+            await this.collection.DeleteManyAsync(t => t.SagaId == sagaId).ConfigureAwait(false);
         }
 
         private void EnsureTimeoutIndexes()

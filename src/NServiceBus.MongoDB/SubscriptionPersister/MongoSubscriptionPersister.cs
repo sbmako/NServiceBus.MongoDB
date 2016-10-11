@@ -96,7 +96,7 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
                 this.collection.UpdateOneAsync(
                     s => s.Id == subscriptionKey,
                     update,
-                    new UpdateOptions() { IsUpsert = true });
+                    new UpdateOptions() { IsUpsert = true }).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -124,7 +124,7 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
                 this.collection.UpdateOneAsync(
                     s => s.Id == subscriptionKey && s.Subscribers.Contains(subscriber),
                     update,
-                    new UpdateOptions() { IsUpsert = false });
+                    new UpdateOptions() { IsUpsert = false }).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -139,32 +139,32 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
         /// <returns>
         /// The collection of subscribers
         /// </returns>
-        public Task<IEnumerable<Subscriber>> GetSubscriberAddressesForMessage(IEnumerable<MessageType> messageTypes, ContextBag context)
+        public async Task<IEnumerable<Subscriber>> GetSubscriberAddressesForMessage(IEnumerable<MessageType> messageTypes, ContextBag context)
         {
-            var subscriptions = this.GetSubscriptions(messageTypes.AssumedNotNull());
+            var subscriptions = await this.GetSubscriptions(messageTypes.AssumedNotNull());
             var subscribers = subscriptions.SelectMany(s => s.Subscribers).Distinct();
-            return Task.FromResult(subscribers);
+            return subscribers;
         }
 
-        internal IEnumerable<Subscription> GetSubscriptions(IEnumerable<MessageType> messageTypes)
+        internal async Task<IEnumerable<Subscription>> GetSubscriptions(IEnumerable<MessageType> messageTypes)
         {
             Contract.Requires(messageTypes != null);
             Contract.Ensures(Contract.Result<IEnumerable<Subscription>>() != null);
 
             var ids = messageTypes.Select(mt => new SubscriptionKey(mt));
             var query = Builders<Subscription>.Filter.In(p => p.Id, ids);
-            var result = this.collection.FindAsync(query).Result.ToList();
+            var result = await this.collection.Find(query).ToListAsync().ConfigureAwait(false);
 
             return result.AssumedNotNull();
         }
 
         internal async Task<IEnumerable<Subscription>> GetSubscription(MessageType messageType)
         {
-                                              Contract.Requires(messageType != null);
+            Contract.Requires(messageType != null);
             Contract.Ensures(Contract.Result<IEnumerable<Subscription>>() != null);
 
             var query = Builders<Subscription>.Filter.Eq(p => p.Id, new SubscriptionKey(messageType));
-            var subscription = await this.collection.Find(query).ToListAsync();
+            var subscription = await this.collection.Find(query).ToListAsync().ConfigureAwait(false);
 
             return subscription ?? new List<Subscription>();
         }
