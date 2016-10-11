@@ -28,12 +28,9 @@
 
 namespace NServiceBus.MongoDB.SubscriptionPersister
 {
-    using System;
-
     using global::MongoDB.Bson.Serialization;
     using global::MongoDB.Bson.Serialization.Serializers;
 
-    using NServiceBus.Pipeline;
     using NServiceBus.Routing;
     using NServiceBus.Unicast.Subscriptions;
     using NServiceBus.Unicast.Subscriptions.MessageDrivenSubscriptions;

@@ -31,7 +31,6 @@ namespace NServiceBus.MongoDB.TimeoutPersister
     using System;
     using System.Diagnostics.Contracts;
     using System.Linq;
-    using System.Runtime.InteropServices;
     using System.Threading.Tasks;
 
     using global::MongoDB.Driver;

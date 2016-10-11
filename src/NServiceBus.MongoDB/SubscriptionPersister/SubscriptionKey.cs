@@ -26,7 +26,7 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace NServiceBus.MongoDB.Tests.SubscriptionPersister
+namespace NServiceBus.MongoDB.SubscriptionPersister
 {
     using NServiceBus.Unicast.Subscriptions;
 

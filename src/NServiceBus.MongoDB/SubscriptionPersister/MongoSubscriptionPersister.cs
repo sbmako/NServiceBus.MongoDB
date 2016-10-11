@@ -38,7 +38,6 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
 
     using NServiceBus.Extensibility;
     using NServiceBus.MongoDB.Internals;
-    using NServiceBus.MongoDB.Tests.SubscriptionPersister;
     using NServiceBus.Unicast.Subscriptions;
     using NServiceBus.Unicast.Subscriptions.MessageDrivenSubscriptions;
 

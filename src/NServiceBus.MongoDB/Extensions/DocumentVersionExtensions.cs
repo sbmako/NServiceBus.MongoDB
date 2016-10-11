@@ -28,7 +28,6 @@
 
 namespace NServiceBus.MongoDB.Extensions
 {
-    using System;
     using System.Diagnostics.Contracts;
     using System.Linq;
     using global::MongoDB.Bson;
