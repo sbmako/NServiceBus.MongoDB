@@ -22,7 +22,7 @@
 //   CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // </copyright>
 // <summary>
-//   
+//   The MongoDB GridFS data bus.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
