@@ -50,9 +50,12 @@ namespace NServiceBus.MongoDB.Tests.TestingUtilities
 
         public static IEnumerable<TimeoutEntity> RetrieveAllTimeouts(this MongoDatabaseFactory factor)
         {
-            var timeouts = from t in factor.GetDatabase()
-                               .GetCollection<TimeoutEntity>(MongoTimeoutPersister.TimeoutEntityName).AsQueryable()
-                            select t;
+            var timeouts =
+                from t in
+                    factor.GetDatabase()
+                    .GetCollection<TimeoutEntity>(MongoTimeoutPersister.TimeoutEntityName)
+                    .AsQueryable()
+                select t;
 
             return timeouts;
         }
@@ -60,7 +63,10 @@ namespace NServiceBus.MongoDB.Tests.TestingUtilities
         public static void ResetTimeoutCollection(this MongoDatabaseFactory factory)
         {
             var database = factory.GetDatabase();
-            database.DropCollection(MongoTimeoutPersister.TimeoutEntityName);
+
+            database.GetCollection<TimeoutEntity>(MongoTimeoutPersister.TimeoutEntityName)
+                .DeleteManyAsync(Builders<TimeoutEntity>.Filter.Empty)
+                .Wait();
         }
     }
 }
