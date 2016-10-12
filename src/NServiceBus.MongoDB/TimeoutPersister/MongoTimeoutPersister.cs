@@ -82,8 +82,8 @@ namespace NServiceBus.MongoDB.TimeoutPersister
             var now = DateTime.UtcNow;
 
             var builder = Builders<TimeoutEntity>.Filter;
-            var query = builder.Eq(t => t.OwningTimeoutManager, this.endpointName) & builder.Gt(t => t.Time, startSlice)
-                        & builder.Lte(t => t.Time, now);
+            var query = builder.Gt(t => t.Time, startSlice) & builder.Lte(t => t.Time, now)
+                        & builder.Eq(t => t.OwningTimeoutManager, this.endpointName);
 
             var results =
                 await
@@ -192,12 +192,23 @@ namespace NServiceBus.MongoDB.TimeoutPersister
             await
                 this.collection.Indexes.CreateOneAsync(
                     Builders<TimeoutEntity>.IndexKeys.Ascending(t => t.SagaId),
-                    new CreateIndexOptions { Background = true }).ConfigureAwait(false);
+                    new CreateIndexOptions
+                        {
+                            Name = MongoPersistenceConstants.SagaIdTimeoutIndexName,
+                            Background = true
+                        }).ConfigureAwait(false);
+
+            var indexKeys =
+                Builders<TimeoutEntity>.IndexKeys.Ascending(t => t.Time).Ascending(t => t.OwningTimeoutManager);
 
             await
                 this.collection.Indexes.CreateOneAsync(
-                    Builders<TimeoutEntity>.IndexKeys.Ascending(t => t.OwningTimeoutManager),
-                    new CreateIndexOptions { Background = true }).ConfigureAwait(false);
+                    indexKeys,
+                    new CreateIndexOptions
+                        {
+                            Name = MongoPersistenceConstants.TimeAndOwningTimeoutManagerIndexName,
+                            Background = true
+                        }).ConfigureAwait(false);
         }
 
         [ContractInvariantMethod]

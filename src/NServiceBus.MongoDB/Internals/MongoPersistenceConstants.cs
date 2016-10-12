@@ -40,9 +40,9 @@ namespace NServiceBus.MongoDB.Internals
 
         public const string ETagPropertyName = "ETag";
 
-        public const string OwningTimeoutManagerAndTimeName = "OwningTimeoutManagerAndTime";
+        public const string TimeAndOwningTimeoutManagerIndexName = "TimeAndOwndingTimeoutManager";
 
-        public const string OwningTimeoutManagerAndSagaIdAndTimeName = "OwningTimeoutManagerAndSagaIdAndTime";
+        public const string SagaIdTimeoutIndexName = "SagaId";
         
         public const int DefaultPort = 27017;
 
