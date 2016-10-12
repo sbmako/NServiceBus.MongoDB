@@ -2,7 +2,7 @@
 // <copyright file="MongoHelpersTests.cs" company="SharkByte Software">
 //   The MIT License (MIT)
 //   
-//   Copyright (c) 2015 SharkByte Software
+//   Copyright (c) 2016 SharkByte Software
 //   
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of
 //   this software and associated documentation files (the "Software"), to deal in
@@ -35,7 +35,6 @@ namespace NServiceBus.MongoDB.Tests.Internals
 
     using FluentAssertions;
     using NServiceBus.MongoDB.Internals;
-    using NServiceBus.MongoDB.Tests.TestingUtilities;
     using NServiceBus.Settings;
 
     using Xunit;

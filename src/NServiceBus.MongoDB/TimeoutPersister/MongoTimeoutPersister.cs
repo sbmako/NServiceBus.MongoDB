@@ -2,7 +2,7 @@
 // <copyright file="MongoTimeoutPersister.cs" company="SharkByte Software">
 //   The MIT License (MIT)
 //   
-//   Copyright (c) 2015 SharkByte Software
+//   Copyright (c) 2016 SharkByte Software
 //   
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of
 //   this software and associated documentation files (the "Software"), to deal in
@@ -104,9 +104,8 @@ namespace NServiceBus.MongoDB.TimeoutPersister
                                          ? nextTimeout.First().Time
                                          : now.AddMinutes(MongoPersistenceConstants.DefaultNextTimeoutIncrementMinutes);
 
-            return new TimeoutsChunk(
-                results.Select(data => new TimeoutsChunk.Timeout(data.Id, data.Time)),
-                nextTimeTorunQuery);
+            var timeouts = results.Select(data => new TimeoutsChunk.Timeout(data.Id, data.Time));
+            return new TimeoutsChunk(timeouts.ToArray(), nextTimeTorunQuery);
         }
 
         /// <summary>

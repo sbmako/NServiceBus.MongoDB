@@ -2,7 +2,7 @@
 // <copyright file="DatabaseNameExtensionsTests.cs" company="SharkByte Software">
 //   The MIT License (MIT)
 //   
-//   Copyright (c) 2015 SharkByte Software
+//   Copyright (c) 2016 SharkByte Software
 //   
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of
 //   this software and associated documentation files (the "Software"), to deal in
@@ -36,7 +36,6 @@ namespace NServiceBus.MongoDB.Tests.Extensions
     using NServiceBus.Settings;
 
     using Xunit;
-    using Xunit.Extensions;
 
     public class DatabaseNameExtensionsTests
     {

@@ -2,7 +2,7 @@
 // <copyright file="MongoTimeoutPersisterTests.cs" company="SharkByte Software">
 //   The MIT License (MIT)
 //   
-//   Copyright (c) 2015 SharkByte Software
+//   Copyright (c) 2016 SharkByte Software
 //   
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of
 //   this software and associated documentation files (the "Software"), to deal in
@@ -26,8 +26,6 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-using NServiceBus.Extensibility;
-
 namespace NServiceBus.MongoDB.Tests.TimeoutPersister
 {
     using System;
@@ -37,6 +35,7 @@ namespace NServiceBus.MongoDB.Tests.TimeoutPersister
 
     using FluentAssertions;
 
+    using NServiceBus.Extensibility;
     using NServiceBus.MongoDB.Internals;
     using NServiceBus.MongoDB.Tests.TestingUtilities;
     using NServiceBus.MongoDB.TimeoutPersister;
@@ -50,6 +49,7 @@ namespace NServiceBus.MongoDB.Tests.TimeoutPersister
         public void BasicMongoTimeoutPersisterConstruction(MongoDatabaseFactory factory)
         {
             var sut = new MongoTimeoutPersister(factory, "UnitTests");
+            sut.Should().NotBeNull();
         }
 
         [Theory, IntegrationTest]
@@ -189,8 +189,6 @@ namespace NServiceBus.MongoDB.Tests.TimeoutPersister
             result.Should().HaveCount(1);
         }
 
-
-
         [Theory, IntegrationTest]
         [AutoDatabase]
         public void TryRemoveShouldSucceedAndReturnData(
@@ -205,7 +203,7 @@ namespace NServiceBus.MongoDB.Tests.TimeoutPersister
 
             var timeouts = factory.RetrieveAllTimeouts();
 
-            var result = sut.TryRemove(timeouts.First().Id.ToString(), context).Result;
+            var result = sut.TryRemove(timeouts.First().Id, context).Result;
 
             result.Should().BeTrue();
             factory.RetrieveAllTimeouts().Should().HaveCount(0);

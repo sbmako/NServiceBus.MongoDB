@@ -2,7 +2,7 @@
 // <copyright file="LocalMongoDatabaseCustomization.cs" company="SharkByte Software">
 //   The MIT License (MIT)
 //   
-//   Copyright (c) 2015 SharkByte Software
+//   Copyright (c) 2016 SharkByte Software
 //   
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of
 //   this software and associated documentation files (the "Software"), to deal in
@@ -29,16 +29,13 @@
 namespace NServiceBus.MongoDB.Tests.TestingUtilities
 {
     using System;
-    using System.Runtime.InteropServices;
 
     using global::MongoDB.Driver;
 
     using NServiceBus.Extensibility;
     using NServiceBus.MongoDB.Internals;
     using NServiceBus.MongoDB.TimeoutPersister;
-    using NServiceBus.Persistence;
     using NServiceBus.Sagas;
-    using NServiceBus.Timeout.Core;
 
     using Ploeh.AutoFixture;
     using Ploeh.AutoFixture.AutoMoq;
@@ -57,7 +54,8 @@ namespace NServiceBus.MongoDB.Tests.TestingUtilities
             fixture.Register(() => clientAccessor);
             fixture.Register(() => databaseFactory);
             fixture.Register(() => new ContextBag());
-            fixture.Register(() => new SagaCorrelationProperty("NonUniqueProperty", fixture.Create<string>("NonUniqueProperty")));
+            fixture.Register(
+                () => new SagaCorrelationProperty("NonUniqueProperty", fixture.Create("NonUniqueProperty")));
 
             fixture.Customize(new AutoMoqCustomization());
 

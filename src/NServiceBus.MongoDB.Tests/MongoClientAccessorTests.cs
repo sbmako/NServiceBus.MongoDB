@@ -34,7 +34,7 @@ namespace NServiceBus.MongoDB.Tests
     using global::MongoDB.Driver;
 
     using NServiceBus.MongoDB.Internals;
-    using NServiceBus.MongoDB.Tests.TestingUtilities;
+
     using Ploeh.AutoFixture.Xunit2;
 
     using Xunit;
