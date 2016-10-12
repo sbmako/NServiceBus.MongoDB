@@ -12,7 +12,7 @@
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
     <description>MongoDB persistence for  NServiceBus 6.x</description>
     <copyright>Copyright 2016 SharkByte Software. All rights reserved.</copyright>
-    <tags>nservicebus mongodb persistence servicebus msmq cqrs publish subscribe</tags>
+    <tags>nservicebus mongodb persistence servicebus cqrs publish subscribe</tags>
     <language>en-US</language>
     <dependencies>
       <dependency id="mongocsharpdriver" version="2.2.4" />
