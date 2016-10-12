@@ -30,8 +30,6 @@ namespace NServiceBus.MongoDB.Tests.Sample
 {
     using System;
 
-    using NServiceBus.Sagas;
-
     public class SagaWithUniqueGuidProperty : ContainMongoSagaData
     {
         public virtual Guid SomeId { get; set; }

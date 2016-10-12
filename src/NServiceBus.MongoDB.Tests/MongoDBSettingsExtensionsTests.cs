@@ -42,7 +42,7 @@ namespace NServiceBus.MongoDB.Tests
     {
         [Theory, UnitTest]
         [AutoConfigureData]
-        public void SetDatabaseName(PersistenceExtentions<MongoDBPersistence> config)
+        public void SetDatabaseName(PersistenceExtensions<MongoDBPersistence> config)
         {
             config.SetDatabaseName("MyDatabase");
 
@@ -56,7 +56,7 @@ namespace NServiceBus.MongoDB.Tests
 
         [Theory, UnitTest]
         [AutoConfigureData]
-        public void SetConnectionString(PersistenceExtentions<MongoDBPersistence> config)
+        public void SetConnectionString(PersistenceExtensions<MongoDBPersistence> config)
         {
             config.SetConnectionString("mongodb://ultratinef:27017");
 
@@ -69,7 +69,7 @@ namespace NServiceBus.MongoDB.Tests
 
         [Theory, UnitTest]
         [AutoConfigureData]
-        public void SetConnectionStringAndDatabaseName(PersistenceExtentions<MongoDBPersistence> config)
+        public void SetConnectionStringAndDatabaseName(PersistenceExtensions<MongoDBPersistence> config)
         {
             config.SetConnectionString("mongodb://ultratinef:27017");
             config.SetDatabaseName("MyDatabase");

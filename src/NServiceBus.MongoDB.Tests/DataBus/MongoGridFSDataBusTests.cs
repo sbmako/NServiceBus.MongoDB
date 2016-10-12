@@ -67,7 +67,6 @@ namespace NServiceBus.MongoDB.Tests.DataBus
         [AutoDatabase]
         public void GetTest(MongoDatabaseFactory factory, byte[] data)
         {
-
             var gridFsBucket = new GridFSBucket(factory.GetDatabase());
             var key = gridFsBucket.UploadFromBytes(Guid.NewGuid().ToString(), data);
 

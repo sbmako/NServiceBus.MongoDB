@@ -26,28 +26,24 @@
 namespace NServiceBus.MongoDB.Tests.TestingUtilities
 {
     using NServiceBus.Configuration.AdvanceExtensibility;
-    using NServiceBus.Routing;
     using NServiceBus.Settings;
     using NServiceBus.Timeout.Core;
 
     using Ploeh.AutoFixture;
-    using Ploeh.AutoFixture.Kernel;
 
     public class ConfigureCustomization : ICustomization
     {
         public void Customize(IFixture fixture)
         {
             var settings = new SettingsHolder();
-            settings.SetDefault<EndpointName>(new EndpointName("UnitTests"));
-            var config = new PersistenceExtentions<MongoDBPersistence>(settings);
+            settings.Set("NServiceBus.Routing.EndpointName", "UnitTests");
+            var config = new PersistenceExtensions<MongoDBPersistence>(settings);
 
             fixture.Register(() => settings);
             fixture.Register(() => config);
 
-            ////fixture.Customize<Address>(c => c.FromFactory(new MethodInvoker(new GreedyConstructorQuery())));
             fixture.Customize<TimeoutData>(
-                c => c.With(t => t.OwningTimeoutManager, string.Empty));
-            ////c => c.With(t => t.OwningTimeoutManager, config.GetSettings().EndpointName()));
+                c => c.With(t => t.OwningTimeoutManager, config.GetSettings().EndpointName()));
         }
     }
 }

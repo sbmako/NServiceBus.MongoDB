@@ -28,8 +28,6 @@
 
 namespace NServiceBus.MongoDB.Tests.Sample
 {
-    using NServiceBus.Sagas;
-
     public class SagaWithUniqueProperty : ContainMongoSagaData
     {
         public virtual string UniqueProperty { get; set; }

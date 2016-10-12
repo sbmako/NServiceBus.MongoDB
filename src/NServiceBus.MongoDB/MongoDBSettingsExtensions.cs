@@ -49,15 +49,15 @@ namespace NServiceBus.MongoDB
         /// The database name.
         /// </param>
         /// <returns>
-        /// The <see cref="PersistenceExtentions"/>.
+        /// The <see cref="PersistenceExtensions"/>.
         /// </returns>
-        public static PersistenceExtentions<MongoDBPersistence> SetDatabaseName(
-            this PersistenceExtentions<MongoDBPersistence> config, 
+        public static PersistenceExtensions<MongoDBPersistence> SetDatabaseName(
+            this PersistenceExtensions<MongoDBPersistence> config, 
             string databaseName)
         {
             Contract.Requires<ArgumentNullException>(config != null, "config != null");
             Contract.Requires<ArgumentNullException>(databaseName != null, "databaseName != null");
-            Contract.Ensures(Contract.Result<PersistenceExtentions<MongoDBPersistence>>() != null);
+            Contract.Ensures(Contract.Result<PersistenceExtensions<MongoDBPersistence>>() != null);
 
             config.GetSettings().Set(MongoPersistenceConstants.DatabaseNameKey, databaseName);
 
@@ -74,15 +74,15 @@ namespace NServiceBus.MongoDB
         /// The database name.
         /// </param>
         /// <returns>
-        /// The <see cref="PersistenceExtentions"/>.
+        /// The <see cref="PersistenceExtensions"/>.
         /// </returns>
-        public static PersistenceExtentions<MongoDBPersistence> SetConnectionString(
-            this PersistenceExtentions<MongoDBPersistence> config,
+        public static PersistenceExtensions<MongoDBPersistence> SetConnectionString(
+            this PersistenceExtensions<MongoDBPersistence> config,
             string connectionString)
         {
             Contract.Requires<ArgumentNullException>(config != null, "config != null");
             Contract.Requires<ArgumentNullException>(connectionString != null, "connectionString != null");
-            Contract.Ensures(Contract.Result<PersistenceExtentions<MongoDBPersistence>>() != null);
+            Contract.Ensures(Contract.Result<PersistenceExtensions<MongoDBPersistence>>() != null);
 
             config.GetSettings().Set(MongoPersistenceConstants.ConnectionStringKey, connectionString);
             

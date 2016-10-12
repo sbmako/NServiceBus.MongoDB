@@ -104,9 +104,8 @@ namespace NServiceBus.MongoDB.TimeoutPersister
                                          ? nextTimeout.First().Time
                                          : now.AddMinutes(MongoPersistenceConstants.DefaultNextTimeoutIncrementMinutes);
 
-            return new TimeoutsChunk(
-                results.Select(data => new TimeoutsChunk.Timeout(data.Id, data.Time)),
-                nextTimeTorunQuery);
+            var timeouts = results.Select(data => new TimeoutsChunk.Timeout(data.Id, data.Time));
+            return new TimeoutsChunk(timeouts.ToArray(), nextTimeTorunQuery);
         }
 
         /// <summary>

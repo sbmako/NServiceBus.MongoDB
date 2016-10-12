@@ -53,6 +53,7 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
         public void BasicMongoSagaPersisterConstruction(MongoDatabaseFactory factory)
         {
             var sut = new MongoSagaPersister(factory);
+            sut.Should().NotBeNull();
         }
 
         [Theory, IntegrationTest]

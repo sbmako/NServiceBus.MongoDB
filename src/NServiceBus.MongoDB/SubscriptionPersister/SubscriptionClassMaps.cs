@@ -29,9 +29,7 @@
 namespace NServiceBus.MongoDB.SubscriptionPersister
 {
     using global::MongoDB.Bson.Serialization;
-    using global::MongoDB.Bson.Serialization.Serializers;
 
-    using NServiceBus.Routing;
     using NServiceBus.Unicast.Subscriptions;
     using NServiceBus.Unicast.Subscriptions.MessageDrivenSubscriptions;
 
@@ -59,22 +57,9 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
                 cm =>
                     {
                         cm.MapMember(c => c.TransportAddress);
-                        cm.MapMember(c => c.Endpoint).SetSerializer(new EndpointNameSerializer());
+                        cm.MapMember(c => c.Endpoint);
                         cm.MapCreator(m => new Subscriber(m.TransportAddress, m.Endpoint));
                     });
-        }
-
-        public class EndpointNameSerializer : SerializerBase<EndpointName>
-        {
-            public override void Serialize(BsonSerializationContext context, BsonSerializationArgs args, EndpointName value)
-            {
-                context.Writer.WriteString(value.ToString());
-            }
-
-            public override EndpointName Deserialize(BsonDeserializationContext context, BsonDeserializationArgs args)
-            {
-                return new EndpointName(context.Reader.ReadString());
-            }
         }
     }
 }

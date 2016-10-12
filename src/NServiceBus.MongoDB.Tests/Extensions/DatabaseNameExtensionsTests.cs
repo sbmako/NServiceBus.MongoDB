@@ -36,7 +36,6 @@ namespace NServiceBus.MongoDB.Tests.Extensions
     using NServiceBus.Settings;
 
     using Xunit;
-    using Xunit.Extensions;
 
     public class DatabaseNameExtensionsTests
     {
