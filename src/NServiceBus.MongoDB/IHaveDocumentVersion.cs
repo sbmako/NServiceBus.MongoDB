@@ -2,7 +2,7 @@
 // <copyright file="IHaveDocumentVersion.cs" company="SharkByte Software">
 //   The MIT License (MIT)
 //   
-//   Copyright (c) 2015 SharkByte Software
+//   Copyright (c) 2016 SharkByte Software
 //   
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of
 //   this software and associated documentation files (the "Software"), to deal in
@@ -21,9 +21,6 @@
 //   IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 //   CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // </copyright>
-// <summary>
-//   The HaveDocumentVersion interface.
-// </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace NServiceBus.MongoDB
@@ -39,7 +36,7 @@ namespace NServiceBus.MongoDB
         int DocumentVersion { get; set; }
 
         /// <summary>
-        /// Gets or sets the document etag value
+        /// Gets or sets the document ETag value
         /// </summary>
         int ETag { get; set; }
     }
