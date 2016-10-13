@@ -76,7 +76,7 @@ public class EndpointConfig : IConfigureThisEndpoint, AsA_Server
 ```
 
 ### Sagas
-Saga data needs to be defined the normal way NSB requires with the additional interface `IHaveDocumentVersion` to work appropriately with `NServiceBus.MongoDB`.  All this interface adds is a version property.  Alternatively you can just inherit from ContainMongoSagaData as follows:
+Saga data needs to be defined the normal way NSB requires with the additional interface `IHaveDocumentVersion` to work appropriately with `NServiceBus.MongoDB`.  This interface adds two additional properties, a version number and ETag property.  Alternatively you can just inherit from ContainMongoSagaData as follows:
 
 ```csharp
 using NServiceBus.MongoDB;
@@ -84,13 +84,10 @@ using NServiceBus.Saga;
 
 public class MySagaData : ContainMongoSagaData
 {
-    [Unique]
     public string SomeId { get; set; }
 
     public int Count { get; set; }
 }
 ```
 ### Samples
-See [`MongoDB persistence Sample`](http://docs.particular.net/samples/mongodb/) (Special thanks to [`Simon Cropp`](https://github.com/SimonCropp) for the example.)
-
 See [`Simple sample`](https://github.com/sbmako/NServiceBus.MongoDB/tree/master/src/Sample)
