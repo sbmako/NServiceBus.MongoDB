@@ -61,8 +61,4 @@
 #*.pdf   diff=astextplain
 #*.PDF   diff=astextplain
 #*.rtf   diff=astextplain
-<<<<<<< 7414a3fee1d3d05900fdce1062ecbab3a349ccfe
 #*.RTF   diff=astextplain
-=======
-#*.RTF   diff=astextplain
->>>>>>> updated git attributes
