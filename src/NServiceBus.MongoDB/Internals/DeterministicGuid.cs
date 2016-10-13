@@ -21,9 +21,6 @@
 //   IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 //   CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // </copyright>
-// <summary>
-//   Defines the DeterministicGuid type.
-// </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace NServiceBus.MongoDB.Internals
@@ -34,7 +31,7 @@ namespace NServiceBus.MongoDB.Internals
     using System.Text;
 
     /// <summary>
-    /// This was borrowed from NServiceBus/src/NServiceBus.Core/Utils/DeterministicGuid.cs
+    /// This was borrowed from NSB source
     /// </summary>
     internal static class DeterministicGuid
     {
