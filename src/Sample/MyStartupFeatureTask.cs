@@ -57,21 +57,20 @@ namespace Sample
 
             Thread.Sleep(5000);
 
-            ////return Task.FromResult(0);
             await session.Send(initMessage).ConfigureAwait(false);
 
-            ////Thread.Sleep(1000);
+            Thread.Sleep(1000);
 
-            ////for (var i = 0; i < 5; i++)
-            ////{
-            ////    anotherMessage.SleepHowLong = i;
-            ////    await session.SendLocal(anotherMessage).ConfigureAwait(false);
-            ////}
+            for (var i = 0; i < 5; i++)
+            {
+                anotherMessage.SleepHowLong = i;
+                await session.Send(anotherMessage).ConfigureAwait(false);
+            }
 
-            ////anotherMessage.SleepHowLong = 0;
-            ////await session.SendLocal(anotherMessage).ConfigureAwait(false);
-            ////await session.SendLocal(anotherMessage).ConfigureAwait(false);
-            ////await session.SendLocal(anotherMessage).ConfigureAwait(false);
+            anotherMessage.SleepHowLong = 0;
+            await session.Send(anotherMessage).ConfigureAwait(false);
+            await session.Send(anotherMessage).ConfigureAwait(false);
+            await session.Send(anotherMessage).ConfigureAwait(false);
         }
 
         protected override Task OnStop(IMessageSession session)
