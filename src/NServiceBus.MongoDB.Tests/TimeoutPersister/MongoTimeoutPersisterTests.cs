@@ -27,6 +27,7 @@ namespace NServiceBus.MongoDB.Tests.TimeoutPersister
 {
     using System;
     using System.Linq;
+    using System.Threading.Tasks;
 
     using CategoryTraits.Xunit2;
 
@@ -178,12 +179,11 @@ namespace NServiceBus.MongoDB.Tests.TimeoutPersister
             factory.ResetTimeoutCollection();
 
             sut.Add(timeout1, context).Wait();
+            var result = factory.RetrieveAllTimeouts().First();
 
-            var peeked = sut.Peek(timeout1.Id, context).Result;
-            var result = factory.RetrieveAllTimeouts();
+            var peeked = sut.Peek(result.Id, context).Result;
 
-            peeked.ShouldBeEquivalentTo(timeout1);
-            result.Should().HaveCount(1);
+            peeked.SagaId.Should().Be(timeout1.SagaId);
         }
 
         [Theory, IntegrationTest]
@@ -244,7 +244,7 @@ namespace NServiceBus.MongoDB.Tests.TimeoutPersister
 
             var remainingTimeout = factory.RetrieveAllTimeouts().ToList();
             remainingTimeout.Should().HaveCount(1);
-            remainingTimeout.First().Id.Should().Be(timeoutData2.Id);
+            remainingTimeout.First().Id.Should().Be(timeouts.Last().Id);
         }
 
         [Theory, IntegrationTest]
