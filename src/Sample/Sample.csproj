@@ -86,12 +86,13 @@
   <ItemGroup>
     <Compile Include="AnotherSagaCommand.cs" />
     <Compile Include="EndpointConfig.cs" />
+    <Compile Include="MyStartupFeature.cs" />
     <Compile Include="MyMessage.cs" />
     <Compile Include="MySaga.cs" />
     <Compile Include="MySagaData.cs" />
     <Compile Include="MyTimeout.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Startup.cs" />
+    <Compile Include="MyStartupFeatureTask.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">
