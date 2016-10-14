@@ -45,7 +45,7 @@ namespace NServiceBus.MongoDB.Tests.TestingUtilities
             return entity.Any() ? entity.First() : default(T);
         }
 
-        public static IEnumerable<TimeoutEntity> RetrieveAllTimeouts(this MongoDatabaseFactory factor)
+        public static List<TimeoutEntity> RetrieveAllTimeouts(this MongoDatabaseFactory factor)
         {
             var timeouts =
                 from t in
@@ -54,7 +54,7 @@ namespace NServiceBus.MongoDB.Tests.TestingUtilities
                     .AsQueryable()
                 select t;
 
-            return timeouts;
+            return timeouts.ToList();
         }
 
         public static void ResetTimeoutCollection(this MongoDatabaseFactory factory)
