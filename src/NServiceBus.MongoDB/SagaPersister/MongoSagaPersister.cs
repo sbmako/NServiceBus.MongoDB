@@ -84,7 +84,7 @@ namespace NServiceBus.MongoDB.SagaPersister
             }
 
             var collection = this.mongoDatabase.GetCollection<BsonDocument>(sagaTypeName);
-            await collection.InsertOneAsync(sagaData.ToBsonDocument()).ConfigureAwait(false);
+            await collection.InsertOneAsync(sagaData.ToBsonDocument());
         }
 
         public async Task Update(IContainSagaData sagaData, SynchronizedStorageSession session, ContextBag context)
@@ -109,16 +109,16 @@ namespace NServiceBus.MongoDB.SagaPersister
             }
         }
 
-        public async Task<TSagaData> Get<TSagaData>(
+        public Task<TSagaData> Get<TSagaData>(
             Guid sagaId, 
             SynchronizedStorageSession session, 
             ContextBag context) where TSagaData : IContainSagaData
         {
             var collection = this.mongoDatabase.GetCollection<TSagaData>(typeof(TSagaData).Name);
-            return await collection.Find(_ => _.Id == sagaId).SingleAsync().ConfigureAwait(false);
+            return collection.Find(_ => _.Id == sagaId).SingleAsync();
         }
 
-        public async Task<TSagaData> Get<TSagaData>(
+        public Task<TSagaData> Get<TSagaData>(
             string propertyName, 
             object propertyValue, 
             SynchronizedStorageSession session, 
@@ -127,28 +127,28 @@ namespace NServiceBus.MongoDB.SagaPersister
             var query = Builders<TSagaData>.Filter.Eq(propertyName, BsonValue.Create(propertyValue));
 
             var collection = this.mongoDatabase.GetCollection<TSagaData>(typeof(TSagaData).Name);
-            return await collection.Find(query).SingleAsync().ConfigureAwait(false);
+            return collection.Find(query).SingleAsync();
         }
 
-        public async Task Complete(IContainSagaData sagaData, SynchronizedStorageSession session, ContextBag context)
+        public Task Complete(IContainSagaData sagaData, SynchronizedStorageSession session, ContextBag context)
         {
             var query = Builders<BsonDocument>.Filter.Eq(MongoPersistenceConstants.IdPropertyName, sagaData.Id);
 
             var collection = this.mongoDatabase.GetCollection<BsonDocument>(sagaData.GetType().Name);
-            await collection.DeleteOneAsync(query).ConfigureAwait(false);
+            return collection.DeleteOneAsync(query);
         }
 
-        private async Task EnsureUniqueIndex(IContainSagaData saga, SagaCorrelationProperty correlationProperty)
+        private Task EnsureUniqueIndex(IContainSagaData saga, SagaCorrelationProperty correlationProperty)
         {
             Contract.Requires(saga != null);
             Contract.Requires(correlationProperty != null);
 
             var collection = this.mongoDatabase.GetCollection<BsonDocument>(saga.GetType().Name);
 
-            await
+            return
                 collection.Indexes.CreateOneAsync(
                     new BsonDocumentIndexKeysDefinition<BsonDocument>(new BsonDocument(correlationProperty.Name, 1)),
-                    new CreateIndexOptions() { Unique = true }).ConfigureAwait(false);
+                    new CreateIndexOptions() { Unique = true });
         }
     }
 }

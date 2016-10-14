@@ -82,26 +82,27 @@ namespace NServiceBus.MongoDB.TimeoutPersister
             var query = builder.Gt(t => t.Time, startSlice) & builder.Lte(t => t.Time, now)
                         & builder.Eq(t => t.OwningTimeoutManager, this.endpointName);
 
-            var results =
-                await
+            var resultsTask =
                 this.collection.Find(query)
                     .Sort(Builders<TimeoutEntity>.Sort.Ascending(t => t.Time))
                     .ToListAsync()
                     .ConfigureAwait(false);
 
             var nextTimeoutQuery = Builders<TimeoutEntity>.Filter.Gt(t => t.Time, now);
-            var nextTimeout =
-                await
+            var nextTimeoutTask =
                 this.collection.Find(nextTimeoutQuery)
                     .Sort(Builders<TimeoutEntity>.Sort.Ascending(t => t.Time))
                     .ToListAsync()
                     .ConfigureAwait(false);
 
+            var results = await resultsTask;
+            var timeouts = results.Select(data => new TimeoutsChunk.Timeout(data.Id, data.Time));
+
+            var nextTimeout = await nextTimeoutTask;
             var nextTimeTorunQuery = nextTimeout.Any()
                                          ? nextTimeout.First().Time
                                          : now.AddMinutes(MongoPersistenceConstants.DefaultNextTimeoutIncrementMinutes);
 
-            var timeouts = results.Select(data => new TimeoutsChunk.Timeout(data.Id, data.Time));
             return new TimeoutsChunk(timeouts.ToArray(), nextTimeTorunQuery);
         }
 
@@ -117,6 +118,7 @@ namespace NServiceBus.MongoDB.TimeoutPersister
         {
             var data =
                 await this.collection.AsQueryable().SingleOrDefaultAsync(e => e.Id == timeoutId).ConfigureAwait(false);
+
             if (data != null)
             {
                 return new TimeoutData
