@@ -44,16 +44,14 @@ namespace Sample
     {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(MySaga));
 
-        public async Task Handle(MyMessage message, IMessageHandlerContext context)
+        public Task Handle(MyMessage message, IMessageHandlerContext context)
         {
             Logger.Info("Hello from MySaga");
 
             this.Data.SomeId = message.SomeId;
             this.Data.Count = 0;
 
-            await
-                this.RequestTimeout(context, TimeSpan.FromMinutes(1), new MyTimeout() { HowLong = 5 })
-                    .ConfigureAwait(false);
+            return this.RequestTimeout(context, TimeSpan.FromMinutes(1), new MyTimeout() { HowLong = 5 });
         }
 
         public Task Handle(AnotherSagaCommand message, IMessageHandlerContext context)

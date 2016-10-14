@@ -1,8 +1,8 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="Startup.cs" company="SharkByte Software">
+// <copyright file="MyStartupFeatureTask.cs" company="SharkByte Software">
 //   The MIT License (MIT)
 //   
-//   Copyright (c) 2015 SharkByte Software
+//   Copyright (c) 2016 SharkByte Software
 //   
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of
 //   this software and associated documentation files (the "Software"), to deal in
@@ -33,28 +33,31 @@ namespace Sample
     using System.Threading.Tasks;
 
     using NServiceBus;
+    using NServiceBus.Features;
     using NServiceBus.Logging;
 
     /// <summary>
     /// The startup.
     /// </summary>
-    public class Startup : IWantToRunWhenEndpointStartsAndStops
+    public class MyStartupFeatureTask : FeatureStartupTask
     {
-        private static readonly ILog Logger = LogManager.GetLogger(typeof(Startup));
+        private static readonly ILog Logger = LogManager.GetLogger(typeof(MyStartupFeatureTask));
 
-
-        public async Task Start(IMessageSession session)
+        protected override async Task OnStart(IMessageSession session)
         {
             Logger.Info("Statup.Run()");
 
             var initMessage = new MyMessage
             {
                 SomeId = "carlos",
-                LargeBlob = new DataBusProperty<byte[]>(Guid.NewGuid().ToByteArray())
+                ////LargeBlob = new DataBusProperty<byte[]>(Guid.NewGuid().ToByteArray())
+                LargeBlob = "Sandoval"
             };
-            ////var anotherMessage = new AnotherSagaCommand { SomeId = initMessage.SomeId, SleepHowLong = 2000 };
+            var anotherMessage = new AnotherSagaCommand { SomeId = initMessage.SomeId, SleepHowLong = 2000 };
 
             Thread.Sleep(5000);
+
+            ////return Task.FromResult(0);
             await session.Send(initMessage).ConfigureAwait(false);
 
             ////Thread.Sleep(1000);
@@ -71,7 +74,7 @@ namespace Sample
             ////await session.SendLocal(anotherMessage).ConfigureAwait(false);
         }
 
-        public Task Stop(IMessageSession session)
+        protected override Task OnStop(IMessageSession session)
         {
             return Task.FromResult(0);
         }

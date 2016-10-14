@@ -69,7 +69,7 @@ namespace NServiceBus.MongoDB.SagaPersister
 
             var sagaDataWithVersion = sagaData as IHaveDocumentVersion;
 
-            if (!(sagaData is IHaveDocumentVersion))
+            if (sagaDataWithVersion == null)
             {
                 throw new InvalidOperationException(
                     string.Format("Saga type {0} does not implement IHaveDocumentVersion", sagaTypeName));
@@ -84,7 +84,7 @@ namespace NServiceBus.MongoDB.SagaPersister
             }
 
             var collection = this.mongoDatabase.GetCollection<BsonDocument>(sagaTypeName);
-            await collection.InsertOneAsync(sagaData.ToBsonDocument());
+            await collection.InsertOneAsync(sagaData.ToBsonDocument()).ConfigureAwait(false);
         }
 
         public async Task Update(IContainSagaData sagaData, SynchronizedStorageSession session, ContextBag context)
@@ -127,7 +127,7 @@ namespace NServiceBus.MongoDB.SagaPersister
             var query = Builders<TSagaData>.Filter.Eq(propertyName, BsonValue.Create(propertyValue));
 
             var collection = this.mongoDatabase.GetCollection<TSagaData>(typeof(TSagaData).Name);
-            return collection.Find(query).SingleAsync();
+            return collection.Find(query).FirstOrDefaultAsync();
         }
 
         public Task Complete(IContainSagaData sagaData, SynchronizedStorageSession session, ContextBag context)
@@ -138,17 +138,17 @@ namespace NServiceBus.MongoDB.SagaPersister
             return collection.DeleteOneAsync(query);
         }
 
-        private Task EnsureUniqueIndex(IContainSagaData saga, SagaCorrelationProperty correlationProperty)
+        private async Task EnsureUniqueIndex(IContainSagaData saga, SagaCorrelationProperty correlationProperty)
         {
             Contract.Requires(saga != null);
             Contract.Requires(correlationProperty != null);
 
             var collection = this.mongoDatabase.GetCollection<BsonDocument>(saga.GetType().Name);
 
-            return
+            await
                 collection.Indexes.CreateOneAsync(
                     new BsonDocumentIndexKeysDefinition<BsonDocument>(new BsonDocument(correlationProperty.Name, 1)),
-                    new CreateIndexOptions() { Unique = true });
+                    new CreateIndexOptions() { Unique = true }).ConfigureAwait(false);
         }
     }
 }
