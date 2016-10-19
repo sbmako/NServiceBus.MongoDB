@@ -308,7 +308,7 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
 
         [Theory]
         [IntegrationTest]
-        [AutoDatabase]
+        [AutoDatabase, BrokenTest]
         public void RetrievingSagaUsingCorrelationPropertyNotFound(
             MongoSagaPersister sut,
             SagaCorrelationProperty correlationProperty,
@@ -317,7 +317,7 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
         {
             sut.Invoking(
                 s =>
-                s.Get<SagaWithUniqueProperty>(correlationProperty.Name, correlationProperty.Value, session, context)
+                s.Get<SagaWithUniqueProperty>(correlationProperty.Name, "badvalue", session, context)
                     .Wait()).ShouldThrow<AggregateException>();
         }
     }

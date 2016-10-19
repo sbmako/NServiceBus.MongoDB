@@ -43,9 +43,7 @@ namespace Sample
             configuration.UsePersistence<MongoDBPersistence>()
                 .SetDatabaseName("MyDatabase");
 
-            ////configuration.UseDataBus<MongoDBDataBus>();
-
-            configuration.EnableFeature<MyStartupFeature>();
+            configuration.UseDataBus<MongoDBDataBus>();
         }
     }
 }

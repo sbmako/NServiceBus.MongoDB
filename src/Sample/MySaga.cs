@@ -33,6 +33,7 @@ namespace Sample
 
     using NServiceBus;
     using NServiceBus.Logging;
+    using NServiceBus.Sagas;
 
     /// <summary>
     /// The my saga.
@@ -40,7 +41,8 @@ namespace Sample
     public class MySaga : Saga<MySagaData>,
         IAmStartedByMessages<MyMessage>,
         IHandleMessages<AnotherSagaCommand>,
-        IHandleTimeouts<MyTimeout>
+        IHandleTimeouts<MyTimeout>,
+        IHandleSagaNotFound
     {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(MySaga));
 
@@ -51,7 +53,7 @@ namespace Sample
             this.Data.SomeId = message.SomeId;
             this.Data.Count = 0;
 
-            return this.RequestTimeout(context, TimeSpan.FromMinutes(1), new MyTimeout() { HowLong = 5 });
+            return this.RequestTimeout(context, TimeSpan.FromMinutes(1), new MyTimeout() { HowLong = 10 });
         }
 
         public Task Handle(AnotherSagaCommand message, IMessageHandlerContext context)
@@ -66,6 +68,13 @@ namespace Sample
         {
             Logger.InfoFormat("Timeout reached with a count of: {0}", this.Data.Count);
             this.MarkAsComplete();
+
+            return Task.FromResult(0);
+        }
+
+        public Task Handle(object message, IMessageProcessingContext context)
+        {
+            Logger.InfoFormat("Saga not found for message {0}", message.ToString());
 
             return Task.FromResult(0);
         }

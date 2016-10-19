@@ -33,7 +33,6 @@ namespace NServiceBus.MongoDB.SagaPersister
     using global::MongoDB.Driver;
 
     using NServiceBus.Extensibility;
-    using NServiceBus.Logging;
     using NServiceBus.MongoDB.Extensions;
     using NServiceBus.MongoDB.Internals;
     using NServiceBus.Persistence;
@@ -116,7 +115,7 @@ namespace NServiceBus.MongoDB.SagaPersister
             ContextBag context) where TSagaData : IContainSagaData
         {
             var collection = this.mongoDatabase.GetCollection<TSagaData>(typeof(TSagaData).Name);
-            return collection.Find(_ => _.Id == sagaId).SingleAsync();
+            return collection.Find(_ => _.Id == sagaId).FirstOrDefaultAsync();
         }
 
         public Task<TSagaData> Get<TSagaData>(
