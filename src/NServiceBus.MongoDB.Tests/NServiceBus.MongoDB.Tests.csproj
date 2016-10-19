@@ -134,7 +134,6 @@
     <Compile Include="MongoClientAccessorTests.cs" />
     <Compile Include="SagaPersister\MongoSagaPersisterTests.cs" />
     <Compile Include="Sample\SagaWithoutDocumentVersion.cs" />
-    <Compile Include="Sample\SagaWithoutUniqueProperties.cs" />
     <Compile Include="Sample\SagaWithUniqueGuidProperty.cs" />
     <Compile Include="Sample\SagaWithUniqueProperty.cs" />
     <Compile Include="SubscriptionPersister\MongoSubscriptionPersisterTests.cs" />

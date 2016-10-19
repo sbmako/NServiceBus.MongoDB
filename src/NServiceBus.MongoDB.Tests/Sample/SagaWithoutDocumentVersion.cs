@@ -29,6 +29,6 @@ namespace NServiceBus.MongoDB.Tests.Sample
     {
         public virtual string UniqueProperty { get; set; }
 
-        public string NonUniqueProperty { get; set; }
+        public string SomeValue { get; set; }
     }
 }
