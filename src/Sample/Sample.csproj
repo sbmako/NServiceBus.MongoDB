@@ -86,7 +86,6 @@
   <ItemGroup>
     <Compile Include="AnotherSagaCommand.cs" />
     <Compile Include="EndpointConfig.cs" />
-    <Compile Include="MyStartupFeature.cs" />
     <Compile Include="MyMessage.cs" />
     <Compile Include="MySaga.cs" />
     <Compile Include="MySagaData.cs" />

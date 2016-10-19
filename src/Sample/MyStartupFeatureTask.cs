@@ -29,51 +29,50 @@
 namespace Sample
 {
     using System;
-    using System.Threading;
     using System.Threading.Tasks;
 
     using NServiceBus;
-    using NServiceBus.Features;
     using NServiceBus.Logging;
 
     /// <summary>
     /// The startup.
     /// </summary>
-    public class MyStartupFeatureTask : FeatureStartupTask
+    public class MyStartupFeatureTask : IWantToRunWhenEndpointStartsAndStops 
     {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(MyStartupFeatureTask));
 
-        protected override async Task OnStart(IMessageSession session)
+        public Task Start(IMessageSession session)
         {
-            Logger.Info("Statup.Run()");
+            Logger.Info("Statup.Start()");
 
+            Logger.Info("Sending first message");
             var initMessage = new MyMessage
             {
-                SomeId = "carlos",
+                SomeId = Guid.NewGuid().ToString(),
                 ////LargeBlob = new DataBusProperty<byte[]>(Guid.NewGuid().ToByteArray())
                 LargeBlob = "Sandoval"
             };
-            var anotherMessage = new AnotherSagaCommand { SomeId = initMessage.SomeId, SleepHowLong = 2000 };
+            session.Send(initMessage).ConfigureAwait(false);
 
-            Thread.Sleep(5000);
+            Task.Delay(10000).Wait();
 
-            await session.Send(initMessage).ConfigureAwait(false);
-
-            Thread.Sleep(1000);
-
+            Logger.Info("Sending other messages");
+            var anotherMessage = new AnotherSagaCommand { SomeId = initMessage.SomeId, SleepHowLong = 1000 };
             for (var i = 0; i < 5; i++)
             {
                 anotherMessage.SleepHowLong = i;
-                await session.Send(anotherMessage).ConfigureAwait(false);
+                session.Send(anotherMessage).ConfigureAwait(false);
             }
 
             anotherMessage.SleepHowLong = 0;
-            await session.Send(anotherMessage).ConfigureAwait(false);
-            await session.Send(anotherMessage).ConfigureAwait(false);
-            await session.Send(anotherMessage).ConfigureAwait(false);
+            session.Send(anotherMessage).ConfigureAwait(false);
+            session.Send(anotherMessage).ConfigureAwait(false);
+            session.Send(anotherMessage).ConfigureAwait(false);
+
+            return Task.FromResult(0);
         }
 
-        protected override Task OnStop(IMessageSession session)
+        public Task Stop(IMessageSession session)
         {
             return Task.FromResult(0);
         }
