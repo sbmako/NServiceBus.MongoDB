@@ -52,7 +52,7 @@ namespace NServiceBus.MongoDB.Tests.TestingUtilities
             fixture.Register(() => databaseFactory);
             fixture.Register(() => new ContextBag());
             fixture.Register(
-                () => new SagaCorrelationProperty("NonUniqueProperty", fixture.Create("NonUniqueProperty")));
+                () => new SagaCorrelationProperty("UniqueProperty", fixture.Create("UniqueProperty")));
 
             fixture.Customize(new AutoMoqCustomization());
 

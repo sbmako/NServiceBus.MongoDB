@@ -33,6 +33,7 @@ namespace NServiceBus.MongoDB.SagaPersister
     using global::MongoDB.Driver;
 
     using NServiceBus.Extensibility;
+    using NServiceBus.Logging;
     using NServiceBus.MongoDB.Extensions;
     using NServiceBus.MongoDB.Internals;
     using NServiceBus.Persistence;

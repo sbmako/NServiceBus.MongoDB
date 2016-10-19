@@ -31,6 +31,6 @@ namespace NServiceBus.MongoDB.Tests.Sample
     {
         public virtual Guid SomeId { get; set; }
 
-        public string NonUniqueProperty { get; set; }
+        public string SomeValue { get; set; }
     }
 }
