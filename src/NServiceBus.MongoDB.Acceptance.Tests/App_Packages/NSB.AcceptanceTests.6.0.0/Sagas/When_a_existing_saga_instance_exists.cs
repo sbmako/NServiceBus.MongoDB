@@ -4,6 +4,9 @@
     using System.Threading.Tasks;
     using AcceptanceTesting;
     using EndpointTemplates;
+
+    using NServiceBus.MongoDB;
+
     using NUnit.Framework;
 
     public class When_a_existing_saga_instance_exists : NServiceBusAcceptanceTest
@@ -70,12 +73,16 @@
                 }
             }
 
-            public class TestSagaData05 : IContainSagaData
+            public class TestSagaData05 : IContainSagaData, IHaveDocumentVersion
             {
                 public virtual Guid SomeId { get; set; }
                 public virtual Guid Id { get; set; }
                 public virtual string Originator { get; set; }
                 public virtual string OriginalMessageId { get; set; }
+
+                public int DocumentVersion { get; set; }
+
+                public int ETag { get; set; }
             }
         }
 

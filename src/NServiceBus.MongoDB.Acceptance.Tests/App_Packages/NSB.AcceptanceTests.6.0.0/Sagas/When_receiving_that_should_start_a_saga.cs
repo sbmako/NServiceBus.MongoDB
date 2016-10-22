@@ -5,6 +5,8 @@
     using AcceptanceTesting;
     using EndpointTemplates;
 
+    using NServiceBus.MongoDB;
+
     public class When_receiving_that_should_start_a_saga : NServiceBusAcceptanceTest
     {
         public class SagaEndpointContext : ScenarioContext
@@ -40,7 +42,7 @@
                         .ToSaga(s => s.SomeId);
                 }
 
-                public class TestSagaData03 : ContainSagaData
+                public class TestSagaData03 : ContainMongoSagaData
                 {
                     public virtual string SomeId { get; set; }
                 }

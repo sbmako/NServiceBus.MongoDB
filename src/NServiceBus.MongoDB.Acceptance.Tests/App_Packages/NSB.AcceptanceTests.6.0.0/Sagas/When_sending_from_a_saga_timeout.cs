@@ -5,6 +5,9 @@
     using AcceptanceTesting;
     using EndpointTemplates;
     using Features;
+
+    using NServiceBus.MongoDB;
+
     using NUnit.Framework;
     using ScenarioDescriptors;
 
@@ -62,7 +65,7 @@
                     mapper.ConfigureMapping<StartSaga1>(m => m.DataId).ToSaga(s => s.DataId);
                 }
 
-                public class SendFromTimeoutSaga1Data : ContainSagaData
+                public class SendFromTimeoutSaga1Data : ContainMongoSagaData
                 {
                     public virtual Guid DataId { get; set; }
                 }
@@ -84,7 +87,7 @@
                     mapper.ConfigureMapping<StartSaga2>(m => m.DataId).ToSaga(s => s.DataId);
                 }
 
-                public class SendFromTimeoutSaga2Data : ContainSagaData
+                public class SendFromTimeoutSaga2Data : ContainMongoSagaData
                 {
                     public virtual Guid DataId { get; set; }
                 }

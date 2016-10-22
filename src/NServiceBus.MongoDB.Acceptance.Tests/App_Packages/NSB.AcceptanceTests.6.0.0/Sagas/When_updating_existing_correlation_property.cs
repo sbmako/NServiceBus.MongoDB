@@ -6,6 +6,9 @@
     using AcceptanceTesting;
     using AcceptanceTesting.Support;
     using EndpointTemplates;
+
+    using NServiceBus.MongoDB;
+
     using NUnit.Framework;
 
     public class When_updating_existing_correlation_property : NServiceBusAcceptanceTest
@@ -69,12 +72,16 @@
                 }
             }
 
-            public class ChangeCorrPropertySagaData : IContainSagaData
+            public class ChangeCorrPropertySagaData : IContainSagaData, IHaveDocumentVersion
             {
                 public virtual Guid SomeId { get; set; }
                 public virtual Guid Id { get; set; }
                 public virtual string Originator { get; set; }
                 public virtual string OriginalMessageId { get; set; }
+
+                public int DocumentVersion { get; set; }
+
+                public int ETag { get; set; }
             }
         }
 

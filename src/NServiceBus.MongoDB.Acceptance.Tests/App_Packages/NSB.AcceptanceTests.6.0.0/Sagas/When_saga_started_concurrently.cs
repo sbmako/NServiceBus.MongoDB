@@ -4,6 +4,9 @@
     using System.Threading.Tasks;
     using AcceptanceTesting;
     using EndpointTemplates;
+
+    using NServiceBus.MongoDB;
+
     using NUnit.Framework;
 
     public class When_saga_started_concurrently : NServiceBusAcceptanceTest
@@ -99,7 +102,7 @@
                 }
             }
 
-            class ConcurrentlyStartedSagaData : ContainSagaData
+            class ConcurrentlyStartedSagaData : ContainMongoSagaData
             {
                 public virtual string OrderId { get; set; }
                 public virtual bool Placed { get; set; }

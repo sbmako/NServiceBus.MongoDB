@@ -5,6 +5,7 @@
     using EndpointTemplates;
     using Extensibility;
     using NServiceBus;
+    using NServiceBus.MongoDB;
     using NServiceBus.Sagas;
     using NUnit.Framework;
     using Persistence;
@@ -79,7 +80,7 @@
                     // Mapping not required for SomeOtherMessage because CustomFinder used
                 }
 
-                public class SagaData08 : ContainSagaData
+                public class SagaData08 : ContainMongoSagaData
                 {
                     public virtual string Property { get; set; }
                 }

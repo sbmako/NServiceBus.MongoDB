@@ -4,6 +4,9 @@
     using System.Threading.Tasks;
     using AcceptanceTesting;
     using EndpointTemplates;
+
+    using NServiceBus.MongoDB;
+
     using NUnit.Framework;
 
     [TestFixture]
@@ -67,7 +70,7 @@
                         .ToSaga(s => s.SomeId);
                 }
 
-                public class BaseClassIsMappedSagaData : ContainSagaData
+                public class BaseClassIsMappedSagaData : ContainMongoSagaData
                 {
                     public virtual Guid SomeId { get; set; }
                 }

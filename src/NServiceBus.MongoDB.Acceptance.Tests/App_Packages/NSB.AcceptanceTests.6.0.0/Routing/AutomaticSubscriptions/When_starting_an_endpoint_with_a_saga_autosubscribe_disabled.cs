@@ -6,6 +6,8 @@ namespace NServiceBus.AcceptanceTests.Routing.AutomaticSubscriptions
     using System.Threading.Tasks;
     using AcceptanceTesting;
     using EndpointTemplates;
+
+    using NServiceBus.MongoDB;
     using NServiceBus.Pipeline;
     using NUnit.Framework;
 
@@ -71,7 +73,7 @@ namespace NServiceBus.AcceptanceTests.Routing.AutomaticSubscriptions
                     mapper.ConfigureMapping<MyEvent>(msg => msg.SomeId).ToSaga(saga => saga.SomeId);
                 }
 
-                public class NotAutoSubscribedSagaSagaData : ContainSagaData
+                public class NotAutoSubscribedSagaSagaData : ContainMongoSagaData
                 {
                     public virtual string SomeId { get; set; }
                 }
@@ -90,7 +92,7 @@ namespace NServiceBus.AcceptanceTests.Routing.AutomaticSubscriptions
                     mapper.ConfigureMapping<MyEventBase>(saga => saga.SomeId).ToSaga(saga => saga.SomeId);
                 }
 
-                public class NotAutosubscribeSuperClassEventSagaData : ContainSagaData
+                public class NotAutosubscribeSuperClassEventSagaData : ContainMongoSagaData
                 {
                     public virtual string SomeId { get; set; }
                 }

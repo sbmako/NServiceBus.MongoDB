@@ -4,6 +4,9 @@
     using System.Threading.Tasks;
     using AcceptanceTesting;
     using EndpointTemplates;
+
+    using NServiceBus.MongoDB;
+
     using NUnit.Framework;
 
     public class When_saga_is_mapped_to_complex_expression : NServiceBusAcceptanceTest
@@ -72,12 +75,16 @@
                 }
             }
 
-            public class TestSagaData02 : IContainSagaData
+            public class TestSagaData02 : IContainSagaData, IHaveDocumentVersion
             {
                 public virtual string KeyValue { get; set; }
                 public virtual Guid Id { get; set; }
                 public virtual string Originator { get; set; }
                 public virtual string OriginalMessageId { get; set; }
+
+                public int DocumentVersion { get; set; }
+
+                public int ETag { get; set; }
             }
         }
 

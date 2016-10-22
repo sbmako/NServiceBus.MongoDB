@@ -7,6 +7,7 @@ namespace NServiceBus.AcceptanceTests.Sagas
     using Extensibility;
     using Features;
     using NServiceBus;
+    using NServiceBus.MongoDB;
     using NServiceBus.Pipeline;
     using NServiceBus.Sagas;
     using NUnit.Framework;
@@ -69,7 +70,7 @@ namespace NServiceBus.AcceptanceTests.Sagas
                 {
                 }
 
-                public class SagaData07 : ContainSagaData
+                public class SagaData07 : ContainMongoSagaData
                 {
                 }
             }

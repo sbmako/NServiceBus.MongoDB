@@ -5,6 +5,8 @@
     using AcceptanceTesting;
     using EndpointTemplates;
     using Features;
+
+    using NServiceBus.MongoDB;
     using NServiceBus.Sagas;
     using NUnit.Framework;
 
@@ -104,7 +106,7 @@
                     mapper.ConfigureMapping<DoSomethingResponse>(m => m.RunId).ToSaga(s => s.RunId);
                 }
 
-                public class CorrelationTestSagaData : ContainSagaData
+                public class CorrelationTestSagaData : ContainMongoSagaData
                 {
                     public virtual Guid RunId { get; set; }
                 }
