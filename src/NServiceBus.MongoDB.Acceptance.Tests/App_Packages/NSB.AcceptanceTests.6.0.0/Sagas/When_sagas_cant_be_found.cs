@@ -5,6 +5,8 @@
     using AcceptanceTesting;
     using EndpointTemplates;
     using Features;
+
+    using NServiceBus.MongoDB;
     using NServiceBus.Sagas;
     using NUnit.Framework;
 
@@ -95,7 +97,7 @@
                     mapper.ConfigureMapping<MessageToSaga>(m => m.Id).ToSaga(s => s.MessageId);
                 }
 
-                public class CantBeFoundSaga1Data : ContainSagaData
+                public class CantBeFoundSaga1Data : ContainMongoSagaData
                 {
                     public virtual Guid MessageId { get; set; }
                 }
@@ -120,7 +122,7 @@
                     mapper.ConfigureMapping<MessageToSaga>(m => m.Id).ToSaga(s => s.MessageId);
                 }
 
-                public class CantBeFoundSaga2Data : ContainSagaData
+                public class CantBeFoundSaga2Data : ContainMongoSagaData
                 {
                     public virtual Guid MessageId { get; set; }
                 }
@@ -194,7 +196,7 @@
                     mapper.ConfigureMapping<MessageToSaga>(m => m.Id).ToSaga(s => s.MessageId);
                 }
 
-                public class ReceiverWithOrderedSagasSaga1Data : ContainSagaData
+                public class ReceiverWithOrderedSagasSaga1Data : ContainMongoSagaData
                 {
                     public virtual Guid MessageId { get; set; }
                 }
@@ -223,7 +225,7 @@
                     mapper.ConfigureMapping<MessageToSaga>(m => m.Id).ToSaga(s => s.MessageId);
                 }
 
-                public class ReceiverWithOrderedSagasSaga2Data : ContainSagaData
+                public class ReceiverWithOrderedSagasSaga2Data : ContainMongoSagaData
                 {
                     public virtual Guid MessageId { get; set; }
                 }

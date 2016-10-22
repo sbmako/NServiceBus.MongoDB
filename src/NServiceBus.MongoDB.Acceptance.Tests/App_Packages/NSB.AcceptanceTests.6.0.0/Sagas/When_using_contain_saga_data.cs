@@ -5,6 +5,9 @@
     using AcceptanceTesting;
     using EndpointTemplates;
     using Features;
+
+    using NServiceBus.MongoDB;
+
     using NUnit.Framework;
 
     public class When_using_contain_saga_data : NServiceBusAcceptanceTest
@@ -61,7 +64,7 @@
                     mapper.ConfigureMapping<StartSaga>(m => m.DataId).ToSaga(s => s.DataId);
                 }
 
-                public class MySagaData : ContainSagaData
+                public class MySagaData : ContainMongoSagaData
                 {
                     public virtual Guid DataId { get; set; }
                 }

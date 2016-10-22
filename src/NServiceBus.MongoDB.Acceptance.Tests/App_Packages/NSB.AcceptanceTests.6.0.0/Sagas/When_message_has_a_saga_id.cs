@@ -5,6 +5,8 @@
     using AcceptanceTesting;
     using EndpointTemplates;
     using Features;
+
+    using NServiceBus.MongoDB;
     using NServiceBus.Sagas;
     using NUnit.Framework;
 
@@ -82,7 +84,7 @@
                         .ToSaga(s => s.DataId);
                 }
 
-                public class MessageWithSagaIdSagaData : ContainSagaData
+                public class MessageWithSagaIdSagaData : ContainMongoSagaData
                 {
                     public virtual Guid DataId { get; set; }
                 }

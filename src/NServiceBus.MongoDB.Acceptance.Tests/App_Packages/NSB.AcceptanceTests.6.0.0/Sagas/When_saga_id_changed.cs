@@ -6,6 +6,9 @@
     using AcceptanceTesting;
     using AcceptanceTesting.Support;
     using EndpointTemplates;
+
+    using NServiceBus.MongoDB;
+
     using NUnit.Framework;
 
     [TestFixture]
@@ -60,7 +63,7 @@
                     mapper.ConfigureMapping<StartSaga>(m => m.DataId).ToSaga(s => s.DataId);
                 }
 
-                public class SagaIdChangedSagaData : ContainSagaData
+                public class SagaIdChangedSagaData : ContainMongoSagaData
                 {
                     public virtual Guid DataId { get; set; }
                 }

@@ -4,6 +4,9 @@
     using AcceptanceTesting;
     using EndpointTemplates;
     using MessageMutator;
+
+    using NServiceBus.MongoDB;
+
     using NUnit.Framework;
 
     public class When_incoming_mutator_changes_message_type : NServiceBusAcceptanceTest
@@ -110,7 +113,7 @@
                 Context TestContext;
             }
 
-            public class SagaData : ContainSagaData
+            public class SagaData : ContainMongoSagaData
             {
                 public virtual string SomeId { get; set; }
             }

@@ -5,6 +5,9 @@
     using AcceptanceTesting;
     using EndpointTemplates;
     using Features;
+
+    using NServiceBus.MongoDB;
+
     using NUnit.Framework;
 
     public class When_using_a_received_message_for_timeout : NServiceBusAcceptanceTest
@@ -61,12 +64,16 @@
                 }
             }
 
-            public class TestSagaData01 : IContainSagaData
+            public class TestSagaData01 : IContainSagaData, IHaveDocumentVersion
             {
                 public virtual Guid SomeId { get; set; }
                 public virtual Guid Id { get; set; }
                 public virtual string Originator { get; set; }
                 public virtual string OriginalMessageId { get; set; }
+
+                public int DocumentVersion { get; set; }
+
+                public int ETag { get; set; }
             }
         }
 

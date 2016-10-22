@@ -5,6 +5,8 @@
     using AcceptanceTesting;
     using EndpointTemplates;
     using Features;
+
+    using NServiceBus.MongoDB;
     using NServiceBus.Sagas;
     using NUnit.Framework;
 
@@ -89,7 +91,7 @@
                     mapper.ConfigureMapping<SomeOtherMessage>(m => m.DataId).ToSaga(s => s.DataId);
                 }
 
-                public class TimeoutHitsNotFoundSagaData : ContainSagaData
+                public class TimeoutHitsNotFoundSagaData : ContainMongoSagaData
                 {
                     public virtual Guid DataId { get; set; }
                 }

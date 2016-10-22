@@ -6,6 +6,8 @@
     using EndpointTemplates;
     using Features;
 
+    using NServiceBus.MongoDB;
+
     public class When_doing_request_response_between_sagas : NServiceBusAcceptanceTest
     {
         public class Context : ScenarioContext
@@ -51,7 +53,7 @@
                     mapper.ConfigureMapping<ResponseFromOtherSaga>(m => m.SomeCorrelationId).ToSaga(s => s.CorrIdForResponse);
                 }
 
-                public class RequestResponseRequestingSagaData : ContainSagaData
+                public class RequestResponseRequestingSagaData : ContainMongoSagaData
                 {
                     public virtual Guid CorrIdForResponse { get; set; } //wont be needed in the future
                 }
@@ -111,7 +113,7 @@
                     });
                 }
 
-                public class RequestResponseRespondingSagaData : ContainSagaData
+                public class RequestResponseRespondingSagaData : ContainMongoSagaData
                 {
                     public virtual Guid CorrIdForRequest { get; set; }
                 }

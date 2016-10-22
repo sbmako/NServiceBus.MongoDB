@@ -5,6 +5,9 @@
     using AcceptanceTesting;
     using EndpointTemplates;
     using Features;
+
+    using NServiceBus.MongoDB;
+
     using NUnit.Framework;
 
     public class When_using_ReplyToOriginator : NServiceBusAcceptanceTest
@@ -64,7 +67,7 @@
                         .ToSaga(s => s.CorrIdForResponse);
                 }
 
-                public class RequestingSagaData : ContainSagaData
+                public class RequestingSagaData : ContainMongoSagaData
                 {
                     public virtual Guid CorrIdForResponse { get; set; } //wont be needed in the future
                 }

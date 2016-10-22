@@ -5,6 +5,9 @@
     using AcceptanceTesting;
     using EndpointTemplates;
     using Features;
+
+    using NServiceBus.MongoDB;
+
     using NUnit.Framework;
     using Routing;
     using ScenarioDescriptors;
@@ -83,7 +86,7 @@
                     mapper.ConfigureMapping<BaseEvent>(m => m.DataId).ToSaga(s => s.DataId);
                 }
 
-                public class SagaStartedByBaseEventSagaData : ContainSagaData
+                public class SagaStartedByBaseEventSagaData : ContainMongoSagaData
                 {
                     public virtual Guid DataId { get; set; }
                 }

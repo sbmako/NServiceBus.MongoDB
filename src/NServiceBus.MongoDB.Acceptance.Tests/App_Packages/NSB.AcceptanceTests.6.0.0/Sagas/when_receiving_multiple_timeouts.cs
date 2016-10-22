@@ -5,6 +5,8 @@
     using AcceptanceTesting;
     using EndpointTemplates;
     using Features;
+
+    using NServiceBus.MongoDB;
     using NServiceBus.Sagas;
     using NUnit.Framework;
 
@@ -107,7 +109,7 @@
                         .ToSaga(s => s.Id);
                 }
 
-                public class MultiTimeoutsSaga1Data : ContainSagaData
+                public class MultiTimeoutsSaga1Data : ContainMongoSagaData
                 {
                     public virtual Guid ContextId { get; set; }
                 }

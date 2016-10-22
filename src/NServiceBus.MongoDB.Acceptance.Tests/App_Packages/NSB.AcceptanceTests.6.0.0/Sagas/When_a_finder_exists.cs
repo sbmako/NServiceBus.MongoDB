@@ -6,6 +6,7 @@
     using Extensibility;
     using Features;
     using NServiceBus;
+    using NServiceBus.MongoDB;
     using NServiceBus.Sagas;
     using NUnit.Framework;
     using Persistence;
@@ -61,7 +62,7 @@
                     // not required because of CustomFinder
                 }
 
-                public class SagaData06 : ContainSagaData
+                public class SagaData06 : ContainMongoSagaData
                 {
                 }
             }

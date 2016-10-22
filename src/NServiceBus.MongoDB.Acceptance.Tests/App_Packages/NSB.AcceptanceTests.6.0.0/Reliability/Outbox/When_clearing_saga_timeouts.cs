@@ -9,6 +9,8 @@
     using Features;
     using NServiceBus.Outbox;
     using NServiceBus;
+    using NServiceBus.MongoDB;
+
     using NUnit.Framework;
     using Persistence;
     using ScenarioDescriptors;
@@ -73,7 +75,7 @@
                     mapper.ConfigureMapping<PlaceOrder>(m => m.DataId).ToSaga(s => s.DataId);
                 }
 
-                public class PlaceOrderSagaData : ContainSagaData
+                public class PlaceOrderSagaData : ContainMongoSagaData
                 {
                     public virtual Guid DataId { get; set; }
                 }

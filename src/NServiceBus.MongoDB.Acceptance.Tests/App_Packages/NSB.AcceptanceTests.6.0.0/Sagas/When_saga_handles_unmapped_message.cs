@@ -5,6 +5,9 @@
     using System.Threading.Tasks;
     using AcceptanceTesting;
     using EndpointTemplates;
+
+    using NServiceBus.MongoDB;
+
     using NUnit.Framework;
 
     public class When_saga_handles_unmapped_message : NServiceBusAcceptanceTest
@@ -82,7 +85,7 @@
                 }
             }
 
-            public class UnmappedMsgSagaData : ContainSagaData
+            public class UnmappedMsgSagaData : ContainMongoSagaData
             {
                 public virtual Guid SomeId { get; set; }
             }

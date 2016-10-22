@@ -5,6 +5,9 @@
     using AcceptanceTesting;
     using EndpointTemplates;
     using Features;
+
+    using NServiceBus.MongoDB;
+
     using NUnit.Framework;
     using ScenarioDescriptors;
 
@@ -134,12 +137,16 @@
                 }
             }
 
-            public class TestSagaData10 : IContainSagaData
+            public class TestSagaData10 : IContainSagaData, IHaveDocumentVersion
             {
                 public virtual Guid SomeId { get; set; }
                 public virtual Guid Id { get; set; }
                 public virtual string Originator { get; set; }
                 public virtual string OriginalMessageId { get; set; }
+
+                public int DocumentVersion { get; set; }
+
+                public int ETag { get; set; }
             }
         }
 
