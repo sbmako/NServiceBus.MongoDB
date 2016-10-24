@@ -272,7 +272,7 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
 
         [Theory]
         [IntegrationTest]
-        [AutoDatabase, BrokenTest]
+        [AutoDatabase]
         public void RetrievingSagaUsingIdNotFound(
             MongoSagaPersister sut,
             SagaWithUniqueProperty sagaData,
@@ -308,7 +308,7 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
 
         [Theory]
         [IntegrationTest]
-        [AutoDatabase, BrokenTest]
+        [AutoDatabase]
         public void RetrievingSagaUsingCorrelationPropertyNotFound(
             MongoSagaPersister sut,
             SagaCorrelationProperty correlationProperty,
