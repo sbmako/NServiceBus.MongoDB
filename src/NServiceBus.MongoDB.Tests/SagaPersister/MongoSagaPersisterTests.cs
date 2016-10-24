@@ -26,6 +26,7 @@
 namespace NServiceBus.MongoDB.Tests.SagaPersister
 {
     using System;
+    using System.Threading.Tasks;
 
     using CategoryTraits.Xunit2;
 
@@ -271,7 +272,7 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
 
         [Theory]
         [IntegrationTest]
-        [AutoDatabase]
+        [AutoDatabase, BrokenTest]
         public void RetrievingSagaUsingIdNotFound(
             MongoSagaPersister sut,
             SagaWithUniqueProperty sagaData,
@@ -279,8 +280,7 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
             SynchronizedStorageSession session,
             ContextBag context)
         {
-            sut.Invoking(s => s.Get<SagaWithUniqueProperty>(sagaData.Id, session, context).Wait())
-                .ShouldThrow<AggregateException>();
+            sut.Get<SagaWithUniqueProperty>(sagaData.Id, session, context).Result.Should().BeNull();
         }
 
         [Theory]
@@ -315,10 +315,9 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
             SynchronizedStorageSession session,
             ContextBag context)
         {
-            sut.Invoking(
-                s =>
-                s.Get<SagaWithUniqueProperty>(correlationProperty.Name, "badvalue", session, context)
-                    .Wait()).ShouldThrow<AggregateException>();
+            sut.Get<SagaWithUniqueProperty>(correlationProperty.Name, "badvalue", session, context)
+                .Result.Should()
+                .BeNull();
         }
     }
 }
