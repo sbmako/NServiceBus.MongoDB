@@ -32,16 +32,12 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
         public SubscriptionKey()
         {
             this.TypeName = string.Empty;
-            this.Version = string.Empty;
         }
 
         public SubscriptionKey(MessageType messagteType)
         {
             this.TypeName = messagteType.TypeName;
-            this.Version = messagteType.Version.ToString();
         }
-
-        public string Version { get; set; }
 
         public string TypeName { get; set; }
     }

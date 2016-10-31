@@ -66,7 +66,6 @@ namespace NServiceBus.MongoDB.Tests.SubscriptionPersister
 
             var subscription = subscriptions.First();
             subscription.Id.TypeName.Should().Be(messageType.TypeName);
-            subscription.Id.Version.Should().Be(messageType.Version.ToString());
             subscription.Subscribers.Should().HaveCount(1);
 
             var firstSubscriber = subscription.Subscribers.First();
@@ -93,7 +92,6 @@ namespace NServiceBus.MongoDB.Tests.SubscriptionPersister
 
             var subscription = subscriptions.First();
             subscription.Id.TypeName.Should().Be(messageType.TypeName);
-            subscription.Id.Version.Should().Be(messageType.Version.ToString());
             subscription.Subscribers.Should().HaveCount(1);
 
             var firstSubscriber = subscription.Subscribers.First();
@@ -122,7 +120,6 @@ namespace NServiceBus.MongoDB.Tests.SubscriptionPersister
 
             var subscription = subscriptions.First();
             subscription.Id.TypeName.Should().Be(messageType1.TypeName);
-            subscription.Id.Version.Should().Be(messageType1.Version.ToString());
             subscription.Subscribers.Should().HaveCount(1);
 
             subscriptions = storage.GetSubscription(messageType2).Result.ToList();
@@ -130,7 +127,6 @@ namespace NServiceBus.MongoDB.Tests.SubscriptionPersister
 
             subscription = subscriptions.First();
             subscription.Id.TypeName.Should().Be(messageType2.TypeName);
-            subscription.Id.Version.Should().Be(messageType2.Version.ToString());
             subscription.Subscribers.Should().HaveCount(1);
         }
 
