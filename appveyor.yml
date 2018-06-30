@@ -1,5 +1,15 @@
+pull_requests:
+  do_not_increment_build_number: true
+skip_tags: true
+image: Visual Studio 2015
+configuration: Debug
+platform: Any CPU
+clone_depth: 1
+services:
+ - mongodb
+ - msmq
 install:
-  - choco install gitversion.portable -pre -y
+ - choco install gitversion.portable -pre -y
 
 assembly_info:
   patch: false
@@ -10,3 +20,16 @@ before_build:
 
 build:
   project: src\NServiceBus.MongoDB.sln
+  parallel: true
+  verbosity: minimal
+test:
+  assemblies:
+    only:
+    - '**\bin\Debug\NServiceBus.MongoDB.Tests.dll'
+notifications:
+- provider: Slack
+  incoming_webhook: https://hooks.slack.com/services/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
+  channel: builds
+  on_build_success: true
+  on_build_failure: true
+  on_build_status_changed: true
