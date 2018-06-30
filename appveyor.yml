@@ -9,4 +9,4 @@ before_build:
   - ps: gitversion /l console /output buildserver /updateAssemblyInfo
 
 build:
-  project: <your sln file>
+  project: src\NServiceBus.MongoDB.sln
