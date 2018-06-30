@@ -14,7 +14,7 @@ assembly_info:
   patch: false
 
 before_build:
-  - nuget restor src\NServiceBus.MongoDB.sln
+  - cmd: nuget restor src\NServiceBus.MongoDB.sln
   - ps: gitversion /l console /output buildserver /updateAssemblyInfo
 
 build:
