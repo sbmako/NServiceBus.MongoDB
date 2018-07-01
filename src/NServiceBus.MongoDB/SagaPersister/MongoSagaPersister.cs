@@ -112,7 +112,7 @@ namespace NServiceBus.MongoDB.SagaPersister
         public Task<TSagaData> Get<TSagaData>(
             Guid sagaId, 
             SynchronizedStorageSession session, 
-            ContextBag context) where TSagaData : IContainSagaData
+            ContextBag context) where TSagaData : class, IContainSagaData
         {
             var collection = this.mongoDatabase.GetCollection<TSagaData>(typeof(TSagaData).Name);
             return collection.Find(_ => _.Id == sagaId).FirstOrDefaultAsync();
@@ -122,7 +122,7 @@ namespace NServiceBus.MongoDB.SagaPersister
             string propertyName, 
             object propertyValue, 
             SynchronizedStorageSession session, 
-            ContextBag context) where TSagaData : IContainSagaData
+            ContextBag context) where TSagaData : class, IContainSagaData
         {
             var query = Builders<TSagaData>.Filter.Eq(propertyName, BsonValue.Create(propertyValue));
 

@@ -29,7 +29,7 @@ namespace NServiceBus.MongoDB.Tests
 
     using FluentAssertions;
 
-    using NServiceBus.Configuration.AdvanceExtensibility;
+    using NServiceBus.Configuration.AdvancedExtensibility;
     using NServiceBus.MongoDB.Internals;
     using NServiceBus.MongoDB.Tests.TestingUtilities;
 

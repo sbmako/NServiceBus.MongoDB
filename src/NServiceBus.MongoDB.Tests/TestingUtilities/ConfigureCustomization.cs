@@ -25,7 +25,7 @@
 
 namespace NServiceBus.MongoDB.Tests.TestingUtilities
 {
-    using NServiceBus.Configuration.AdvanceExtensibility;
+    using NServiceBus.Configuration.AdvancedExtensibility;
     using NServiceBus.Settings;
     using NServiceBus.Timeout.Core;
 

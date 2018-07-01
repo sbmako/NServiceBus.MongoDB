@@ -28,18 +28,18 @@
 
 namespace Sample
 {
-    using NServiceBus;
-    using NServiceBus.MongoDB;
-    using NServiceBus.MongoDB.DataBus;
+	using NServiceBus;
+	using NServiceBus.MongoDB;
+	using NServiceBus.MongoDB.DataBus;
 
-    /// <summary>
-    /// The endpoint config.
-    /// </summary>
-    public class EndpointConfig : IConfigureThisEndpoint, AsA_Server
+	/// <summary>
+	/// The endpoint config.
+	/// </summary>
+	public class EndpointConfig : IConfigureThisEndpoint
     {
         public void Customize(EndpointConfiguration configuration)
         {
-            configuration.UseSerialization<JsonSerializer>();
+            configuration.UseSerialization<NewtonsoftSerializer>();
             configuration.UsePersistence<MongoDBPersistence>()
                 .SetDatabaseName("MyDatabase");
 
