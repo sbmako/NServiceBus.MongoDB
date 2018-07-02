@@ -21,6 +21,7 @@ Properties {
 	$nugetOutDir = "packaging\"
     $msbuildCommand = "MSBuild.exe"
     $msbuildVerbosity = 'minimal'
+	$sharedAssemblyInfo = "$sourceDir\NServiceBus.MongoDB\bin\Release\NServiceBus.MongoDB.dll"
 }
 
 # default task
@@ -38,7 +39,8 @@ task Build -depends BuildDebug {}
 
 task Package -Depends BuildRelease {
 	Remove-Item $baseDir\packaging\*.nupkg
-	exec { & "$nugetExecutable" pack $nuspecFile -OutputDirectory $nugetOutDir }
+	$version =(Get-Item $sharedAssemblyInfo).VersionInfo.ProductVersion
+	exec { & "$nugetExecutable" pack $nuspecFile -OutputDirectory $nugetOutDir -Version $version }
 }
 
 Task CleanSolution { BuildSolution $allSolution -Target Clean }
