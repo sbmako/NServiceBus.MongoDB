@@ -26,7 +26,6 @@
 namespace NServiceBus.MongoDB.Tests.SagaPersister
 {
     using System;
-    using System.Threading.Tasks;
 
     using CategoryTraits.Xunit2;
 
@@ -85,7 +84,7 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
         {
             sut.Save(sagaData, correlationProperty, session, context).Wait();
             sut.Invoking(s => s.Save(sagaData, correlationProperty, session, context).Wait())
-                .ShouldThrow<MongoWriteException>();
+                .Should().Throw<MongoWriteException>();
         }
 
         [Theory, IntegrationTest]
@@ -124,7 +123,7 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
             ContextBag context)
         {
             sut.Invoking(s => s.Save(sagaData, correlationProperty, session, context).Wait())
-                .ShouldThrow<InvalidOperationException>();
+                .Should().Throw<InvalidOperationException>();
         }
 
         [Theory, IntegrationTest]
@@ -157,7 +156,7 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
             SynchronizedStorageSession session,
             ContextBag context)
         {
-            sut.Invoking(s => s.Update(sagaData, session, context).Wait()).ShouldThrow<InvalidOperationException>();
+            sut.Invoking(s => s.Update(sagaData, session, context).Wait()).Should().Throw<InvalidOperationException>();
 
             factory.RetrieveSagaData(sagaData).Should().BeNull();
         }
@@ -180,7 +179,7 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
             sut.Update(saga1, session, context).Wait();
 
             saga2.UniqueProperty = Guid.NewGuid().ToString();
-            sut.Invoking(s => s.Update(saga2, session, context).Wait()).ShouldThrow<InvalidOperationException>();
+            sut.Invoking(s => s.Update(saga2, session, context).Wait()).Should().Throw<InvalidOperationException>();
         }
 
         [Theory, IntegrationTest]
@@ -193,7 +192,7 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
             SynchronizedStorageSession session,
             ContextBag context)
         {
-            sut.Invoking(s => s.Update(sagaData, session, context).Wait()).ShouldThrow<InvalidOperationException>();
+            sut.Invoking(s => s.Update(sagaData, session, context).Wait()).Should().Throw<InvalidOperationException>();
         }
 
         [Theory, IntegrationTest]
@@ -267,7 +266,7 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
 
             var result = sut.Get<SagaWithUniqueProperty>(sagaData.Id, session, context).Result;
 
-            result.ShouldBeEquivalentTo(sagaData);
+            result.Should().BeEquivalentTo(sagaData);
         }
 
         [Theory]
@@ -303,7 +302,7 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
                     session,
                     context).Result;
 
-            result.ShouldBeEquivalentTo(sagaData);
+            result.Should().BeEquivalentTo(sagaData);
         }
 
         [Theory]

@@ -29,7 +29,7 @@ namespace NServiceBus.MongoDB.Tests.TestingUtilities
     using NServiceBus.Settings;
     using NServiceBus.Timeout.Core;
 
-    using Ploeh.AutoFixture;
+    using AutoFixture;
 
     public class ConfigureCustomization : ICustomization
     {

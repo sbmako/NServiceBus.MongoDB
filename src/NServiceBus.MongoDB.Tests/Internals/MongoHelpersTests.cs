@@ -31,6 +31,8 @@ namespace NServiceBus.MongoDB.Tests.Internals
     using CategoryTraits.Xunit2;
 
     using FluentAssertions;
+    using FluentAssertions.Extensions;
+
     using NServiceBus.MongoDB.Internals;
     using NServiceBus.Settings;
 
@@ -49,7 +51,7 @@ namespace NServiceBus.MongoDB.Tests.Internals
         public void GetConnectionStringFromConfigUsingInValidConnectionStringName()
         {
             Action sut = () => MongoHelpers.GetConnectionStringFromConfig("My.MissingPersistence");
-            sut.ShouldThrow<ConfigurationErrorsException>();
+            sut.Should().Throw<ConfigurationErrorsException>();
         }
 
         [Fact, UnitTest]

@@ -32,7 +32,7 @@ namespace NServiceBus.MongoDB.Tests
 
     using NServiceBus.MongoDB.Internals;
 
-    using Ploeh.AutoFixture.Xunit2;
+    using AutoFixture.Xunit2;
 
     using Xunit;
 

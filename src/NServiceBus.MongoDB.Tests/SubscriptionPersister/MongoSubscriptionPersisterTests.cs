@@ -30,6 +30,7 @@ namespace NServiceBus.MongoDB.Tests.SubscriptionPersister
     using CategoryTraits.Xunit2;
 
     using FluentAssertions;
+    using FluentAssertions.Extensions;
 
     using NServiceBus.Extensibility;
     using NServiceBus.MongoDB.Internals;
@@ -69,7 +70,7 @@ namespace NServiceBus.MongoDB.Tests.SubscriptionPersister
             subscription.Subscribers.Should().HaveCount(1);
 
             var firstSubscriber = subscription.Subscribers.First();
-            firstSubscriber.ShouldBeEquivalentTo(subscriber);
+            firstSubscriber.Should().BeEquivalentTo(subscriber);
         }
 
         [Theory, IntegrationTest]
@@ -95,7 +96,7 @@ namespace NServiceBus.MongoDB.Tests.SubscriptionPersister
             subscription.Subscribers.Should().HaveCount(1);
 
             var firstSubscriber = subscription.Subscribers.First();
-            firstSubscriber.ShouldBeEquivalentTo(subscriber);
+            firstSubscriber.Should().BeEquivalentTo(subscriber);
         }
 
         [Theory, IntegrationTest]
@@ -250,8 +251,8 @@ namespace NServiceBus.MongoDB.Tests.SubscriptionPersister
             var clients =
                 sut.GetSubscriberAddressesForMessage(new List<MessageType>() { messageType }, context).Result.ToList();
             clients.Should().HaveCount(2);
-            clients.First().ShouldBeEquivalentTo(otherSubscriber1);
-            clients.Last().ShouldBeEquivalentTo(otherSubscriber2);
+            clients.First().Should().BeEquivalentTo(otherSubscriber1);
+            clients.Last().Should().BeEquivalentTo(otherSubscriber2);
         }
 
         [Theory, IntegrationTest]
@@ -279,8 +280,8 @@ namespace NServiceBus.MongoDB.Tests.SubscriptionPersister
             var clients =
                 sut.GetSubscriberAddressesForMessage(new List<MessageType>() { messageType }, context).Result.ToList();
             clients.Should().HaveCount(2);
-            clients.First().ShouldBeEquivalentTo(otherSubscriber1);
-            clients.Last().ShouldBeEquivalentTo(otherSubscriber2);
+            clients.First().Should().BeEquivalentTo(otherSubscriber1);
+            clients.Last().Should().BeEquivalentTo(otherSubscriber2);
         }
     }
 }

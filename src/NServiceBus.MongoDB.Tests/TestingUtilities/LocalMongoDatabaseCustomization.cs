@@ -34,8 +34,8 @@ namespace NServiceBus.MongoDB.Tests.TestingUtilities
     using NServiceBus.MongoDB.TimeoutPersister;
     using NServiceBus.Sagas;
 
-    using Ploeh.AutoFixture;
-    using Ploeh.AutoFixture.AutoMoq;
+    using AutoFixture;
+    using AutoFixture.AutoMoq;
 
     using TimeoutData = NServiceBus.Timeout.Core.TimeoutData;
 
@@ -52,7 +52,7 @@ namespace NServiceBus.MongoDB.Tests.TestingUtilities
             fixture.Register(() => databaseFactory);
             fixture.Register(() => new ContextBag());
             fixture.Register(
-                () => new SagaCorrelationProperty("UniqueProperty", fixture.Create("UniqueProperty")));
+                () => new SagaCorrelationProperty("UniqueProperty", fixture.Create<string>()));
 
             fixture.Customize(new AutoMoqCustomization());
 

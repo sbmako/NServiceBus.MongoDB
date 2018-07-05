@@ -25,8 +25,8 @@
 
 namespace NServiceBus.MongoDB.Tests.TestingUtilities
 {
-    using Ploeh.AutoFixture;
-    using Ploeh.AutoFixture.Xunit2;
+    using AutoFixture;
+    using AutoFixture.Xunit2;
 
     public class AutoConfigureData : AutoDataAttribute
     {
