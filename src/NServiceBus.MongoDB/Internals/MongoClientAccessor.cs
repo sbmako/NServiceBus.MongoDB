@@ -25,7 +25,6 @@
 
 namespace NServiceBus.MongoDB.Internals
 {
-    using System;
     using System.Diagnostics.Contracts;
 
     using global::MongoDB.Driver;

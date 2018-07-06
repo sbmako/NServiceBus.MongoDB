@@ -30,7 +30,6 @@ namespace NServiceBus.MongoDB.Tests.SubscriptionPersister
     using CategoryTraits.Xunit2;
 
     using FluentAssertions;
-    using FluentAssertions.Extensions;
 
     using NServiceBus.Extensibility;
     using NServiceBus.MongoDB.Internals;
@@ -52,7 +51,6 @@ namespace NServiceBus.MongoDB.Tests.SubscriptionPersister
         [AutoDatabase]
         public void SingleSubscriptionShouldOnlyCreateOneSubscription(
             MongoSubscriptionPersister storage,
-            MongoDatabaseFactory factory,
             Subscriber subscriber,
             ContextBag context,
             string messageTypeString)
@@ -77,7 +75,6 @@ namespace NServiceBus.MongoDB.Tests.SubscriptionPersister
         [AutoDatabase]
         public void SameClientSubscribesTwiceShouldOnlyCreateOneSubscribtion(
             MongoSubscriptionPersister storage,
-            MongoDatabaseFactory factory,
             Subscriber subscriber,
             ContextBag context,
             string messageTypeString)
@@ -103,7 +100,6 @@ namespace NServiceBus.MongoDB.Tests.SubscriptionPersister
         [AutoDatabase]
         public void SubscribeTwoMessageTypesShouldCreateTwoDifferentSubscriptions(
             MongoSubscriptionPersister storage,
-            MongoDatabaseFactory factory,
             Subscriber subscriber,
             ContextBag context,
             string messageTypeString1,
@@ -135,7 +131,6 @@ namespace NServiceBus.MongoDB.Tests.SubscriptionPersister
         [AutoDatabase]
         public void SubscribeTwoClientsOneMessageTypeShouldCreateOneSubscriptionWithMultipleAddresses(
             MongoSubscriptionPersister storage,
-            MongoDatabaseFactory factory,
             Subscriber subscriber1,
             Subscriber subscriber2,
             ContextBag context,
@@ -159,7 +154,6 @@ namespace NServiceBus.MongoDB.Tests.SubscriptionPersister
         [AutoDatabase]
         public void UnsubscribeWhenThereIsNoSubscriptionShouldNotCreateSubscription(
             MongoSubscriptionPersister storage,
-            MongoDatabaseFactory factory,
             Subscriber subscriber,
             ContextBag context,
             string messageTypeString)
@@ -178,7 +172,6 @@ namespace NServiceBus.MongoDB.Tests.SubscriptionPersister
         [AutoDatabase]
         public void UnsubscribeFromAllMessages(
             MongoSubscriptionPersister storage,
-            MongoDatabaseFactory factory,
             Subscriber subscriber,
             ContextBag context,
             string messageTypeString1,
@@ -205,7 +198,6 @@ namespace NServiceBus.MongoDB.Tests.SubscriptionPersister
         [AutoDatabase]
         public void UnsubscribeWhenClientSubscriptionIsTheOnlyOneShouldRemoveOnlyClient(
             MongoSubscriptionPersister storage,
-            MongoDatabaseFactory factory,
             Subscriber subscriber,
             ContextBag context,
             string messageTypeString)
@@ -231,7 +223,6 @@ namespace NServiceBus.MongoDB.Tests.SubscriptionPersister
         [AutoDatabase]
         public void UnsubscribeWhenThereAreSubscriptionsButNotClientsShouldNotChangeAnything(
             MongoSubscriptionPersister storage,
-            MongoDatabaseFactory factory,
             Subscriber subscriber,
             Subscriber otherSubscriber1,
             Subscriber otherSubscriber2,
@@ -259,7 +250,6 @@ namespace NServiceBus.MongoDB.Tests.SubscriptionPersister
         [AutoDatabase]
         public void UnsubscribeWhenThereAreSubscriptionsShouldRemoveClientsAddress(
             MongoSubscriptionPersister storage,
-            MongoDatabaseFactory factory,
             Subscriber subscriber,
             Subscriber otherSubscriber1,
             Subscriber otherSubscriber2,

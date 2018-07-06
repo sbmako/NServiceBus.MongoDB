@@ -25,7 +25,6 @@
 
 namespace NServiceBus.MongoDB
 {
-    using System;
     using System.Diagnostics.Contracts;
 
     using NServiceBus.Configuration.AdvancedExtensibility;

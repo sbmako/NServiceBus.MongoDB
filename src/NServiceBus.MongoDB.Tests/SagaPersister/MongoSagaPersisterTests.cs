@@ -76,7 +76,6 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
         [AutoDatabase]
         public void InterleavedSavingSagaShouldThrowException(
             MongoSagaPersister sut,
-            MongoDatabaseFactory factory,
             SagaWithUniqueProperty sagaData,
             SagaCorrelationProperty correlationProperty,
             SynchronizedStorageSession session,
@@ -116,7 +115,6 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
         [AutoDatabase]
         public void SavingSagaWithoutDocumentVersionShouldThrowException(
             MongoSagaPersister sut,
-            MongoDatabaseFactory factory,
             SagaWithoutDocumentVersion sagaData,
             SagaCorrelationProperty correlationProperty,
             SynchronizedStorageSession session,
@@ -152,7 +150,6 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
             MongoSagaPersister sut,
             MongoDatabaseFactory factory,
             SagaWithUniqueProperty sagaData,
-            SagaCorrelationProperty correlationProperty,
             SynchronizedStorageSession session,
             ContextBag context)
         {
@@ -186,9 +183,7 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
         [AutoDatabase]
         public void UpdatingSagaWithoutDocumentVersion(
             MongoSagaPersister sut,
-            MongoDatabaseFactory factory,
             SagaWithUniqueProperty sagaData,
-            SagaCorrelationProperty correlationProperty,
             SynchronizedStorageSession session,
             ContextBag context)
         {
@@ -275,7 +270,6 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
         public void RetrievingSagaUsingIdNotFound(
             MongoSagaPersister sut,
             SagaWithUniqueProperty sagaData,
-            SagaCorrelationProperty correlationProperty,
             SynchronizedStorageSession session,
             ContextBag context)
         {

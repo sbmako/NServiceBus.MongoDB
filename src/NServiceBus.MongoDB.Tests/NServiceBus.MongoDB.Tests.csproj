@@ -28,9 +28,6 @@
     <Compile Remove="ConfigureMongoPersistenceTests.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Remove="appsettings.config" />
-  </ItemGroup>
-  <ItemGroup>
     <None Update="app.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
