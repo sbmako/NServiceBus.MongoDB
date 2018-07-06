@@ -29,7 +29,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Remove="appsettings.config" />
-    <None Remove="appsettings.json" />
   </ItemGroup>
   <ItemGroup>
     <None Update="app.config">

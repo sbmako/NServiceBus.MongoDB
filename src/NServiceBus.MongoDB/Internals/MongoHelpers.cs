@@ -25,12 +25,11 @@
 
 namespace NServiceBus.MongoDB.Internals
 {
+    using System;
     using System.Configuration;
     using System.Diagnostics.Contracts;
     using NServiceBus.Logging;
     using NServiceBus.Settings;
-
-    using System.Linq;
 
     internal static class MongoHelpers
     {
@@ -41,49 +40,26 @@ namespace NServiceBus.MongoDB.Internals
             Contract.Requires(settings != null);
             Contract.Ensures(Contract.Result<string>() != null);
 
-            if (settings.HasSetting(MongoPersistenceConstants.ConnectionStringKey))
+            if (!settings.HasSetting(MongoPersistenceConstants.ConnectionStringKey))
             {
-                var connectionString =
-                    settings.Get<string>(MongoPersistenceConstants.ConnectionStringKey).AssumedNotNull();
-
-                return connectionString;
+                throw new ConfigurationErrorsException(
+                    string.Format(
+                    "Cannot configure Mongo Persister. No connection string was set"));
             }
 
-            if (ConfigurationManager.ConnectionStrings[MongoPersistenceConstants.DefaultConnectionStringName] != null)
-            {
-                Logger.InfoFormat(
-                    "Using connection string from {0}",
-                    MongoPersistenceConstants.DefaultConnectionStringName);
-                return GetConnectionStringFromConfig(MongoPersistenceConstants.DefaultConnectionStringName);    
-            }
+            var connectionString =
+                settings.Get<string>(MongoPersistenceConstants.ConnectionStringKey).AssumedNotNull();
 
-            Logger.InfoFormat("Using connection string from {0}", MongoPersistenceConstants.FallbackConnectionStringName);
-
-            return GetConnectionStringFromConfig(MongoPersistenceConstants.FallbackConnectionStringName);
+            return connectionString;
         }
 
+        [Obsolete("No longer supported.  Set database connection using SetConnectionSring", true)]
         public static string GetConnectionStringFromConfig(string connectionStringName)
         {
             Contract.Requires(connectionStringName != null);
             Contract.Ensures(Contract.Result<string>() != null);
 
-            var connectionStringSettings = ConfigurationManager.ConnectionStrings[connectionStringName];
-
-            if (connectionStringSettings == null)
-            {
-                throw new ConfigurationErrorsException(
-                    string.Format(
-                        "Cannot configure Mongo Persister. No connection string named {0} was found",
-                        connectionStringName));
-            }
-
-            if (connectionStringSettings.ConnectionString == null)
-            {
-                throw new ConfigurationErrorsException(
-                    string.Format("Connection string named {0} has a null or empty value", connectionStringName));
-            }
-
-            return connectionStringSettings.ConnectionString;
+            return MongoPersistenceConstants.DefaultConnectionString;
         }
     }
 }

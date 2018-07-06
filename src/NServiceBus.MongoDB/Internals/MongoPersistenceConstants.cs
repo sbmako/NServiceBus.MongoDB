@@ -45,9 +45,9 @@ namespace NServiceBus.MongoDB.Internals
 
         public const string DefaultHost = "localhost";
 
-        public const string FallbackConnectionStringName = "NServiceBus/Persistence";
+        public const string FallbackConnectionStringName = "NServiceBus-Persistence";
 
-        public const string DefaultConnectionStringName = "NServiceBus/Persistence/MongoDB";
+        public const string DefaultConnectionStringName = "NServiceBus-Persistence-MongoDB";
 
         public const string ConnectionStringKey = "MongoConnectionStringKey";
 

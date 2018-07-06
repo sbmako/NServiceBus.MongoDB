@@ -40,20 +40,6 @@ namespace NServiceBus.MongoDB.Tests.Internals
     public class MongoHelpersTests
     {
         [Fact, UnitTest]
-        public void GetConnectionStringFromConfigUsingValidConnectionString()
-        {
-            var result = MongoHelpers.GetConnectionStringFromConfig("NServiceBus/Persistence/MongoDB");
-            result.Should().Be("mongodb://localhost:27017");
-        }
-
-        [Fact, UnitTest]
-        public void GetConnectionStringFromConfigUsingInValidConnectionStringName()
-        {
-            Action sut = () => MongoHelpers.GetConnectionStringFromConfig("My.MissingPersistence");
-            sut.Should().Throw<ConfigurationErrorsException>();
-        }
-
-        [Fact, UnitTest]
         public void GetConnectionUsingSettingsFromConnectionString()
         {
             var settings = new SettingsHolder();
