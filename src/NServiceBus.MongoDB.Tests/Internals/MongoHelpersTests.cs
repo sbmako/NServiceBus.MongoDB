@@ -31,7 +31,6 @@ namespace NServiceBus.MongoDB.Tests.Internals
     using CategoryTraits.Xunit2;
 
     using FluentAssertions;
-    using FluentAssertions.Extensions;
 
     using NServiceBus.MongoDB.Internals;
     using NServiceBus.Settings;

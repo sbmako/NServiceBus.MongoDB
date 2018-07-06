@@ -50,7 +50,7 @@ namespace NServiceBus.MongoDB.DataBus
         /// </param>
         public MongoGridFSDataBus(MongoDatabaseFactory mongoFactory)
         {
-            Contract.Requires<ArgumentNullException>(mongoFactory != null, "mongoFactory != null");
+            Contract.Requires(mongoFactory != null, "mongoFactory != null");
             this.gridFsBucket = new GridFSBucket(mongoFactory.GetDatabase());
         }
 

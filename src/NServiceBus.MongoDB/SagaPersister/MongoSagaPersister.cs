@@ -55,7 +55,7 @@ namespace NServiceBus.MongoDB.SagaPersister
         /// </param>
         public MongoSagaPersister(MongoDatabaseFactory mongoFactory)
         {
-            Contract.Requires<ArgumentNullException>(mongoFactory != null, "mongoFactory != null");
+            Contract.Requires(mongoFactory != null, "mongoFactory != null");
             this.mongoDatabase = mongoFactory.GetDatabase();
         }
 

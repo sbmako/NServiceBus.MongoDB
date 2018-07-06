@@ -55,7 +55,7 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
         /// </param>
         public MongoSubscriptionPersister(MongoDatabaseFactory mongoFactory)
         {
-            Contract.Requires<ArgumentNullException>(mongoFactory != null);
+            Contract.Requires(mongoFactory != null);
 
             this.collection = mongoFactory.GetDatabase().GetCollection<Subscription>(SubscriptionName).AssumedNotNull();
         }

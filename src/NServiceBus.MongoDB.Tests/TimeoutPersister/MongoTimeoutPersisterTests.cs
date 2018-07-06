@@ -129,7 +129,7 @@ namespace NServiceBus.MongoDB.Tests.TimeoutPersister
             var result = sut.GetNextChunk(startSlice).Result;
 
             result.DueTimeouts.Should().HaveCount(0);
-            result.NextTimeToQuery.Should().Be(timeoutData2.Time);
+            result.NextTimeToQuery.Should().Be(timeoutData1.Time);
         }
 
         [Theory, IntegrationTest]

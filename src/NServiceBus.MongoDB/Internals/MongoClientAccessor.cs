@@ -46,8 +46,8 @@ namespace NServiceBus.MongoDB.Internals
         /// </param>
         public MongoClientAccessor(MongoClient mongoClient, string databaseName)
         {
-            Contract.Requires<ArgumentNullException>(mongoClient != null, "mongoClient != null");
-            Contract.Requires<ArgumentNullException>(databaseName != null, "databaseName != null");
+            Contract.Requires(mongoClient != null, "mongoClient != null");
+            Contract.Requires(databaseName != null, "databaseName != null");
 
             this.MongoClient = mongoClient;
             this.DatabaseName = databaseName;

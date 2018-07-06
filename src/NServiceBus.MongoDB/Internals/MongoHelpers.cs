@@ -30,6 +30,8 @@ namespace NServiceBus.MongoDB.Internals
     using NServiceBus.Logging;
     using NServiceBus.Settings;
 
+    using System.Linq;
+
     internal static class MongoHelpers
     {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(MongoHelpers));
