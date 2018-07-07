@@ -27,8 +27,6 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
 {
     using System;
 
-    using CategoryTraits.Xunit2;
-
     using FluentAssertions;
 
     using global::MongoDB.Driver;
@@ -45,7 +43,7 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
 
     public class MongoSagaPersisterTests
     {
-        [Theory, IntegrationTest]
+        [Theory]
         [AutoDatabase]
         public void BasicMongoSagaPersisterConstruction(MongoDatabaseFactory factory)
         {
@@ -53,7 +51,7 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
             sut.Should().NotBeNull();
         }
 
-        [Theory, IntegrationTest]
+        [Theory]
         [AutoDatabase]
         public void SavingSagaWithUniqueProperty(
             MongoSagaPersister sut,
@@ -72,7 +70,7 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
             entity.SomeValue.Should().Be(sagaData.SomeValue);
         }
 
-        [Theory, IntegrationTest]
+        [Theory]
         [AutoDatabase]
         public void InterleavedSavingSagaShouldThrowException(
             MongoSagaPersister sut,
@@ -86,7 +84,7 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
                 .Should().Throw<MongoWriteException>();
         }
 
-        [Theory, IntegrationTest]
+        [Theory]
         [AutoDatabase]
         public void SavingSagaWithSameUniquePropertyAsAnAlreadyCompletedSaga(
             MongoSagaPersister sut,
@@ -111,7 +109,7 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
             entity.SomeValue.Should().Be(sagaData2.SomeValue);
         }
 
-        [Theory, IntegrationTest]
+        [Theory]
         [AutoDatabase]
         public void SavingSagaWithoutDocumentVersionShouldThrowException(
             MongoSagaPersister sut,
@@ -124,7 +122,7 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
                 .Should().Throw<InvalidOperationException>();
         }
 
-        [Theory, IntegrationTest]
+        [Theory]
         [AutoDatabase]
         public void UpdatingSagaWithUniqueProperty(
             MongoSagaPersister sut,
@@ -144,7 +142,7 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
             entity.SomeValue.Should().Be(newValue);
         }
 
-        [Theory, IntegrationTest]
+        [Theory]
         [AutoDatabase]
         public void UpdatingNonExistantSagaWithUniqueProperty(
             MongoSagaPersister sut,
@@ -158,7 +156,7 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
             factory.RetrieveSagaData(sagaData).Should().BeNull();
         }
 
-        [Theory, IntegrationTest]
+        [Theory]
         [AutoDatabase]
         public void UpdateCollisionShouldFail(
             MongoSagaPersister sut,
@@ -179,7 +177,7 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
             sut.Invoking(s => s.Update(saga2, session, context).Wait()).Should().Throw<InvalidOperationException>();
         }
 
-        [Theory, IntegrationTest]
+        [Theory]
         [AutoDatabase]
         public void UpdatingSagaWithoutDocumentVersion(
             MongoSagaPersister sut,
@@ -190,7 +188,7 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
             sut.Invoking(s => s.Update(sagaData, session, context).Wait()).Should().Throw<InvalidOperationException>();
         }
 
-        [Theory, IntegrationTest]
+        [Theory]
         [AutoDatabase]
         public void UpdatingSagaWithNoChangesShouldNotUpdateVersion(
             MongoSagaPersister sut,
@@ -209,7 +207,7 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
             saga2.DocumentVersion.Should().Be(saga1.DocumentVersion);
         }
 
-        [Theory, IntegrationTest]
+        [Theory]
         [AutoDatabase]
         public void UpdatingSagaWithChangesShouldUpdateVersion(
                 MongoSagaPersister sut,
@@ -231,7 +229,7 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
             saga2.SomeValue.Should().Be(saga1.SomeValue);
         }
 
-        [Theory, IntegrationTest]
+        [Theory]
         [AutoDatabase]
         public void CompletingSagaShouldRemoveDocument(
             MongoSagaPersister sut,
@@ -248,7 +246,6 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
         }
 
         [Theory]
-        [IntegrationTest]
         [AutoDatabase]
         public void RetrievingSagaUsingId(
             MongoSagaPersister sut,
@@ -265,7 +262,6 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
         }
 
         [Theory]
-        [IntegrationTest]
         [AutoDatabase]
         public void RetrievingSagaUsingIdNotFound(
             MongoSagaPersister sut,
@@ -277,7 +273,6 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
         }
 
         [Theory]
-        [IntegrationTest]
         [AutoDatabase]
         public void RetrievingSagaUsingCorrelationProperty(
             MongoSagaPersister sut,
@@ -300,7 +295,6 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
         }
 
         [Theory]
-        [IntegrationTest]
         [AutoDatabase]
         public void RetrievingSagaUsingCorrelationPropertyNotFound(
             MongoSagaPersister sut,

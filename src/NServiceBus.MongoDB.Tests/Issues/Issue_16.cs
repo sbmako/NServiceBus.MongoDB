@@ -27,8 +27,6 @@ namespace NServiceBus.MongoDB.Tests.Issues
 {
     using System;
 
-    using CategoryTraits.Xunit2;
-
     using NServiceBus.Extensibility;
     using NServiceBus.MongoDB.SagaPersister;
     using NServiceBus.MongoDB.Tests.TestingUtilities;
@@ -40,7 +38,6 @@ namespace NServiceBus.MongoDB.Tests.Issues
     public class Issue16
     {
         [Theory]
-        [IntegrationTest]
         [AutoDatabase]
         public void SaveSagaData(
             MongoSagaPersister sut,
@@ -53,7 +50,6 @@ namespace NServiceBus.MongoDB.Tests.Issues
         }
 
         [Theory]
-        [IntegrationTest]
         [AutoDatabase]
         public void UpdateSagaData(
             MongoSagaPersister sut,

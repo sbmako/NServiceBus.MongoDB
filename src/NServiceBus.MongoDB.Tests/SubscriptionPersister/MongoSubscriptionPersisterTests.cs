@@ -27,12 +27,9 @@ namespace NServiceBus.MongoDB.Tests.SubscriptionPersister
     using System.Collections.Generic;
     using System.Linq;
 
-    using CategoryTraits.Xunit2;
-
     using FluentAssertions;
 
     using NServiceBus.Extensibility;
-    using NServiceBus.MongoDB.Internals;
     using NServiceBus.MongoDB.SubscriptionPersister;
     using NServiceBus.MongoDB.Tests.TestingUtilities;
     using NServiceBus.Unicast.Subscriptions;
@@ -47,7 +44,7 @@ namespace NServiceBus.MongoDB.Tests.SubscriptionPersister
             SubscriptionClassMaps.ConfigureClassMaps();
         }
 
-        [Theory, IntegrationTest]
+        [Theory]
         [AutoDatabase]
         public void SingleSubscriptionShouldOnlyCreateOneSubscription(
             MongoSubscriptionPersister storage,
@@ -71,7 +68,7 @@ namespace NServiceBus.MongoDB.Tests.SubscriptionPersister
             firstSubscriber.Should().BeEquivalentTo(subscriber);
         }
 
-        [Theory, IntegrationTest]
+        [Theory]
         [AutoDatabase]
         public void SameClientSubscribesTwiceShouldOnlyCreateOneSubscribtion(
             MongoSubscriptionPersister storage,
@@ -96,7 +93,7 @@ namespace NServiceBus.MongoDB.Tests.SubscriptionPersister
             firstSubscriber.Should().BeEquivalentTo(subscriber);
         }
 
-        [Theory, IntegrationTest]
+        [Theory]
         [AutoDatabase]
         public void SubscribeTwoMessageTypesShouldCreateTwoDifferentSubscriptions(
             MongoSubscriptionPersister storage,
@@ -127,7 +124,7 @@ namespace NServiceBus.MongoDB.Tests.SubscriptionPersister
             subscription.Subscribers.Should().HaveCount(1);
         }
 
-        [Theory, IntegrationTest]
+        [Theory]
         [AutoDatabase]
         public void SubscribeTwoClientsOneMessageTypeShouldCreateOneSubscriptionWithMultipleAddresses(
             MongoSubscriptionPersister storage,
@@ -150,7 +147,7 @@ namespace NServiceBus.MongoDB.Tests.SubscriptionPersister
             subscribers.Should().ContainSingle(a => subscriber2.TransportAddress == a.TransportAddress);
         }
 
-        [Theory, IntegrationTest]
+        [Theory]
         [AutoDatabase]
         public void UnsubscribeWhenThereIsNoSubscriptionShouldNotCreateSubscription(
             MongoSubscriptionPersister storage,
@@ -168,7 +165,7 @@ namespace NServiceBus.MongoDB.Tests.SubscriptionPersister
             subscriptions.Should().BeEmpty();
         }
 
-        [Theory, IntegrationTest]
+        [Theory]
         [AutoDatabase]
         public void UnsubscribeFromAllMessages(
             MongoSubscriptionPersister storage,
@@ -194,7 +191,7 @@ namespace NServiceBus.MongoDB.Tests.SubscriptionPersister
             storage.GetSubscriptions(messageTypes).Result.ToList().ForEach(s => s.Subscribers.Should().HaveCount(0));
         }
 
-        [Theory, IntegrationTest]
+        [Theory]
         [AutoDatabase]
         public void UnsubscribeWhenClientSubscriptionIsTheOnlyOneShouldRemoveOnlyClient(
             MongoSubscriptionPersister storage,
@@ -219,7 +216,7 @@ namespace NServiceBus.MongoDB.Tests.SubscriptionPersister
                 .HaveCount(0);
         }
 
-        [Theory, IntegrationTest]
+        [Theory]
         [AutoDatabase]
         public void UnsubscribeWhenThereAreSubscriptionsButNotClientsShouldNotChangeAnything(
             MongoSubscriptionPersister storage,
@@ -246,7 +243,7 @@ namespace NServiceBus.MongoDB.Tests.SubscriptionPersister
             clients.Last().Should().BeEquivalentTo(otherSubscriber2);
         }
 
-        [Theory, IntegrationTest]
+        [Theory]
         [AutoDatabase]
         public void UnsubscribeWhenThereAreSubscriptionsShouldRemoveClientsAddress(
             MongoSubscriptionPersister storage,

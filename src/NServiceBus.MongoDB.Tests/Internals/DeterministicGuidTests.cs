@@ -26,20 +26,14 @@
 namespace NServiceBus.MongoDB.Tests.Internals
 {
     using System.Collections.Generic;
-
-    using CategoryTraits.Xunit2;
-
-    using FluentAssertions;
-
-    using NServiceBus.MongoDB.Internals;
-
     using AutoFixture.Xunit2;
-
+    using FluentAssertions;
+    using NServiceBus.MongoDB.Internals;
     using Xunit;
 
     public class DeterministicGuidTests
     {
-        [Theory, UnitTest]
+        [Theory]
         [AutoData]
         public void SameProducesSameGuid(KeyValuePair<string, int> testObject)
         {
@@ -49,7 +43,7 @@ namespace NServiceBus.MongoDB.Tests.Internals
             first.Should().Be(second);
         }
 
-        [Theory, UnitTest]
+        [Theory]
         [AutoData]
         public void DifferntProduceDifferentGuids(KeyValuePair<string, int> firstObject, KeyValuePair<string, int> secondObject)
         {

@@ -31,7 +31,9 @@ namespace NServiceBus.MongoDB.Tests.TestingUtilities
     public class AutoConfigureData : AutoDataAttribute
     {
         public AutoConfigureData()
+#pragma warning disable CS0618 // Type or member is obsolete
             : base(new Fixture().Customize(new ConfigureCustomization()))
+#pragma warning restore CS0618 // Type or member is obsolete
         {
         }
     }

@@ -27,9 +27,6 @@ namespace NServiceBus.MongoDB.Tests.TimeoutPersister
 {
     using System;
     using System.Linq;
-    using System.Threading.Tasks;
-
-    using CategoryTraits.Xunit2;
 
     using FluentAssertions;
 
@@ -42,7 +39,7 @@ namespace NServiceBus.MongoDB.Tests.TimeoutPersister
 
     public class MongoTimeoutPersisterTests
     {
-        [Theory, IntegrationTest]
+        [Theory]
         [AutoDatabase]
         public void BasicMongoTimeoutPersisterConstruction(MongoDatabaseFactory factory)
         {
@@ -50,7 +47,7 @@ namespace NServiceBus.MongoDB.Tests.TimeoutPersister
             sut.Should().NotBeNull();
         }
 
-        [Theory, IntegrationTest]
+        [Theory]
         [AutoDatabase]
         public void GetNextChunkReturnsEmptyListWhenCollectionDoesNotExist(
             MongoTimeoutPersister sut,
@@ -66,7 +63,7 @@ namespace NServiceBus.MongoDB.Tests.TimeoutPersister
                 .BeOnOrAfter(startSlice.AddMinutes(MongoPersistenceConstants.DefaultNextTimeoutIncrementMinutes));
         }
 
-        [Theory, IntegrationTest]
+        [Theory]
         [AutoDatabase]
         public void GetNextChunkReturnsOneTimeoutWhenCollectionHasOneTimeout(
             MongoTimeoutPersister sut,
@@ -86,7 +83,7 @@ namespace NServiceBus.MongoDB.Tests.TimeoutPersister
             result.NextTimeToQuery.Should().BeOnOrAfter(timeoutData.Time);
         }
 
-        [Theory, IntegrationTest]
+        [Theory]
         [AutoDatabase]
         public void GetNextChunkReturnsOneTimeoutWhenCollectionHasOneTimeoutBetweenStartSliceAndUtcNowAndOneAfterUtcNow(
             MongoTimeoutPersister sut,
@@ -109,7 +106,7 @@ namespace NServiceBus.MongoDB.Tests.TimeoutPersister
             result.NextTimeToQuery.Should().BeOnOrBefore(timeoutData2.Time);
         }
 
-        [Theory, IntegrationTest]
+        [Theory]
         [AutoDatabase]
         public void GetNextChunkReturnsEmptyListWhenCollectionHasTwoTimeoutsAfterUtcNow(
             MongoTimeoutPersister sut,
@@ -132,7 +129,7 @@ namespace NServiceBus.MongoDB.Tests.TimeoutPersister
             result.NextTimeToQuery.Should().Be(timeoutData1.Time);
         }
 
-        [Theory, IntegrationTest]
+        [Theory]
         [AutoDatabase]
         public void AddOneTimeout(
             MongoTimeoutPersister sut,
@@ -149,7 +146,7 @@ namespace NServiceBus.MongoDB.Tests.TimeoutPersister
             result.Should().HaveCount(1);
         }
 
-        [Theory, IntegrationTest]
+        [Theory]
         [AutoDatabase]
         public void AddTwoDifferentTimeouts(
             MongoTimeoutPersister sut,
@@ -168,7 +165,7 @@ namespace NServiceBus.MongoDB.Tests.TimeoutPersister
             result.Should().HaveCount(2);
         }
 
-        [Theory, IntegrationTest]
+        [Theory]
         [AutoDatabase]
         public void PeekExistingTimeout(
             MongoTimeoutPersister sut,
@@ -186,7 +183,7 @@ namespace NServiceBus.MongoDB.Tests.TimeoutPersister
             peeked.SagaId.Should().Be(timeout1.SagaId);
         }
 
-        [Theory, IntegrationTest]
+        [Theory]
         [AutoDatabase]
         public void TryRemoveShouldSucceedAndReturnData(
             MongoTimeoutPersister sut,
@@ -206,7 +203,7 @@ namespace NServiceBus.MongoDB.Tests.TimeoutPersister
             factory.RetrieveAllTimeouts().Should().HaveCount(0);
         }
 
-        [Theory, IntegrationTest]
+        [Theory]
         [AutoDatabase]
         public void TryRemoveEmptyTimeoutCollectionShouldReturnFalseAndNullData(
             MongoTimeoutPersister sut,
@@ -222,7 +219,7 @@ namespace NServiceBus.MongoDB.Tests.TimeoutPersister
             factory.RetrieveAllTimeouts().Should().HaveCount(0);
         }
 
-        [Theory, IntegrationTest]
+        [Theory]
         [AutoDatabase]
         public void TryRemoveShouldSucceedAndReturnDataForOneTimeoutAndLeaveTheOther(
             MongoTimeoutPersister sut,
@@ -247,7 +244,7 @@ namespace NServiceBus.MongoDB.Tests.TimeoutPersister
             remainingTimeout.First().Id.Should().Be(timeouts.Last().Id);
         }
 
-        [Theory, IntegrationTest]
+        [Theory]
         [AutoDatabase]
         public void RemoveTimeoutByIdRemovesTimeout(
             MongoTimeoutPersister sut,
@@ -264,7 +261,7 @@ namespace NServiceBus.MongoDB.Tests.TimeoutPersister
             factory.RetrieveAllTimeouts().Should().HaveCount(0);
         }
 
-        [Theory, IntegrationTest]
+        [Theory]
         [AutoDatabase]
         public void RemoveTimeoutByIdOnEmptyTimeoutCollection(
             MongoTimeoutPersister sut,
@@ -279,7 +276,7 @@ namespace NServiceBus.MongoDB.Tests.TimeoutPersister
             factory.RetrieveAllTimeouts().Should().HaveCount(0);
         }
 
-        [Theory, IntegrationTest]
+        [Theory]
         [AutoDatabase]
         public void RemoveTimeoutByIdOnNonExistantIdDoesNotRemoveOtherTimeout(
             MongoTimeoutPersister sut,
@@ -296,7 +293,7 @@ namespace NServiceBus.MongoDB.Tests.TimeoutPersister
             factory.RetrieveAllTimeouts().Should().HaveCount(1);
         }
 
-        [Theory, IntegrationTest]
+        [Theory]
         [AutoDatabase]
         public void RemoveTimeoutByIdRemovesCorrectTimeoutAndDoesNotRemoveOtherTimeout(
             MongoTimeoutPersister sut,

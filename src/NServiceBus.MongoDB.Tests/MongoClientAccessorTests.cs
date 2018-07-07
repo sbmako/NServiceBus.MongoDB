@@ -25,20 +25,15 @@
 
 namespace NServiceBus.MongoDB.Tests
 {
-    using CategoryTraits.Xunit2;
-
+    using AutoFixture.Xunit2;
     using FluentAssertions;
     using global::MongoDB.Driver;
-
     using NServiceBus.MongoDB.Internals;
-
-    using AutoFixture.Xunit2;
-
     using Xunit;
 
     public class MongoClientAccessorTests
     {
-        [Theory, UnitTest]
+        [Theory]
         [AutoData]
         public void MongoClientAccessorConstror(MongoClient mongoClient, string databaseName)
         {

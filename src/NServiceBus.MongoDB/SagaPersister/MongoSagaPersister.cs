@@ -146,9 +146,11 @@ namespace NServiceBus.MongoDB.SagaPersister
             var collection = this.mongoDatabase.GetCollection<BsonDocument>(saga.GetType().Name);
 
             await
+#pragma warning disable CS0618 // Type or member is obsolete
                 collection.Indexes.CreateOneAsync(
                     new BsonDocumentIndexKeysDefinition<BsonDocument>(new BsonDocument(correlationProperty.Name, 1)),
                     new CreateIndexOptions() { Unique = true }).ConfigureAwait(false);
+#pragma warning restore CS0618 // Type or member is obsolete
         }
     }
 }

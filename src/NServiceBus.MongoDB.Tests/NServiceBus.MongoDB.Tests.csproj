@@ -15,17 +15,14 @@
     <PackageReference Include="AutoFixture" Version="4.4.0" />
     <PackageReference Include="AutoFixture.Xunit2" Version="4.4.0" />
     <PackageReference Include="AutoFixture.AutoMoq" Version="4.4.0" />
-    <PackageReference Include="CategoryTraits.Xunit2" Version="2.0.13" />
     <PackageReference Include="xunit.abstractions" Version="2.0.1" />
     <PackageReference Include="xunit.extensibility.core" Version="2.3.1" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.5.0" />
+    <PackageReference Include="System.ComponentModel.TypeConverter" Version="4.3.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\NServiceBus.MongoDB\NServiceBus.MongoDB.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Remove="ConfigureMongoPersistenceTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Update="app.config">

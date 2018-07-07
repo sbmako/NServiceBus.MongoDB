@@ -25,11 +25,6 @@
 
 namespace NServiceBus.MongoDB.Tests.Internals
 {
-    using System;
-    using System.Configuration;
-
-    using CategoryTraits.Xunit2;
-
     using FluentAssertions;
 
     using NServiceBus.MongoDB.Internals;
@@ -39,7 +34,7 @@ namespace NServiceBus.MongoDB.Tests.Internals
 
     public class MongoHelpersTests
     {
-        [Fact, UnitTest]
+        [Fact]
         public void GetConnectionUsingSettingsFromConnectionString()
         {
             var settings = new SettingsHolder();

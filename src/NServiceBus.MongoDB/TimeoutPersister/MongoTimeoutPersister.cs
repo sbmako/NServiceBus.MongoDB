@@ -185,6 +185,7 @@ namespace NServiceBus.MongoDB.TimeoutPersister
         private async Task EnsureTimeoutIndexes()
         {
             await
+#pragma warning disable CS0618 // Type or member is obsolete
                 this.collection.Indexes.CreateOneAsync(
                     Builders<TimeoutEntity>.IndexKeys.Ascending(t => t.SagaId),
                     new CreateIndexOptions
@@ -192,11 +193,13 @@ namespace NServiceBus.MongoDB.TimeoutPersister
                             Name = MongoPersistenceConstants.SagaIdTimeoutIndexName,
                             Background = true
                         }).ConfigureAwait(false);
+#pragma warning restore CS0618 // Type or member is obsolete
 
             var indexKeys =
                 Builders<TimeoutEntity>.IndexKeys.Ascending(t => t.Time).Ascending(t => t.OwningTimeoutManager);
 
             await
+#pragma warning disable CS0618 // Type or member is obsolete
                 this.collection.Indexes.CreateOneAsync(
                     indexKeys,
                     new CreateIndexOptions
@@ -204,6 +207,7 @@ namespace NServiceBus.MongoDB.TimeoutPersister
                             Name = MongoPersistenceConstants.TimeAndOwningTimeoutManagerIndexName,
                             Background = true
                         }).ConfigureAwait(false);
+#pragma warning restore CS0618 // Type or member is obsolete
         }
 
         [ContractInvariantMethod]

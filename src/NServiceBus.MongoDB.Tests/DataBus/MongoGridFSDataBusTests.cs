@@ -28,8 +28,6 @@ namespace NServiceBus.MongoDB.Tests.DataBus
     using System;
     using System.IO;
 
-    using CategoryTraits.Xunit2;
-
     using FluentAssertions;
 
     using global::MongoDB.Bson;
@@ -43,7 +41,7 @@ namespace NServiceBus.MongoDB.Tests.DataBus
 
     public class MongoGridFsDataBusTests
     {
-        [Theory, IntegrationTest]
+        [Theory]
         [AutoDatabase]
         public void PutTest(MongoDatabaseFactory factory, byte[] data)
         {
@@ -60,7 +58,7 @@ namespace NServiceBus.MongoDB.Tests.DataBus
             result.Should().BeEquivalentTo(data);
         }
 
-        [Theory, IntegrationTest]
+        [Theory]
         [AutoDatabase]
         public void GetTest(MongoDatabaseFactory factory, byte[] data)
         {

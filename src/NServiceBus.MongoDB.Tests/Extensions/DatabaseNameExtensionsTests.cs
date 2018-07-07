@@ -25,8 +25,6 @@
 
 namespace NServiceBus.MongoDB.Tests.Extensions
 {
-    using CategoryTraits.Xunit2;
-
     using FluentAssertions;
     using NServiceBus.MongoDB.Extensions;
     using NServiceBus.MongoDB.Tests.TestingUtilities;
@@ -36,7 +34,7 @@ namespace NServiceBus.MongoDB.Tests.Extensions
 
     public class DatabaseNameExtensionsTests
     {
-        [Fact, UnitTest]
+        [Fact]
         public void VerifyPeriodsAreReplacedWithUnderscores()
         {
             const string EndpointName = "test.endpoint.name";
@@ -47,7 +45,6 @@ namespace NServiceBus.MongoDB.Tests.Extensions
         }
 
         [Theory]
-        [UnitTest]
         [AutoConfigureData]
         public void VerifyGettingEndpointNameFromSettings(SettingsHolder settings)
         {

@@ -25,8 +25,6 @@
 
 namespace NServiceBus.MongoDB.Tests
 {
-    using CategoryTraits.Xunit2;
-
     using FluentAssertions;
 
     using NServiceBus.Configuration.AdvancedExtensibility;
@@ -37,7 +35,7 @@ namespace NServiceBus.MongoDB.Tests
 
     public class MongoDBSettingsExtensionsTests
     {
-        [Theory, UnitTest]
+        [Theory]
         [AutoConfigureData]
         public void SetDatabaseName(PersistenceExtensions<MongoDBPersistence> config)
         {
@@ -51,7 +49,7 @@ namespace NServiceBus.MongoDB.Tests
             config.GetSettings().HasSetting(MongoPersistenceConstants.ConnectionStringKey).Should().BeFalse();
         }
 
-        [Theory, UnitTest]
+        [Theory]
         [AutoConfigureData]
         public void SetConnectionString(PersistenceExtensions<MongoDBPersistence> config)
         {
@@ -64,7 +62,7 @@ namespace NServiceBus.MongoDB.Tests
             config.GetSettings().HasSetting(MongoPersistenceConstants.DatabaseNameKey).Should().BeFalse();
         }
 
-        [Theory, UnitTest]
+        [Theory]
         [AutoConfigureData]
         public void SetConnectionStringAndDatabaseName(PersistenceExtensions<MongoDBPersistence> config)
         {
