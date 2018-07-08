@@ -4,32 +4,46 @@
 
 BASEDIR = $(CURDIR)
 SOLUTION = $(BASEDIR)/NServiceBus.MongoDB.sln
-TESTS = $(CURDIR)/src/NServiceBus.MongoDB.Tests
+PROJECT = $(BASEDIR)/src/NServiceBus.MongoDB
+TESTS = $(BASEDIR)/src/NServiceBus.MongoDB.Tests
 
 BUILD_OPTS = --no-restore
 TEST_OPTS = --no-restore
 RESTORE_OPTS =
+PUBLISH_OPTS = -c Release
+PACK_OPTS = -c Release
+
+CLEAN_DIRS = \
+	src/*/bin \
+	src/*/obj 
 
 default: restore build test
 
-all: default
+all: restore build test publish pack
 
 build:
 	$(printTarget)
-	dotnet build $(BUILD_OPTS) $(SOLUTION)
+	@dotnet build $(BUILD_OPTS) $(SOLUTION)
 
 test: build
 	$(printTarget)
-	dotnet test $(TEST_OPTS) $(TESTS)
+	@dotnet test $(TEST_OPTS) $(TESTS)
+
+publish:
+	$(printTarget)
+	@dotnet publish $(PUBLISH_OPTS)
+
+pack:
+	$(printTarget)
+	@dotnet pack $(PACK_OPTS) $(PROJECT)
 
 restore:
 	$(printTarget)
-	dotnet restore $(RESTORE_OPTS) $(SOLUTION)
+	@dotnet restore $(RESTORE_OPTS) $(SOLUTION)
 
 clean:
 	$(printTarget)
-	dotnet clean $(SOLUTION)
-	rm -rf src/*/bin src/*/obj
+	rm -rf $(CLEAN_DIRS) 
 
 # Helper function to pretty print targets as they execute
 TARGET_COLOR := \033[0;32m
