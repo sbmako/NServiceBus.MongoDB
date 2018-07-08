@@ -29,6 +29,7 @@ restore:
 clean:
 	$(printTarget)
 	dotnet clean $(SOLUTION)
+	rm -rf src/*/bin src/*/obj
 
 # Helper function to pretty print targets as they execute
 TARGET_COLOR := \033[0;32m
