@@ -1,3 +1,4 @@
+mode: ContinuousDelivery
 branches: {}
 assembly-informational-format: '{semver}'
 ignore:
