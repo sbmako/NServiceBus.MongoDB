@@ -7,13 +7,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NServiceBus.MongoDB", "src\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NServiceBus.MongoDB.Tests", "src\NServiceBus.MongoDB.Tests\NServiceBus.MongoDB.Tests.csproj", "{60B8C7F2-C29F-45E9-A5D7-83C8638DF94C}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Support", "Support", "{E4F9B0E0-3EC5-4F0A-A42A-8094FB053532}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sln", "sln", "{E4F9B0E0-3EC5-4F0A-A42A-8094FB053532}"
 	ProjectSection(SolutionItems) = preProject
 		appveyor.yml = appveyor.yml
 		build.cmd = build.cmd
 		default.ps1 = default.ps1
 		GitVersion.yml = GitVersion.yml
 		README.md = README.md
+		Makefile = Makefile
 	EndProjectSection
 EndProject
 Global
