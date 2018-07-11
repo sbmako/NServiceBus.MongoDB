@@ -43,9 +43,9 @@ namespace NServiceBus.MongoDB.TimeoutPersister
     {
         internal static readonly string TimeoutEntityName = "TimeoutData";
 
-        private readonly IMongoCollection<TimeoutEntity> collection; 
+        readonly IMongoCollection<TimeoutEntity> collection; 
 
-        private readonly string endpointName;
+        readonly string endpointName;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MongoTimeoutPersister"/> class.
@@ -141,7 +141,7 @@ namespace NServiceBus.MongoDB.TimeoutPersister
         /// <returns>The task</returns>
         public Task Add(TimeoutData timeout, ContextBag context)
         {
-            var data = new TimeoutEntity()
+            var data = new TimeoutEntity
             {
                 Id = Guid.NewGuid().ToString(),
                 Destination = timeout.Destination,
@@ -182,7 +182,7 @@ namespace NServiceBus.MongoDB.TimeoutPersister
             return this.collection.DeleteManyAsync(t => t.SagaId == sagaId);
         }
 
-        private async Task EnsureTimeoutIndexes()
+        async Task EnsureTimeoutIndexes()
         {
             await
 #pragma warning disable CS0618 // Type or member is obsolete
@@ -211,7 +211,7 @@ namespace NServiceBus.MongoDB.TimeoutPersister
         }
 
         [ContractInvariantMethod]
-        private void ObjectInvariants()
+        void ObjectInvariants()
         {
             Contract.Invariant(this.collection != null);
             Contract.Invariant(this.endpointName != null);

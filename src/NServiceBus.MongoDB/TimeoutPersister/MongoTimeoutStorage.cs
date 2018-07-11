@@ -56,7 +56,7 @@ namespace NServiceBus.MongoDB.TimeoutPersister
                 builder =>
                 new MongoTimeoutPersister(
                     builder.Build<MongoDatabaseFactory>(),
-                    context.Settings.EndpointName().ToString()),
+                    context.Settings.EndpointName()),
                 DependencyLifecycle.SingleInstance);
         }
     }

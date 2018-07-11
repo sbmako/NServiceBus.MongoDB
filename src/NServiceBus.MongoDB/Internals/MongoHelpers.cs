@@ -31,9 +31,9 @@ namespace NServiceBus.MongoDB.Internals
     using NServiceBus.Logging;
     using NServiceBus.Settings;
 
-    internal static class MongoHelpers
+    static class MongoHelpers
     {
-        private static readonly ILog Logger = LogManager.GetLogger(typeof(MongoHelpers));
+        static readonly ILog Logger = LogManager.GetLogger(typeof(MongoHelpers));
 
         public static string GetConnectionString(ReadOnlySettings settings)
         {

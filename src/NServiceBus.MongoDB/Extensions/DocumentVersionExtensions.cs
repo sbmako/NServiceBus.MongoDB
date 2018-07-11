@@ -32,7 +32,7 @@ namespace NServiceBus.MongoDB.Extensions
 
     using NServiceBus.MongoDB.Internals;
 
-    internal static class DocumentVersionExtensions
+    static class DocumentVersionExtensions
     {
         public static FilterDefinition<BsonDocument> MongoUpdateQuery<T>(this T sagaData, int oldDocumentVersion)
             where T : IContainSagaData

@@ -10,8 +10,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sln", "sln", "{E4F9B0E0-3EC5-4F0A-A42A-8094FB053532}"
 	ProjectSection(SolutionItems) = preProject
 		appveyor.yml = appveyor.yml
-		build.cmd = build.cmd
-		default.ps1 = default.ps1
 		GitVersion.yml = GitVersion.yml
 		README.md = README.md
 		Makefile = Makefile

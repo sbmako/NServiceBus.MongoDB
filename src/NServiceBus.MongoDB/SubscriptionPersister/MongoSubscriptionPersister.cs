@@ -42,9 +42,9 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
     /// </summary>
     public sealed class MongoSubscriptionPersister : ISubscriptionStorage
     {
-        private static readonly string SubscriptionName = typeof(Subscription).Name;
+        static readonly string SubscriptionName = typeof(Subscription).Name;
 
-        private readonly IMongoCollection<Subscription> collection;
+        readonly IMongoCollection<Subscription> collection;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MongoSubscriptionPersister"/> class. 
@@ -90,7 +90,7 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
             return this.collection.UpdateOneAsync(
                 s => s.Id == subscriptionKey,
                 update,
-                new UpdateOptions() { IsUpsert = true });
+                new UpdateOptions { IsUpsert = true });
         }
 
         /// <summary>
@@ -117,7 +117,7 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
             return this.collection.UpdateOneAsync(
                 s => s.Id == subscriptionKey && s.Subscribers.Contains(subscriber),
                 update,
-                new UpdateOptions() { IsUpsert = false });
+                new UpdateOptions { IsUpsert = false });
         }
 
         /// <summary>
@@ -161,7 +161,7 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
         }
 
         [ContractInvariantMethod]
-        private void ObjectInvariants()
+        void ObjectInvariants()
         {
             Contract.Invariant(this.collection != null);
         }

@@ -63,7 +63,7 @@ namespace NServiceBus.MongoDB.Internals
         public string DatabaseName { get; private set; }
 
         [ContractInvariantMethod]
-        private void ObjectInvariants()
+        void ObjectInvariants()
         {
             Contract.Invariant(this.MongoClient != null);
             Contract.Invariant(this.DatabaseName != null);

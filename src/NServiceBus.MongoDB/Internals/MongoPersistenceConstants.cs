@@ -27,7 +27,7 @@ namespace NServiceBus.MongoDB.Internals
 {
     using System.Diagnostics.Contracts;
 
-    internal static class MongoPersistenceConstants
+    static class MongoPersistenceConstants
     {
         public const int DefaultNextTimeoutIncrementMinutes = 10;
 

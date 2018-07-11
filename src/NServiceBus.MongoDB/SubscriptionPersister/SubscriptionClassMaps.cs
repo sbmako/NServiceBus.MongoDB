@@ -30,7 +30,7 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
     using NServiceBus.Unicast.Subscriptions;
     using NServiceBus.Unicast.Subscriptions.MessageDrivenSubscriptions;
 
-    internal static class SubscriptionClassMaps
+    static class SubscriptionClassMaps
     {
         internal static void ConfigureClassMaps()
         {
@@ -40,7 +40,7 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
             }
         }
 
-        private static void ConfigureMessageTypeClassMap()
+        static void ConfigureMessageTypeClassMap()
         {
             BsonClassMap.RegisterClassMap<MessageType>(
                 cm =>

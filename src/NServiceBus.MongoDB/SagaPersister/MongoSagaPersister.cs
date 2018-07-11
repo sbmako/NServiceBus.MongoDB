@@ -43,9 +43,7 @@ namespace NServiceBus.MongoDB.SagaPersister
     /// </summary>
     public class MongoSagaPersister : ISagaPersister
     {
-        ////private static ConcurrentDictionary<Type, string> indexes = new ConcurrentDictionary<Type, string>();
-
-        private readonly IMongoDatabase mongoDatabase;
+        readonly IMongoDatabase mongoDatabase;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MongoSagaPersister"/> class.
@@ -138,7 +136,7 @@ namespace NServiceBus.MongoDB.SagaPersister
             return collection.DeleteOneAsync(query);
         }
 
-        private async Task EnsureUniqueIndex(IContainSagaData saga, SagaCorrelationProperty correlationProperty)
+        async Task EnsureUniqueIndex(IContainSagaData saga, SagaCorrelationProperty correlationProperty)
         {
             Contract.Requires(saga != null);
             Contract.Requires(correlationProperty != null);
@@ -149,7 +147,7 @@ namespace NServiceBus.MongoDB.SagaPersister
 #pragma warning disable CS0618 // Type or member is obsolete
                 collection.Indexes.CreateOneAsync(
                     new BsonDocumentIndexKeysDefinition<BsonDocument>(new BsonDocument(correlationProperty.Name, 1)),
-                    new CreateIndexOptions() { Unique = true }).ConfigureAwait(false);
+                    new CreateIndexOptions { Unique = true }).ConfigureAwait(false);
 #pragma warning restore CS0618 // Type or member is obsolete
         }
     }

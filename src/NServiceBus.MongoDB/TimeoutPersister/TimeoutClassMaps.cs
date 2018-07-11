@@ -33,7 +33,7 @@ namespace NServiceBus.MongoDB.TimeoutPersister
     using global::MongoDB.Bson.Serialization.Options;
     using global::MongoDB.Bson.Serialization.Serializers;
 
-    internal static class TimeoutClassMaps
+    static class TimeoutClassMaps
     {
         internal static void ConfigureClassMaps()
         {

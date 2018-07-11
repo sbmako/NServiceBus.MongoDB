@@ -35,7 +35,7 @@ namespace NServiceBus.MongoDB.Internals
     /// </summary>
     public class MongoDatabaseFactory
     {
-        private readonly MongoClientAccessor mongoClientAccessor;
+        readonly MongoClientAccessor mongoClientAccessor;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MongoDatabaseFactory"/> class.
@@ -53,7 +53,7 @@ namespace NServiceBus.MongoDB.Internals
         /// The get database.
         /// </summary>
         /// <returns>
-        /// The <see cref="MongoDatabase"/>.
+        /// The <see cref="IMongoDatabase"/>.
         /// </returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate", Justification = "Ok here")]
         public IMongoDatabase GetDatabase()
@@ -65,7 +65,7 @@ namespace NServiceBus.MongoDB.Internals
         }
 
         [ContractInvariantMethod]
-        private void ObjectInvariants()
+        void ObjectInvariants()
         {
             Contract.Invariant(this.mongoClientAccessor != null);
         }

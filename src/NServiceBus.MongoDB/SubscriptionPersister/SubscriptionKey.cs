@@ -27,7 +27,7 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
 {
     using NServiceBus.Unicast.Subscriptions;
 
-    internal sealed class SubscriptionKey
+    sealed class SubscriptionKey
     {
         public SubscriptionKey()
         {

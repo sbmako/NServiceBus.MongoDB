@@ -40,7 +40,7 @@ namespace NServiceBus.MongoDB.DataBus
     /// </summary>
     public class MongoGridFSDataBus : IDataBus
     {
-        private readonly GridFSBucket gridFsBucket;
+        readonly GridFSBucket gridFsBucket;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MongoGridFSDataBus"/> class.
@@ -100,7 +100,7 @@ namespace NServiceBus.MongoDB.DataBus
         }
 
         [ContractInvariantMethod]
-        private void ObjectInvariants()
+        void ObjectInvariants()
         {
             Contract.Invariant(this.gridFsBucket != null);
         }

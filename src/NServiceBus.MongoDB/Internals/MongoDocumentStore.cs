@@ -70,7 +70,7 @@ namespace NServiceBus.MongoDB.Internals
             context.Container.ConfigureComponent<MongoDatabaseFactory>(DependencyLifecycle.SingleInstance);
         }
 
-        private static MongoClientAccessor InternalMongoClientAccessorFactory(
+        static MongoClientAccessor InternalMongoClientAccessorFactory(
             string connectionString, 
             string databaseName)
         {

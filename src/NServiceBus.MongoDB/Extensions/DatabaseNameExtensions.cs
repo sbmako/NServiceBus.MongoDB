@@ -29,7 +29,7 @@ namespace NServiceBus.MongoDB.Extensions
     using NServiceBus.MongoDB.Internals;
     using NServiceBus.Settings;
 
-    internal static class DatabaseNameExtensions
+    static class DatabaseNameExtensions
     {
         /// <summary>
         /// The endpoint name as database name.

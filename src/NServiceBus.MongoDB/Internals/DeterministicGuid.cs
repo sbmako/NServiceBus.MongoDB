@@ -33,7 +33,7 @@ namespace NServiceBus.MongoDB.Internals
     /// <summary>
     /// This was borrowed from NSB source
     /// </summary>
-    internal static class DeterministicGuid
+    static class DeterministicGuid
     {
         public static Guid Create(params object[] data)
         {

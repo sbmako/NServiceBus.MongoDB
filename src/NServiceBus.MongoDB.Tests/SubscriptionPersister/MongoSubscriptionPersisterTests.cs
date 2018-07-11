@@ -176,11 +176,11 @@ namespace NServiceBus.MongoDB.Tests.SubscriptionPersister
             string messageTypeString3)
         {
             var sut = storage as ISubscriptionStorage;
-            var messageTypes = new List<MessageType>()
+            var messageTypes = new List<MessageType>
                                    {
                                        new MessageType(messageTypeString1, "1.0.0.0"),
                                        new MessageType(messageTypeString2, "1.0.0.0"),
-                                       new MessageType(messageTypeString3, "1.0.0.0"),
+                                       new MessageType(messageTypeString3, "1.0.0.0")
                                    };
 
             messageTypes.ForEach(mt => sut.Subscribe(subscriber, mt, context).Wait());
@@ -204,14 +204,14 @@ namespace NServiceBus.MongoDB.Tests.SubscriptionPersister
 
             sut.Subscribe(subscriber, messageType, context).Wait();
             storage.GetSubscription(messageType).Result.Should().HaveCount(1);
-            sut.GetSubscriberAddressesForMessage(new List<MessageType>() { messageType }, context)
+            sut.GetSubscriberAddressesForMessage(new List<MessageType> { messageType }, context)
                 .Result.Should()
                 .HaveCount(1);
 
             sut.Unsubscribe(subscriber, messageType, context).Wait();
             storage.GetSubscription(messageType).Result.Should().HaveCount(1);
 
-            sut.GetSubscriberAddressesForMessage(new List<MessageType>() { messageType }, context)
+            sut.GetSubscriberAddressesForMessage(new List<MessageType> { messageType }, context)
                 .Result.Should()
                 .HaveCount(0);
         }
@@ -231,13 +231,13 @@ namespace NServiceBus.MongoDB.Tests.SubscriptionPersister
 
             sut.Subscribe(otherSubscriber1, messageType, context).Wait();
             sut.Subscribe(otherSubscriber2, messageType, context).Wait();
-            sut.GetSubscriberAddressesForMessage(new List<MessageType>() { messageType }, context)
+            sut.GetSubscriberAddressesForMessage(new List<MessageType> { messageType }, context)
                 .Result.Should()
                 .HaveCount(2);
 
             sut.Unsubscribe(subscriber, messageType, context).Wait();
             var clients =
-                sut.GetSubscriberAddressesForMessage(new List<MessageType>() { messageType }, context).Result.ToList();
+                sut.GetSubscriberAddressesForMessage(new List<MessageType> { messageType }, context).Result.ToList();
             clients.Should().HaveCount(2);
             clients.First().Should().BeEquivalentTo(otherSubscriber1);
             clients.Last().Should().BeEquivalentTo(otherSubscriber2);
@@ -259,13 +259,13 @@ namespace NServiceBus.MongoDB.Tests.SubscriptionPersister
             sut.Subscribe(subscriber, messageType, context).Wait();
             sut.Subscribe(otherSubscriber1, messageType, context).Wait();
             sut.Subscribe(otherSubscriber2, messageType, context).Wait();
-            sut.GetSubscriberAddressesForMessage(new List<MessageType>() { messageType }, context)
+            sut.GetSubscriberAddressesForMessage(new List<MessageType> { messageType }, context)
                 .Result.Should()
                 .HaveCount(3);
 
             sut.Unsubscribe(subscriber, messageType, context).Wait();
             var clients =
-                sut.GetSubscriberAddressesForMessage(new List<MessageType>() { messageType }, context).Result.ToList();
+                sut.GetSubscriberAddressesForMessage(new List<MessageType> { messageType }, context).Result.ToList();
             clients.Should().HaveCount(2);
             clients.First().Should().BeEquivalentTo(otherSubscriber1);
             clients.Last().Should().BeEquivalentTo(otherSubscriber2);

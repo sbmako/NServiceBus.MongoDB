@@ -28,7 +28,7 @@ namespace NServiceBus.MongoDB.TimeoutPersister
     using System;
     using System.Collections.Generic;
 
-    internal class TimeoutEntity
+    class TimeoutEntity
     {
         /// <summary>
         /// Gets or sets the id.

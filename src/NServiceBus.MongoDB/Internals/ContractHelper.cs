@@ -30,27 +30,8 @@ namespace NServiceBus.MongoDB.Internals
     /// <summary>
     /// The contract helpers.
     /// </summary>
-    internal static class ContractHelper
+    static class ContractHelper
     {
-        /// <summary>
-        /// Helper class to assist with invariant warnings
-        /// </summary>
-        /// <param name="obj">
-        ///  The object to assume the invariants on
-        /// </param>
-        /// <typeparam name="T">
-        /// The type to assume invariants
-        /// </typeparam>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage(
-            "Microsoft.Usage",
-            "CA1801:ReviewUnusedParameters",
-            MessageId = "obj",
-            Justification = "Ok here.")]
-        [Pure]
-        public static void AssumeInvariant<T>(T obj)
-        {
-        }
-
         /// <summary>
         /// Helper class to assist with contracts
         /// </summary>
