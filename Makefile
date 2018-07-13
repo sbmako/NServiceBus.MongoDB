@@ -6,12 +6,13 @@ BASEDIR = $(CURDIR)
 SOLUTION = $(BASEDIR)/NServiceBus.MongoDB.sln
 PROJECT = $(BASEDIR)/src/NServiceBus.MongoDB
 TESTS = $(BASEDIR)/src/NServiceBus.MongoDB.Tests
-
-BUILD_OPTS = --no-restore
-TEST_OPTS = --no-restore
+CONFIGURATION ?= Debug
+GitVersion_SemVer ?= $$(gitversion /showvariable SemVer || echo '1.0.0-local')
+BUILD_OPTS = --no-restore -c $(CONFIGURATION)
+TEST_OPTS = --no-restore -c $(CONFIGURATION)
 RESTORE_OPTS =
-PUBLISH_OPTS = -c Release
-PACK_OPTS = -c Release
+PUBLISH_OPTS = -c $(CONFIGURATION)
+PACK_OPTS = --no-restore -c $(CONFIGURATION) /p:Version=$(GitVersion_SemVer)
 
 CLEAN_DIRS = \
 	src/*/bin \
@@ -21,10 +22,10 @@ default: restore build test
 
 all: restore build test publish pack
 
-build:
+build: restore
 	$(printTarget)
 	@dotnet build $(BUILD_OPTS) $(SOLUTION)
-
+    
 test: build
 	$(printTarget)
 	@dotnet test $(TEST_OPTS) $(TESTS)
@@ -33,7 +34,7 @@ publish:
 	$(printTarget)
 	@dotnet publish $(PUBLISH_OPTS)
 
-pack:
+pack: build
 	$(printTarget)
 	@dotnet pack $(PACK_OPTS) $(PROJECT)
 
@@ -43,6 +44,7 @@ restore:
 
 clean:
 	$(printTarget)
+	@dotnet clean
 	rm -rf $(CLEAN_DIRS) 
 
 # Helper function to pretty print targets as they execute

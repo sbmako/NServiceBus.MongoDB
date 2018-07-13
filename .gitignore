@@ -6,6 +6,8 @@
 *.user
 *.sln.docstates
 .vs
+.vscode
+*.orig
 
 # Build results
 
