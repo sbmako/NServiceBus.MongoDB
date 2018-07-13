@@ -25,9 +25,11 @@
 
 namespace NServiceBus.MongoDB.Tests.TestingUtilities
 {
+    using System;
     using AutoFixture;
     using AutoFixture.Xunit2;
 
+    [AttributeUsage(AttributeTargets.All, Inherited = false, AllowMultiple = false)]
     public class AutoDatabaseAttribute : AutoDataAttribute
     {
         public AutoDatabaseAttribute()

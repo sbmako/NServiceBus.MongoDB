@@ -25,12 +25,14 @@
 
 namespace NServiceBus.MongoDB.Tests.TestingUtilities
 {
+    using System;
     using AutoFixture;
     using AutoFixture.Xunit2;
 
-    public class AutoConfigureData : AutoDataAttribute
+    [AttributeUsage(AttributeTargets.All, Inherited = false, AllowMultiple = false)]
+    public class AutoConfigureDataAttribute : AutoDataAttribute
     {
-        public AutoConfigureData()
+        public AutoConfigureDataAttribute()
 #pragma warning disable CS0618 // Type or member is obsolete
             : base(new Fixture().Customize(new ConfigureCustomization()))
 #pragma warning restore CS0618 // Type or member is obsolete

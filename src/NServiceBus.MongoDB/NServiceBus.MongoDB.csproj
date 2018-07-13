@@ -3,10 +3,21 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <CodeAnalysisRuleSet>NServiceBus.MongoDB.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
 
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DocumentationFile>bin\Debug\netstandard2.0\NServiceBus.MongoDB.xml</DocumentationFile>
+    <NoWarn>1701;1702;5159;1591</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType></DebugType>
+    <DocumentationFile>bin\Release\netstandard2.0\NServiceBus.MongoDB.xml</DocumentationFile>
+    <NoWarn>1701;1702;5159;1591</NoWarn>
+  </PropertyGroup>
   <ItemGroup>
     <Compile Remove="ConfigureMongoPersistence.cs" />
+    <Compile Remove="GlobalSuppressions.cs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="NServiceBus" Version="7.0.1" />
@@ -16,5 +27,12 @@
     <PackageReference Include="MongoDB.Driver.GridFS" Version="2.7.0" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.5.0" />
     <PackageReference Include="System.Diagnostics.Contracts" Version="4.3.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.6.1" />
+    <PackageReference Include="Microsoft.CodeQuality.Analyzers" Version="2.6.1" />
+    <PackageReference Include="Microsoft.NetCore.Analyzers" Version="2.6.1" />
+    <PackageReference Include="Text.Analyzers" Version="2.6.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove=".NServiceBus.MongoDB.csproj.swp" />
   </ItemGroup>
 </Project>

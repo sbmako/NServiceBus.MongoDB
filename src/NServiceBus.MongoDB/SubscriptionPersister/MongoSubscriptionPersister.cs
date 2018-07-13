@@ -134,7 +134,7 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
         /// </returns>
         public async Task<IEnumerable<Subscriber>> GetSubscriberAddressesForMessage(IEnumerable<MessageType> messageTypes, ContextBag context)
         {
-            var subscriptions = await this.GetSubscriptions(messageTypes.AssumedNotNull());
+            var subscriptions = await this.GetSubscriptions(messageTypes.AssumedNotNull()).ConfigureAwait(false);
             var subscribers = subscriptions.SelectMany(s => s.Subscribers).Distinct();
             return subscribers;
         }

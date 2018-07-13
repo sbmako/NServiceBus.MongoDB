@@ -28,13 +28,10 @@ namespace NServiceBus.MongoDB.Internals
     using System;
     using System.Configuration;
     using System.Diagnostics.Contracts;
-    using NServiceBus.Logging;
     using NServiceBus.Settings;
 
     static class MongoHelpers
     {
-        static readonly ILog Logger = LogManager.GetLogger(typeof(MongoHelpers));
-
         public static string GetConnectionString(ReadOnlySettings settings)
         {
             Contract.Requires(settings != null);

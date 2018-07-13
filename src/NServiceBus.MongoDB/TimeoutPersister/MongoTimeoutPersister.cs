@@ -41,7 +41,7 @@ namespace NServiceBus.MongoDB.TimeoutPersister
     /// </summary>
     public class MongoTimeoutPersister : IPersistTimeouts, IQueryTimeouts
     {
-        internal static readonly string TimeoutEntityName = "TimeoutData";
+        internal const string TimeoutEntityName = "TimeoutData";
 
         readonly IMongoCollection<TimeoutEntity> collection; 
 
