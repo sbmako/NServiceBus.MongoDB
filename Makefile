@@ -1,5 +1,5 @@
 #
-# Makefile for composing containers for the onbaord WiFi Portal
+#
 #
 
 BASEDIR = $(CURDIR)
