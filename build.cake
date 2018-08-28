@@ -53,16 +53,23 @@ Task("Clean")
           new DeleteDirectorySettings { Recursive = true, Force = true });
 });
 
-Task("Pack")
+Task("UpdateAssemblyInfo")
     .Does(() =>
 {
-    var semanticVersion = SemVerForDotnetCore();
+    ExecuteGitVersionForDotnetCore(updateAssemblyInfo: true);
+});
+
+Task("Pack")
+    .IsDependentOn("UpdateAssemblyInfo")
+    .Does(() =>
+{
+    var semanticVersion = ExecuteGitVersionForDotnetCore();
     
-     var packSettings = new DotNetCorePackSettings
-     {
-         Configuration = configuration,
-         MSBuildSettings = new DotNetCoreMSBuildSettings().WithProperty("Version", semanticVersion.SemVer)
-     };
+    var packSettings = new DotNetCorePackSettings
+    {
+        Configuration = configuration,
+        MSBuildSettings = new DotNetCoreMSBuildSettings().WithProperty("Version", semanticVersion.SemVer)
+    };
 
      DotNetCorePack("./src/NServiceBus.MongoDB", packSettings);
 });
@@ -75,7 +82,7 @@ RunTarget(target);
 // See: https://github.com/GitTools/GitVersion/pull/1269
 // TODO: Migrate this to run as a dotnet tool and use the builtin Cake GitVersion command.
 // See: https://cakebuild.net/dsl/gitversion/
-private GitVersion SemVerForDotnetCore()
+private GitVersion ExecuteGitVersionForDotnetCore(bool updateAssemblyInfo = false)
 {
     IEnumerable<string> redirectedStandardOutput;
     IEnumerable<string> redirectedStandardError;
@@ -86,7 +93,13 @@ private GitVersion SemVerForDotnetCore()
 
         var arguments =  new ProcessArgumentBuilder()
             .AppendQuoted(gitVersionBinaryPath)
-            .Append("-nofetch");
+            .Append("/nofetch");
+
+        if (updateAssemblyInfo)
+        {
+            arguments.Append("/updateassemblyinfo");
+
+        }
 
         var exitCode = StartProcess(
             "dotnet",
