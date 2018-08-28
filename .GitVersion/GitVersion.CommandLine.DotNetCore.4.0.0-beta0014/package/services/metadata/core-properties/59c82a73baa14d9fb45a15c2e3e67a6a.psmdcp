@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<coreProperties xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.openxmlformats.org/package/2006/metadata/core-properties">
+  <dc:creator>GitTools and Contributors</dc:creator>
+  <dc:description>Derives SemVer information from a repository following GitFlow or GitHubFlow.</dc:description>
+  <dc:identifier>GitVersion.CommandLine.DotNetCore</dc:identifier>
+  <version>4.0.0-beta0014</version>
+  <keywords>Git Versioning GitVersion GitFlowVersion GitFlow GitHubFlow SemVer</keywords>
+  <lastModifiedBy>NuGet, Version=4.6.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35;Microsoft Windows NT 6.2.9200.0;.NET Framework 4.6</lastModifiedBy>
+</coreProperties>

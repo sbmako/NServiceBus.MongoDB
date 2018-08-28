@@ -11,13 +11,9 @@ cakeCommandPath=./tools/cake_$cakeVersion
 cake="$cakeCommandPath/dotnet-cake"
 which "$cake" || dotnet tool install Cake.Tool --version $cakeVersion --tool-path "$cakeCommandPath"
 
-#Determine the version
-#TODO: Use the .Net Core version of GitVersion
-semanticVersion=$(gitversion /showvariable SemVer || echo '1.0.0-local')
-
 #Run the Cake build script
 target=$(echo $1 | tr '[:upper:]' '[:lower:]')
-$cake build.cake -semanticVersion=$semanticVersion -target=$target ${@:2} \
+$cake build.cake  --verbosity=Quiet -target=$target ${@:2} \
     && echo "######### BUILD SUCCESSFUL #########" \
     || { echo "######### BUILD FAILED! #########"; exit -1; }
 
