@@ -61,6 +61,7 @@ Task("UpdateAssemblyInfo")
 
 Task("Pack")
     .IsDependentOn("UpdateAssemblyInfo")
+    .IsDependentOn("Build")
     .Does(() =>
 {
     var semanticVersion = ExecuteGitVersionForDotnetCore();
@@ -84,12 +85,14 @@ RunTarget(target);
 // See: https://cakebuild.net/dsl/gitversion/
 private GitVersion ExecuteGitVersionForDotnetCore(bool updateAssemblyInfo = false)
 {
+    #tool nuget:https://ci.appveyor.com/nuget/gitversion-8nigugxjftrw?package=GitVersion.CommandLine.DotNetCore&version=4.0.0-beta0014
+
     IEnumerable<string> redirectedStandardOutput;
-    IEnumerable<string> redirectedStandardError;
+    IEnumerable<string> redirectedStandardError; 
 
     try
     {
-        var gitVersionBinaryPath = MakeAbsolute((FilePath)".GitVersion/GitVersion.CommandLine.DotNetCore.4.0.0-beta0014/tools/GitVersion.dll").ToString();
+        var gitVersionBinaryPath = MakeAbsolute((FilePath)"./tools/GitVersion.CommandLine.DotNetCore.4.0.0-beta0014/tools/GitVersion.dll").ToString();
 
         var arguments =  new ProcessArgumentBuilder()
             .AppendQuoted(gitVersionBinaryPath)
