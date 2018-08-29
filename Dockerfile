@@ -13,5 +13,4 @@ WORKDIR /src
 
 RUN rm -rf /src/tools && \
     ./build.sh CleanAll && \
-    ./build.sh && \
     ./build.sh pack

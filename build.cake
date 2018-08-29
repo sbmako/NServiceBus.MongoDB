@@ -101,7 +101,6 @@ private GitVersion ExecuteGitVersionForDotnetCore(bool updateAssemblyInfo = fals
         if (updateAssemblyInfo)
         {
             arguments.Append("/updateassemblyinfo");
-
         }
 
         var exitCode = StartProcess(
