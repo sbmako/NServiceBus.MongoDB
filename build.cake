@@ -1,18 +1,9 @@
 /// This is a Cake build script for this project.
 /// See: https://cakebuild.net
 
-#addin nuget:?package=Cake.Json&version=3.0.0
-#addin nuget:?package=Newtonsoft.Json&version=9.0.1
-
 using System;
 
-var target = Argument("target", "");
-
-if (string.IsNullOrWhiteSpace(target))
-{
-    target = "Default";
-}
-
+var target = string.IsNullOrWhiteSpace(Argument("target", "")) ? "Default" : Argument<string>("target");
 var configuration = Argument("configuration", "Debug");
 var solutionFile = Argument("solution", "NServiceBus.MongoDB.sln");
 
@@ -85,13 +76,12 @@ RunTarget(target);
 // See: https://cakebuild.net/dsl/gitversion/
 private GitVersion ExecuteGitVersionForDotnetCore(bool updateAssemblyInfo = false)
 {
-    #tool nuget:https://ci.appveyor.com/nuget/gitversion-8nigugxjftrw?package=GitVersion.CommandLine.DotNetCore&version=4.0.0-beta0014
-
     IEnumerable<string> redirectedStandardOutput;
     IEnumerable<string> redirectedStandardError; 
 
     try
     {
+        #tool nuget:https://ci.appveyor.com/nuget/gitversion-8nigugxjftrw?package=GitVersion.CommandLine.DotNetCore&version=4.0.0-beta0014
         var gitVersionBinaryPath = MakeAbsolute((FilePath)"./tools/GitVersion.CommandLine.DotNetCore.4.0.0-beta0014/tools/GitVersion.dll").ToString();
 
         var arguments =  new ProcessArgumentBuilder()
@@ -127,6 +117,8 @@ private GitVersion ExecuteGitVersionForDotnetCore(bool updateAssemblyInfo = fals
         throw;
     }
 
+    #addin nuget:?package=Cake.Json&version=3.0.0
+    #addin nuget:?package=Newtonsoft.Json&version=9.0.1
     var json = string.Join(Environment.NewLine, redirectedStandardOutput.ToList());
     return DeserializeJson<GitVersion>(json);
 }
