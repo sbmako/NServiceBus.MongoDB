@@ -20,7 +20,7 @@ REM Run the Cake build script
 SET Target=%1
 %Cake% build.cake --verbosity=Quiet -target=%* || GOTO BuildFailed
 
-REM Clean up tools when the target is "cleanall"
+@REM Clean up tools when the target is "cleanall"
 @IF /I "%Target%" == "cleanall" (
     ECHO "Removing tools..."
     RD /q /s .\tools
