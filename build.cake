@@ -12,7 +12,7 @@ Task("Default")
 
 Task("All")
     .IsDependentOn("CleanAll")
-    .IsDependentOn("Build")
+    .IsDependentOn("UpdateAssemblyInfo")
     .IsDependentOn("Test")
     .IsDependentOn("Pack");
 
