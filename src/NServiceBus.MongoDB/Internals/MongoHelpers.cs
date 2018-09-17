@@ -40,8 +40,7 @@ namespace NServiceBus.MongoDB.Internals
             if (!settings.HasSetting(MongoPersistenceConstants.ConnectionStringKey))
             {
                 throw new ConfigurationErrorsException(
-                    string.Format(
-                    "Cannot configure Mongo Persister. No connection string was set"));
+                    "Cannot configure Mongo Persister. No connection string was set");
             }
 
             var connectionString =

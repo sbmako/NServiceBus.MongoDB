@@ -111,6 +111,10 @@ csx
 # Windows Store app package directory
 AppPackages/
 
+# sonar directories
+.scannerwork
+.sonarqube
+
 # Others
 sql/
 *.Cache

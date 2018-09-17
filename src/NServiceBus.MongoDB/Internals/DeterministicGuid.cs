@@ -44,7 +44,6 @@ namespace NServiceBus.MongoDB.Internals
             {
                 var inputBytes = Encoding.Default.GetBytes(string.Concat(data));
 
-                //// TODO: provide extension method to normalize byte array to 16 length
                 var hashBytes = provider.ComputeHash(inputBytes);
 
                 // generate a GUID from the hash:
