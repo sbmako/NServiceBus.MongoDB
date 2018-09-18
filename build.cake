@@ -35,13 +35,13 @@ Task("Test")
 
 Task("Clean")
     .Does(() =>
-{
-     DotNetCoreClean(solutionFile, new DotNetCoreCleanSettings { Configuration = configuration } );
-     
+{     
      DeleteDirectories(
          GetDirectories("./src/**/bin")
          .Union(GetDirectories("./src/**/obj")),
           new DeleteDirectorySettings { Recursive = true, Force = true });
+
+     DotNetCoreClean(solutionFile, new DotNetCoreCleanSettings { Configuration = configuration } );
 });
 
 Task("UpdateAssemblyInfo")

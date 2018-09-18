@@ -13,7 +13,7 @@ which "$cake" || dotnet tool install Cake.Tool --version $cakeVersion --tool-pat
 
 #Run the Cake build script
 target=$(echo $1 | tr '[:upper:]' '[:lower:]')
-$cake build.cake  --verbosity=Quiet -target=$target ${@:2} \
+$cake build.cake  -target=$target ${@:2} \
     && echo "######### BUILD SUCCESSFUL #########" \
     || { echo "######### BUILD FAILED! #########"; exit -1; }
 
