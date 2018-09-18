@@ -1,10 +1,9 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFrameworks>net452;netstandard2.0</TargetFrameworks>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <CodeAnalysisRuleSet>NServiceBus.MongoDB.ruleset</CodeAnalysisRuleSet>
-    <PackOnBuild>true</PackOnBuild>
     <Authors>Carlos Sandoval</Authors>
     <PackageIconUrl>https://raw.githubusercontent.com/sbmako/NServiceBus.MongoDB/master/packaging/NServiceBus_mongo_32.png</PackageIconUrl>
     <NeutralLanguage>en-US</NeutralLanguage>
@@ -16,7 +15,8 @@
     <Title>NServiceBus MongoDB</Title>
     <Description>MongoDB persistence for NServiceBus 7 and .Net Standard 2.0</Description>
     <PackageId>NServiceBus.MongoDB</PackageId>
-  </PropertyGroup>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DocumentationFile>bin\Debug\netstandard2.0\NServiceBus.MongoDB.xml</DocumentationFile>
@@ -31,27 +31,33 @@
     <Compile Remove="ConfigureMongoPersistence.cs" />
     <Compile Remove="GlobalSuppressions.cs" />
   </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net452'">
+    <Reference Include="System.Configuration" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.5.0" />
+  </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="NServiceBus" Version="[7.0.1,8.0)" />
     <PackageReference Include="MongoDB.Driver" Version="2.7.0" />
     <PackageReference Include="MongoDB.Bson" Version="2.7.0" />
     <PackageReference Include="MongoDB.Driver.Core" Version="2.7.0" />
     <PackageReference Include="MongoDB.Driver.GridFS" Version="2.7.0" />
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.5.0" />
+
     <PackageReference Include="System.Diagnostics.Contracts" Version="4.3.0" />
-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.6.1" >
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.6.1">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="NuGet.Build.Packaging" Version="0.2.0" >
+    <PackageReference Include="Microsoft.CodeQuality.Analyzers" Version="2.6.1">
           <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.CodeQuality.Analyzers" Version="2.6.1" >
+    <PackageReference Include="Microsoft.NetCore.Analyzers" Version="2.6.1">
           <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.NetCore.Analyzers" Version="2.6.1" >
-          <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
-    <PackageReference Include="Text.Analyzers" Version="2.6.1" >
+    <PackageReference Include="Text.Analyzers" Version="2.6.1">
           <PrivateAssets>all</PrivateAssets>
     </PackageReference>
   </ItemGroup>
