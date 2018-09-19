@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks Condition="Exists('C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5.2')">netcoreapp2;net452</TargetFrameworks>
-    <TargetFrameworks Condition="!Exists('C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5.2')">netstandard2.0</TargetFrameworks>
+    <TargetFrameworks Condition="!Exists('C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5.2')">netcoreapp2</TargetFrameworks>
     <IsPackable>false</IsPackable>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
