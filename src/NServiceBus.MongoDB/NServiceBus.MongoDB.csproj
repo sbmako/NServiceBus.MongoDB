@@ -17,6 +17,7 @@
     <Description>MongoDB persistence for NServiceBus 7 and .Net Standard 2.0</Description>
     <PackageId>NServiceBus.MongoDB</PackageId>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb;.xml</AllowedOutputExtensionsInPackageBuildOutputFolder>
    </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
