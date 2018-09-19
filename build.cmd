@@ -18,7 +18,7 @@ IF NOT EXIST "%Cake%" (
 
 REM Run the Cake build script
 SET Target=%1
-%Cake% build.cake --verbosity=Quiet -target=%* || GOTO BuildFailed
+%Cake% build.cake -target=%* || GOTO BuildFailed
 
 @REM Clean up tools when the target is "cleanall"
 @IF /I "%Target%" == "cleanall" (
