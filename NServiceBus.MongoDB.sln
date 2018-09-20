@@ -12,8 +12,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sln", "sln", "{E4F9B0E0-3EC
 		appveyor.yml = appveyor.yml
 		GitVersion.yml = GitVersion.yml
 		README.md = README.md
-		Makefile = Makefile
 		src\Settings.StyleCop = src\Settings.StyleCop
+		build.cake = build.cake
+		build.cmd = build.cmd
+		build.sh = build.sh
+		Dockerfile = Dockerfile
 	EndProjectSection
 EndProject
 Global
