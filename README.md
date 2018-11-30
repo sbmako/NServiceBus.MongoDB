@@ -1,4 +1,4 @@
-## NServiceBus.MongoDB [![Build Status](https://ci.appveyor.com/api/projects/status/github/sbmako/NServiceBus.MongoDB?branch=master&svg=true)](https://ci.appveyor.com/project/sbmako/nservicebus-mongodb) [![NuGet Status](http://img.shields.io/nuget/v/NServiceBus.MongoDB.svg)](https://www.nuget.org/packages/NServiceBus.MongoDB/) [![BCH compliance](https://bettercodehub.com/edge/badge/sbmako/NServiceBus.MongoDB?branch=master)](https://bettercodehub.com/) ##
+## NServiceBus.MongoDB [![Build Status](https://ci.appveyor.com/api/projects/status/github/sbmako/NServiceBus.MongoDB?branch=master&svg=true)](https://ci.appveyor.com/project/sbmako/nservicebus-mongodb) [![NuGet Status](http://img.shields.io/nuget/v/NServiceBus.MongoDB.svg)](https://www.nuget.org/packages/NServiceBus.MongoDB/) [![BCH compliance](https://bettercodehub.com/edge/badge/sbmako/NServiceBus.MongoDB?branch=master)](https://bettercodehub.com/) [![CodeFactor](https://www.codefactor.io/repository/github/sbmako/nservicebus.mongodb/badge)](https://www.codefactor.io/repository/github/sbmako/nservicebus.mongodb) ##
 
 MongoDB persistence for NServicBus 6.x
 
