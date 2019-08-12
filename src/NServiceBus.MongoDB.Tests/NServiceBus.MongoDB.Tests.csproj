@@ -5,6 +5,7 @@
     <TargetFrameworks Condition="!Exists('C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5.2')">netcoreapp2</TargetFrameworks>
     <IsPackable>false</IsPackable>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <ReleaseVersion>7.1</ReleaseVersion>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net452'">

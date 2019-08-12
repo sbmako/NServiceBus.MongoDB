@@ -1,10 +1,7 @@
 /// This is a Cake build script for this project.
 /// See: https://cakebuild.net
 
-#addin Cake.Docker
-
 using System;
-using Cake.Docker;
 
 var target = string.IsNullOrWhiteSpace(Argument("target", "")) ? "Default" : Argument<string>("target");
 var configuration = Argument("configuration", "Debug");
@@ -35,11 +32,6 @@ Task("Test")
         DotNetCoreTest(file.FullPath, new DotNetCoreTestSettings { Configuration = configuration } );
     }
 });
-
-Task("TestLocal")
-    .IsDependentOn("RunMongo")
-    .IsDependentOn("Test")
-    .IsDependentOn("StopMongo");
 
 Task("Clean")
     .Does(() =>
@@ -72,26 +64,6 @@ Task("Pack")
     };
 
      DotNetCorePack("./src/NServiceBus.MongoDB", packSettings);
-});
-
-Task("RunMongo")
-    .Does(() =>
-{
-    var settings = new DockerContainerRunSettings()
-    {
-        Detach = true,
-        Name = "test-mongo",
-        Publish = new String[]{ "27017:27017" }
-    };
-
-    DockerRun(settings, "mongo", "");
-});
-
-Task("StopMongo")
-    .Does(() =>
-{
-    DockerStop("test-mongo");
-    DockerRm("test-mongo");
 });
 
 Task("CleanAll").IsDependentOn("Clean");

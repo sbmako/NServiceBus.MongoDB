@@ -5,11 +5,9 @@
     <TargetFrameworks Condition="!Exists('C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5.2')">netstandard2.0</TargetFrameworks>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <CodeAnalysisRuleSet>NServiceBus.MongoDB.ruleset</CodeAnalysisRuleSet>
-    <Authors>Carlos Sandoval</Authors>
+    <Authors>SharkByte Software</Authors>
     <PackageIconUrl>https://raw.githubusercontent.com/sbmako/NServiceBus.MongoDB/master/packaging/NServiceBus_mongo_32.png</PackageIconUrl>
     <NeutralLanguage>en-US</NeutralLanguage>
-    <PackageLicenseUrl>https://github.com/sbmako/NServiceBus.MongoDB/blob/master/LICENSE</PackageLicenseUrl>
-    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <Owners>SharkByte Software</Owners>
     <PackageProjectUrl>https://github.com/sbmako/NServiceBus.MongoDB</PackageProjectUrl>
     <PackageTags>nservicebus mongodb persistence servicebus</PackageTags>
@@ -18,6 +16,12 @@
     <PackageId>NServiceBus.MongoDB</PackageId>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb;.xml</AllowedOutputExtensionsInPackageBuildOutputFolder>
+    <ReleaseVersion>7.1</ReleaseVersion>
+    <PackOnBuild>true</PackOnBuild>
+    <PackageVersion>7.1</PackageVersion>
+    <Copyright>Copyright 2019 SharkByte Software. All rights reserved.</Copyright>
+    <Summary>MongoDB persistence for NServiceBus 7.x</Summary>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
    </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">

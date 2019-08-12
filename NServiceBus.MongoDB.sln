@@ -17,6 +17,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sln", "sln", "{E4F9B0E0-3EC
 		build.cmd = build.cmd
 		build.sh = build.sh
 		Dockerfile = Dockerfile
+		packaging\nuget\NServiceBus.MongoDB.nuspec = packaging\nuget\NServiceBus.MongoDB.nuspec
+		LICENSE = LICENSE
 	EndProjectSection
 EndProject
 Global
@@ -56,5 +58,14 @@ Global
 		{60B8C7F2-C29F-45E9-A5D7-83C8638DF94C}.Release|x64.Build.0 = Release|Any CPU
 		{60B8C7F2-C29F-45E9-A5D7-83C8638DF94C}.Release|x86.ActiveCfg = Release|Any CPU
 		{60B8C7F2-C29F-45E9-A5D7-83C8638DF94C}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		description = MongoDB persistence for NServiceBus 7.x
+		version = 7.1
+		Policies = $0
+		$0.DotNetNamingPolicy = $1
+		$1.DirectoryNamespaceAssociation = PrefixedHierarchical
+		$0.StandardHeader = $2
+		$0.VersionControlPolicy = $3
 	EndGlobalSection
 EndGlobal
