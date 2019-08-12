@@ -38,11 +38,11 @@ namespace NServiceBus.MongoDB.Tests.Internals
         public void GetConnectionUsingSettingsFromConnectionString()
         {
             var settings = new SettingsHolder();
-            settings.Set(MongoPersistenceConstants.ConnectionStringKey, "mongodb://ultratinef:27017");
+            settings.Set(MongoPersistenceConstants.ConnectionStringKey, "mongodb://root:mongoR0cks@localhost:27017");
             var readonlySettings = (ReadOnlySettings)settings;
 
             var result = MongoHelpers.GetConnectionString(readonlySettings);
-            result.Should().Be("mongodb://ultratinef:27017");
+            result.Should().Be("mongodb://root:mongoR0cks@localhost:27017");
         }
     }
 }

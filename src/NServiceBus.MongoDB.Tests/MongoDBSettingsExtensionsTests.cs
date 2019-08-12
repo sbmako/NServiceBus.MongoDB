@@ -53,12 +53,12 @@ namespace NServiceBus.MongoDB.Tests
         [AutoConfigureData]
         public void SetConnectionString(PersistenceExtensions<MongoDBPersistence> config)
         {
-            config.SetConnectionString("mongodb://ultratinef:27017");
+            config.SetConnectionString("mongodb://root:mongoR0cks@localhost:27017");
 
             config.GetSettings()
                 .Get<string>(MongoPersistenceConstants.ConnectionStringKey)
                 .Should()
-                .Be("mongodb://ultratinef:27017");
+                .Be("mongodb://root:mongoR0cks@localhost:27017");
             config.GetSettings().HasSetting(MongoPersistenceConstants.DatabaseNameKey).Should().BeFalse();
         }
 
@@ -66,13 +66,13 @@ namespace NServiceBus.MongoDB.Tests
         [AutoConfigureData]
         public void SetConnectionStringAndDatabaseName(PersistenceExtensions<MongoDBPersistence> config)
         {
-            config.SetConnectionString("mongodb://ultratinef:27017");
+            config.SetConnectionString("mongodb://root:mongoR0cks@localhost:27017");
             config.SetDatabaseName("MyDatabase");
 
             config.GetSettings()
                 .Get<string>(MongoPersistenceConstants.ConnectionStringKey)
                 .Should()
-                .Be("mongodb://ultratinef:27017");
+                .Be("mongodb://root:mongoR0cks@localhost:27017");
 
             config.GetSettings()
                 .Get<string>(MongoPersistenceConstants.DatabaseNameKey)

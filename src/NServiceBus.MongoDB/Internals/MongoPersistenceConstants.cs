@@ -54,7 +54,7 @@ namespace NServiceBus.MongoDB.Internals
             get
             {
                 Contract.Ensures(Contract.Result<string>() != null);
-                var connectionString = string.Format("mongodb://{0}:{1}", DefaultHost, DefaultPort);
+                var connectionString = string.Format("mongodb://root:mongoR0cks@{0}:{1}", DefaultHost, DefaultPort);
                 return connectionString.AssumedNotNull();
             }
         }
