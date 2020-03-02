@@ -3,7 +3,6 @@ SOLUTION = $(BASEDIR)/NServiceBus.MongoDB.sln
 PROJECT = $(BASEDIR)/src/NServiceBus.MongoDB
 TESTS = $(BASEDIR)/src/NServiceBus.MongoDB.Tests
 CONFIGURATION ?= Debug
-GitVersion_SemVer ?= $$(gitversion /showvariable SemVer || echo '1.0.0-local')
 BUILD_OPTS = --no-restore -c $(CONFIGURATION)
 TEST_OPTS = --no-restore -c $(CONFIGURATION)
 RESTORE_OPTS =

@@ -26,7 +26,7 @@
 namespace NServiceBus.MongoDB.Tests.SagaPersister
 {
     using System;
-
+    using AutoFixture.Xunit2;
     using FluentAssertions;
 
     using global::MongoDB.Driver;
@@ -255,6 +255,7 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
             ContextBag context)
         {
             sut.Save(sagaData, correlationProperty, session, context).Wait();
+            sagaData.DocumentVersion += 1;
 
             var result = sut.Get<SagaWithUniqueProperty>(sagaData.Id, session, context).Result;
 
@@ -283,6 +284,7 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
         {
             sagaData.UniqueProperty = correlationProperty.Value.ToString();
             sut.Save(sagaData, correlationProperty, session, context).Wait();
+            sagaData.DocumentVersion += 1;
 
             var result =
                 sut.Get<SagaWithUniqueProperty>(

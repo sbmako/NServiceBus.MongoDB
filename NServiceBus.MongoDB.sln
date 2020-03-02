@@ -9,8 +9,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NServiceBus.MongoDB.Tests",
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sln", "sln", "{E4F9B0E0-3EC5-4F0A-A42A-8094FB053532}"
 	ProjectSection(SolutionItems) = preProject
-		appveyor.yml = appveyor.yml
-		GitVersion.yml = GitVersion.yml
 		README.md = README.md
 		src\Settings.StyleCop = src\Settings.StyleCop
 		build.cake = build.cake
@@ -19,6 +17,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sln", "sln", "{E4F9B0E0-3EC
 		Dockerfile = Dockerfile
 		packaging\nuget\NServiceBus.MongoDB.nuspec = packaging\nuget\NServiceBus.MongoDB.nuspec
 		LICENSE = LICENSE
+		appveyor.gitversion.yml = appveyor.gitversion.yml
+		appveyor.yml = appveyor.yml
+		GitVersion.yml = GitVersion.yml
 	EndProjectSection
 EndProject
 Global
