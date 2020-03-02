@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.5.0" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.7.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -23,7 +23,7 @@
 </PackageReference>
     <DotNetCliToolReference Include="dotnet-xunit" Version="2.3.1" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.2.0" />
-    <PackageReference Include="FluentAssertions" Version="5.8.0" />
+    <PackageReference Include="FluentAssertions" Version="5.10.2" />
     <PackageReference Include="AutoFixture" Version="4.11.0" />
     <PackageReference Include="AutoFixture.Xunit2" Version="4.11.0" />
     <PackageReference Include="AutoFixture.AutoMoq" Version="4.11.0" />

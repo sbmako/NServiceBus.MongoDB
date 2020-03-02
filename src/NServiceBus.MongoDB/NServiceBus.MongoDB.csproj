@@ -43,7 +43,7 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.5.0" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.7.0" />
     <PackageReference Include="NServiceBus" Version="7.2.3" />
   </ItemGroup>
 
@@ -54,13 +54,13 @@
     <PackageReference Include="MongoDB.Driver.GridFS" Version="2.10.2" />
 
     <PackageReference Include="System.Diagnostics.Contracts" Version="4.3.0" />
-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.4">
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.8">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.CodeQuality.Analyzers" Version="2.9.4">
+    <PackageReference Include="Microsoft.CodeQuality.Analyzers" Version="2.9.8">
           <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.NetCore.Analyzers" Version="2.9.4">
+    <PackageReference Include="Microsoft.NetCore.Analyzers" Version="2.9.8">
           <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Text.Analyzers" Version="2.6.4">
