@@ -2,7 +2,7 @@
 // <copyright file="MongoSagaPersister.cs" company="SharkByte Software">
 //   The MIT License (MIT)
 //   
-//   Copyright (c) 2017 SharkByte Software
+//   Copyright (c) 2018 SharkByte Software
 //   
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of
 //   this software and associated documentation files (the "Software"), to deal in
@@ -43,9 +43,7 @@ namespace NServiceBus.MongoDB.SagaPersister
     /// </summary>
     public class MongoSagaPersister : ISagaPersister
     {
-        ////private static ConcurrentDictionary<Type, string> indexes = new ConcurrentDictionary<Type, string>();
-
-        private readonly IMongoDatabase mongoDatabase;
+        readonly IMongoDatabase mongoDatabase;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MongoSagaPersister"/> class.
@@ -55,7 +53,7 @@ namespace NServiceBus.MongoDB.SagaPersister
         /// </param>
         public MongoSagaPersister(MongoDatabaseFactory mongoFactory)
         {
-            Contract.Requires<ArgumentNullException>(mongoFactory != null, "mongoFactory != null");
+            Contract.Requires(mongoFactory != null, "mongoFactory != null");
             this.mongoDatabase = mongoFactory.GetDatabase();
         }
 
@@ -109,36 +107,52 @@ namespace NServiceBus.MongoDB.SagaPersister
             }
         }
 
-        public Task<TSagaData> Get<TSagaData>(
+        public async Task<TSagaData> Get<TSagaData>(
             Guid sagaId, 
             SynchronizedStorageSession session, 
-            ContextBag context) where TSagaData : IContainSagaData
+            ContextBag context) where TSagaData : class, IContainSagaData
         {
             var collection = this.mongoDatabase.GetCollection<TSagaData>(typeof(TSagaData).Name);
-            return collection.Find(_ => _.Id == sagaId).FirstOrDefaultAsync();
+            var result = collection.Find(_ => _.Id == sagaId).FirstOrDefaultAsync().Result;
+
+            if (result != null)
+            {
+                var versioned = result as IHaveDocumentVersion;
+                versioned.DocumentVersion += 1;
+            }
+
+            return await Task.FromResult(result).ConfigureAwait(false);
         }
 
-        public Task<TSagaData> Get<TSagaData>(
+        public async Task<TSagaData> Get<TSagaData>(
             string propertyName, 
             object propertyValue, 
             SynchronizedStorageSession session, 
-            ContextBag context) where TSagaData : IContainSagaData
+            ContextBag context) where TSagaData : class, IContainSagaData
         {
             var query = Builders<TSagaData>.Filter.Eq(propertyName, BsonValue.Create(propertyValue));
 
             var collection = this.mongoDatabase.GetCollection<TSagaData>(typeof(TSagaData).Name);
-            return collection.Find(query).FirstOrDefaultAsync();
+            var result = collection.Find(query).FirstOrDefaultAsync().Result;
+
+            if (result != null)
+            {
+                var versioned = result as IHaveDocumentVersion;
+                versioned.DocumentVersion += 1;
+            }
+
+            return await Task.FromResult(result).ConfigureAwait(false);
         }
 
-        public Task Complete(IContainSagaData sagaData, SynchronizedStorageSession session, ContextBag context)
+        public async Task Complete(IContainSagaData sagaData, SynchronizedStorageSession session, ContextBag context)
         {
             var query = Builders<BsonDocument>.Filter.Eq(MongoPersistenceConstants.IdPropertyName, sagaData.Id);
 
             var collection = this.mongoDatabase.GetCollection<BsonDocument>(sagaData.GetType().Name);
-            return collection.DeleteOneAsync(query);
+            await collection.DeleteOneAsync(query).ConfigureAwait(false);
         }
 
-        private async Task EnsureUniqueIndex(IContainSagaData saga, SagaCorrelationProperty correlationProperty)
+        async Task EnsureUniqueIndex(IContainSagaData saga, SagaCorrelationProperty correlationProperty)
         {
             Contract.Requires(saga != null);
             Contract.Requires(correlationProperty != null);
@@ -146,9 +160,11 @@ namespace NServiceBus.MongoDB.SagaPersister
             var collection = this.mongoDatabase.GetCollection<BsonDocument>(saga.GetType().Name);
 
             await
+#pragma warning disable CS0618 // Type or member is obsolete
                 collection.Indexes.CreateOneAsync(
                     new BsonDocumentIndexKeysDefinition<BsonDocument>(new BsonDocument(correlationProperty.Name, 1)),
-                    new CreateIndexOptions() { Unique = true }).ConfigureAwait(false);
+                    new CreateIndexOptions { Unique = true }).ConfigureAwait(false);
+#pragma warning restore CS0618 // Type or member is obsolete
         }
     }
 }

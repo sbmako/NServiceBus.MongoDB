@@ -2,7 +2,7 @@
 // <copyright file="AutoConfigureData.cs" company="SharkByte Software">
 //   The MIT License (MIT)
 //   
-//   Copyright (c) 2017 SharkByte Software
+//   Copyright (c) 2018 SharkByte Software
 //   
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of
 //   this software and associated documentation files (the "Software"), to deal in
@@ -25,13 +25,17 @@
 
 namespace NServiceBus.MongoDB.Tests.TestingUtilities
 {
-    using Ploeh.AutoFixture;
-    using Ploeh.AutoFixture.Xunit2;
+    using System;
+    using AutoFixture;
+    using AutoFixture.Xunit2;
 
-    public class AutoConfigureData : AutoDataAttribute
+    [AttributeUsage(AttributeTargets.All, Inherited = false, AllowMultiple = false)]
+    public class AutoConfigureDataAttribute : AutoDataAttribute
     {
-        public AutoConfigureData()
+        public AutoConfigureDataAttribute()
+#pragma warning disable CS0618 // Type or member is obsolete
             : base(new Fixture().Customize(new ConfigureCustomization()))
+#pragma warning restore CS0618 // Type or member is obsolete
         {
         }
     }

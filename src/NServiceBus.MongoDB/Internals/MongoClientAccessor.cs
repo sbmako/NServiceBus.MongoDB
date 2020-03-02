@@ -2,7 +2,7 @@
 // <copyright file="MongoClientAccessor.cs" company="SharkByte Software">
 //   The MIT License (MIT)
 //   
-//   Copyright (c) 2017 SharkByte Software
+//   Copyright (c) 2018 SharkByte Software
 //   
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of
 //   this software and associated documentation files (the "Software"), to deal in
@@ -25,7 +25,6 @@
 
 namespace NServiceBus.MongoDB.Internals
 {
-    using System;
     using System.Diagnostics.Contracts;
 
     using global::MongoDB.Driver;
@@ -46,8 +45,8 @@ namespace NServiceBus.MongoDB.Internals
         /// </param>
         public MongoClientAccessor(MongoClient mongoClient, string databaseName)
         {
-            Contract.Requires<ArgumentNullException>(mongoClient != null, "mongoClient != null");
-            Contract.Requires<ArgumentNullException>(databaseName != null, "databaseName != null");
+            Contract.Requires(mongoClient != null, "mongoClient != null");
+            Contract.Requires(databaseName != null, "databaseName != null");
 
             this.MongoClient = mongoClient;
             this.DatabaseName = databaseName;
@@ -64,7 +63,7 @@ namespace NServiceBus.MongoDB.Internals
         public string DatabaseName { get; private set; }
 
         [ContractInvariantMethod]
-        private void ObjectInvariants()
+        void ObjectInvariants()
         {
             Contract.Invariant(this.MongoClient != null);
             Contract.Invariant(this.DatabaseName != null);

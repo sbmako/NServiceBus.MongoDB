@@ -2,7 +2,7 @@
 // <copyright file="MongoGridFSDataBus.cs" company="SharkByte Software">
 //   The MIT License (MIT)
 //   
-//   Copyright (c) 2017 SharkByte Software
+//   Copyright (c) 2018 SharkByte Software
 //   
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of
 //   this software and associated documentation files (the "Software"), to deal in
@@ -40,7 +40,7 @@ namespace NServiceBus.MongoDB.DataBus
     /// </summary>
     public class MongoGridFSDataBus : IDataBus
     {
-        private readonly GridFSBucket gridFsBucket;
+        readonly GridFSBucket gridFsBucket;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MongoGridFSDataBus"/> class.
@@ -50,7 +50,7 @@ namespace NServiceBus.MongoDB.DataBus
         /// </param>
         public MongoGridFSDataBus(MongoDatabaseFactory mongoFactory)
         {
-            Contract.Requires<ArgumentNullException>(mongoFactory != null, "mongoFactory != null");
+            Contract.Requires(mongoFactory != null, "mongoFactory != null");
             this.gridFsBucket = new GridFSBucket(mongoFactory.GetDatabase());
         }
 
@@ -100,7 +100,7 @@ namespace NServiceBus.MongoDB.DataBus
         }
 
         [ContractInvariantMethod]
-        private void ObjectInvariants()
+        void ObjectInvariants()
         {
             Contract.Invariant(this.gridFsBucket != null);
         }

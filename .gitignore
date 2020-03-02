@@ -5,6 +5,9 @@
 *.suo
 *.user
 *.sln.docstates
+.vs
+.vscode
+*.orig
 
 # Build results
 
@@ -14,6 +17,7 @@ x64/
 build/
 [Bb]in/
 [Oo]bj/
+tools
 
 # Enable "build/" folder in the NuGet Packages folder since NuGet packages use it for MSBuild targets
 packaging/*.nupkg
@@ -106,6 +110,10 @@ csx
 
 # Windows Store app package directory
 AppPackages/
+
+# sonar directories
+.scannerwork
+.sonarqube
 
 # Others
 sql/

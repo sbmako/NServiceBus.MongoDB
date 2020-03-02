@@ -3,23 +3,23 @@
   <metadata xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <id>NServiceBus.MongoDB</id>
     <title>NServiceBus MongoDB</title>
-    <version>6.4.4</version>
+    <version>$version$</version>
     <authors>Carlos Sandoval</authors>
     <owners>SharkByte Software</owners>
     <licenseUrl>https://github.com/sbmako/NServiceBus.MongoDB/blob/master/LICENSE</licenseUrl>
     <projectUrl>https://github.com/sbmako/NServiceBus.MongoDB</projectUrl>
     <iconUrl>https://raw.githubusercontent.com/sbmako/NServiceBus.MongoDB/master/packaging/NServiceBus_mongo_32.png</iconUrl>
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
-    <description>MongoDB persistence for  NServiceBus 6.x</description>
-    <copyright>Copyright 2017 SharkByte Software. All rights reserved.</copyright>
+    <description>MongoDB persistence for NServiceBus 7.x</description>
+    <copyright>Copyright 2019 SharkByte Software. All rights reserved.</copyright>
     <tags>nservicebus mongodb persistence servicebus</tags>
     <language>en-US</language>
     <dependencies>
-      <dependency id="MongoDB.Bson" version="2.6.1" />
-      <dependency id="MongoDB.Driver" version="2.6.1" />
-      <dependency id="MongoDB.Driver.Core" version="2.6.1" />
-      <dependency id="MongoDB.Driver.GridFS" version="2.6.1" />
-      <dependency id="NServiceBus" version="[6.4.4,7.0)" />
+      <dependency id="MongoDB.Bson" version="2.8.1" />
+      <dependency id="MongoDB.Driver" version="2.8.1" />
+      <dependency id="MongoDB.Driver.Core" version="2.8.1" />
+      <dependency id="MongoDB.Driver.GridFS" version="2.8.1" />
+      <dependency id="NServiceBus" version="[7.1.10,8.0)" />
     </dependencies>
     <references>
       <reference file="NServiceBus.MongoDB.dll" />
@@ -27,6 +27,5 @@
   </metadata>
   <files>
     <file src="..\..\src\NServiceBus.MongoDB\bin\Release\NServiceBus.MongoDB.???" target="lib\net461" />
-    <file src="..\..\src\NserviceBus.MongoDB\bin\Release\CodeContracts\*.*" target="lib\net461\CodeContracts" />
   </files>
 </package>

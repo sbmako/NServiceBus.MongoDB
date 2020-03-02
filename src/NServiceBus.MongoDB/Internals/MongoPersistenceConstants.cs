@@ -2,7 +2,7 @@
 // <copyright file="MongoPersistenceConstants.cs" company="SharkByte Software">
 //   The MIT License (MIT)
 //   
-//   Copyright (c) 2017 SharkByte Software
+//   Copyright (c) 2018 SharkByte Software
 //   
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of
 //   this software and associated documentation files (the "Software"), to deal in
@@ -27,7 +27,7 @@ namespace NServiceBus.MongoDB.Internals
 {
     using System.Diagnostics.Contracts;
 
-    internal static class MongoPersistenceConstants
+    static class MongoPersistenceConstants
     {
         public const int DefaultNextTimeoutIncrementMinutes = 10;
 
@@ -45,10 +45,6 @@ namespace NServiceBus.MongoDB.Internals
 
         public const string DefaultHost = "localhost";
 
-        public const string FallbackConnectionStringName = "NServiceBus/Persistence";
-
-        public const string DefaultConnectionStringName = "NServiceBus/Persistence/MongoDB";
-
         public const string ConnectionStringKey = "MongoConnectionStringKey";
 
         public const string DatabaseNameKey = "MongoDatabaseNameKey";
@@ -58,7 +54,7 @@ namespace NServiceBus.MongoDB.Internals
             get
             {
                 Contract.Ensures(Contract.Result<string>() != null);
-                var connectionString = string.Format("mongodb://{0}:{1}", DefaultHost, DefaultPort);
+                var connectionString = string.Format("mongodb://root:mongoR0cks@{0}:{1}", DefaultHost, DefaultPort);
                 return connectionString.AssumedNotNull();
             }
         }

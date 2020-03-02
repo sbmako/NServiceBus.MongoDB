@@ -2,7 +2,7 @@
 // <copyright file="DeterministicGuid.cs" company="SharkByte Software">
 //   The MIT License (MIT)
 //   
-//   Copyright (c) 2017 SharkByte Software
+//   Copyright (c) 2018 SharkByte Software
 //   
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of
 //   this software and associated documentation files (the "Software"), to deal in
@@ -33,7 +33,7 @@ namespace NServiceBus.MongoDB.Internals
     /// <summary>
     /// This was borrowed from NSB source
     /// </summary>
-    internal static class DeterministicGuid
+    static class DeterministicGuid
     {
         public static Guid Create(params object[] data)
         {
@@ -44,7 +44,6 @@ namespace NServiceBus.MongoDB.Internals
             {
                 var inputBytes = Encoding.Default.GetBytes(string.Concat(data));
 
-                //// TODO: provide extension method to normalize byte array to 16 length
                 var hashBytes = provider.ComputeHash(inputBytes);
 
                 // generate a GUID from the hash:

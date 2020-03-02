@@ -2,7 +2,7 @@
 // <copyright file="Subscription.cs" company="SharkByte Software">
 //   The MIT License (MIT)
 //   
-//   Copyright (c) 2017 SharkByte Software
+//   Copyright (c) 2018 SharkByte Software
 //   
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of
 //   this software and associated documentation files (the "Software"), to deal in
@@ -31,7 +31,7 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
     using NServiceBus.Unicast.Subscriptions;
     using NServiceBus.Unicast.Subscriptions.MessageDrivenSubscriptions;
 
-    internal sealed class Subscription
+    sealed class Subscription
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="Subscription"/> class.
@@ -67,7 +67,7 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
         public List<Subscriber> Subscribers { get; set; }
 
         [ContractInvariantMethod]
-        private void ObjectInvariants()
+        void ObjectInvariants()
         {
             Contract.Invariant(this.Id != null);
             Contract.Invariant(this.Subscribers != null);

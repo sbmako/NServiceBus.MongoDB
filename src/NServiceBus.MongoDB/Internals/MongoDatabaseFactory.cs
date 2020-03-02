@@ -2,7 +2,7 @@
 // <copyright file="MongoDatabaseFactory.cs" company="SharkByte Software">
 //   The MIT License (MIT)
 //   
-//   Copyright (c) 2017 SharkByte Software
+//   Copyright (c) 2018 SharkByte Software
 //   
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of
 //   this software and associated documentation files (the "Software"), to deal in
@@ -35,7 +35,7 @@ namespace NServiceBus.MongoDB.Internals
     /// </summary>
     public class MongoDatabaseFactory
     {
-        private readonly MongoClientAccessor mongoClientAccessor;
+        readonly MongoClientAccessor mongoClientAccessor;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MongoDatabaseFactory"/> class.
@@ -45,7 +45,7 @@ namespace NServiceBus.MongoDB.Internals
         /// </param>
         public MongoDatabaseFactory(MongoClientAccessor clientAccessor)
         {
-            Contract.Requires<ArgumentNullException>(clientAccessor != null, "clientAccessor != null");
+            Contract.Requires(clientAccessor != null, "clientAccessor != null");
             this.mongoClientAccessor = clientAccessor;
         }
 
@@ -53,7 +53,7 @@ namespace NServiceBus.MongoDB.Internals
         /// The get database.
         /// </summary>
         /// <returns>
-        /// The <see cref="MongoDatabase"/>.
+        /// The <see cref="IMongoDatabase"/>.
         /// </returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate", Justification = "Ok here")]
         public IMongoDatabase GetDatabase()
@@ -65,7 +65,7 @@ namespace NServiceBus.MongoDB.Internals
         }
 
         [ContractInvariantMethod]
-        private void ObjectInvariants()
+        void ObjectInvariants()
         {
             Contract.Invariant(this.mongoClientAccessor != null);
         }

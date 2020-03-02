@@ -2,7 +2,7 @@
 // <copyright file="MongoDBSettingsExtensionsTests.cs" company="SharkByte Software">
 //   The MIT License (MIT)
 //   
-//   Copyright (c) 2017 SharkByte Software
+//   Copyright (c) 2018 SharkByte Software
 //   
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of
 //   this software and associated documentation files (the "Software"), to deal in
@@ -25,11 +25,9 @@
 
 namespace NServiceBus.MongoDB.Tests
 {
-    using CategoryTraits.Xunit2;
-
     using FluentAssertions;
 
-    using NServiceBus.Configuration.AdvanceExtensibility;
+    using NServiceBus.Configuration.AdvancedExtensibility;
     using NServiceBus.MongoDB.Internals;
     using NServiceBus.MongoDB.Tests.TestingUtilities;
 
@@ -37,7 +35,7 @@ namespace NServiceBus.MongoDB.Tests
 
     public class MongoDBSettingsExtensionsTests
     {
-        [Theory, UnitTest]
+        [Theory]
         [AutoConfigureData]
         public void SetDatabaseName(PersistenceExtensions<MongoDBPersistence> config)
         {
@@ -51,30 +49,30 @@ namespace NServiceBus.MongoDB.Tests
             config.GetSettings().HasSetting(MongoPersistenceConstants.ConnectionStringKey).Should().BeFalse();
         }
 
-        [Theory, UnitTest]
+        [Theory]
         [AutoConfigureData]
         public void SetConnectionString(PersistenceExtensions<MongoDBPersistence> config)
         {
-            config.SetConnectionString("mongodb://ultratinef:27017");
+            config.SetConnectionString("mongodb://root:mongoR0cks@localhost:27017");
 
             config.GetSettings()
                 .Get<string>(MongoPersistenceConstants.ConnectionStringKey)
                 .Should()
-                .Be("mongodb://ultratinef:27017");
+                .Be("mongodb://root:mongoR0cks@localhost:27017");
             config.GetSettings().HasSetting(MongoPersistenceConstants.DatabaseNameKey).Should().BeFalse();
         }
 
-        [Theory, UnitTest]
+        [Theory]
         [AutoConfigureData]
         public void SetConnectionStringAndDatabaseName(PersistenceExtensions<MongoDBPersistence> config)
         {
-            config.SetConnectionString("mongodb://ultratinef:27017");
+            config.SetConnectionString("mongodb://root:mongoR0cks@localhost:27017");
             config.SetDatabaseName("MyDatabase");
 
             config.GetSettings()
                 .Get<string>(MongoPersistenceConstants.ConnectionStringKey)
                 .Should()
-                .Be("mongodb://ultratinef:27017");
+                .Be("mongodb://root:mongoR0cks@localhost:27017");
 
             config.GetSettings()
                 .Get<string>(MongoPersistenceConstants.DatabaseNameKey)

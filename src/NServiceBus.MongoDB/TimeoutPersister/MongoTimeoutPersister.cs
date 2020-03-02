@@ -2,7 +2,7 @@
 // <copyright file="MongoTimeoutPersister.cs" company="SharkByte Software">
 //   The MIT License (MIT)
 //   
-//   Copyright (c) 2017 SharkByte Software
+//   Copyright (c) 2018 SharkByte Software
 //   
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of
 //   this software and associated documentation files (the "Software"), to deal in
@@ -41,11 +41,11 @@ namespace NServiceBus.MongoDB.TimeoutPersister
     /// </summary>
     public class MongoTimeoutPersister : IPersistTimeouts, IQueryTimeouts
     {
-        internal static readonly string TimeoutEntityName = "TimeoutData";
+        internal const string TimeoutEntityName = "TimeoutData";
 
-        private readonly IMongoCollection<TimeoutEntity> collection; 
+        readonly IMongoCollection<TimeoutEntity> collection; 
 
-        private readonly string endpointName;
+        readonly string endpointName;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MongoTimeoutPersister"/> class.
@@ -58,7 +58,7 @@ namespace NServiceBus.MongoDB.TimeoutPersister
         /// </param>
         public MongoTimeoutPersister(MongoDatabaseFactory mongoFactory, string endpointName)
         {
-            Contract.Requires<ArgumentNullException>(mongoFactory != null);
+            Contract.Requires(mongoFactory != null);
 
             this.collection = mongoFactory.GetDatabase().GetCollection<TimeoutEntity>(TimeoutEntityName);
 
@@ -141,7 +141,7 @@ namespace NServiceBus.MongoDB.TimeoutPersister
         /// <returns>The task</returns>
         public Task Add(TimeoutData timeout, ContextBag context)
         {
-            var data = new TimeoutEntity()
+            var data = new TimeoutEntity
             {
                 Id = Guid.NewGuid().ToString(),
                 Destination = timeout.Destination,
@@ -182,9 +182,10 @@ namespace NServiceBus.MongoDB.TimeoutPersister
             return this.collection.DeleteManyAsync(t => t.SagaId == sagaId);
         }
 
-        private async Task EnsureTimeoutIndexes()
+        async Task EnsureTimeoutIndexes()
         {
             await
+#pragma warning disable CS0618 // Type or member is obsolete
                 this.collection.Indexes.CreateOneAsync(
                     Builders<TimeoutEntity>.IndexKeys.Ascending(t => t.SagaId),
                     new CreateIndexOptions
@@ -192,11 +193,13 @@ namespace NServiceBus.MongoDB.TimeoutPersister
                             Name = MongoPersistenceConstants.SagaIdTimeoutIndexName,
                             Background = true
                         }).ConfigureAwait(false);
+#pragma warning restore CS0618 // Type or member is obsolete
 
             var indexKeys =
                 Builders<TimeoutEntity>.IndexKeys.Ascending(t => t.Time).Ascending(t => t.OwningTimeoutManager);
 
             await
+#pragma warning disable CS0618 // Type or member is obsolete
                 this.collection.Indexes.CreateOneAsync(
                     indexKeys,
                     new CreateIndexOptions
@@ -204,10 +207,11 @@ namespace NServiceBus.MongoDB.TimeoutPersister
                             Name = MongoPersistenceConstants.TimeAndOwningTimeoutManagerIndexName,
                             Background = true
                         }).ConfigureAwait(false);
+#pragma warning restore CS0618 // Type or member is obsolete
         }
 
         [ContractInvariantMethod]
-        private void ObjectInvariants()
+        void ObjectInvariants()
         {
             Contract.Invariant(this.collection != null);
             Contract.Invariant(this.endpointName != null);

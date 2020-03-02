@@ -2,7 +2,7 @@
 // <copyright file="DeterministicGuidTests.cs" company="SharkByte Software">
 //   The MIT License (MIT)
 //   
-//   Copyright (c) 2017 SharkByte Software
+//   Copyright (c) 2018 SharkByte Software
 //   
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of
 //   this software and associated documentation files (the "Software"), to deal in
@@ -26,20 +26,14 @@
 namespace NServiceBus.MongoDB.Tests.Internals
 {
     using System.Collections.Generic;
-
-    using CategoryTraits.Xunit2;
-
+    using AutoFixture.Xunit2;
     using FluentAssertions;
-
     using NServiceBus.MongoDB.Internals;
-
-    using Ploeh.AutoFixture.Xunit2;
-
     using Xunit;
 
     public class DeterministicGuidTests
     {
-        [Theory, UnitTest]
+        [Theory]
         [AutoData]
         public void SameProducesSameGuid(KeyValuePair<string, int> testObject)
         {
@@ -49,7 +43,7 @@ namespace NServiceBus.MongoDB.Tests.Internals
             first.Should().Be(second);
         }
 
-        [Theory, UnitTest]
+        [Theory]
         [AutoData]
         public void DifferntProduceDifferentGuids(KeyValuePair<string, int> firstObject, KeyValuePair<string, int> secondObject)
         {

@@ -2,7 +2,7 @@
 // <copyright file="MongoSubscriptionPersister.cs" company="SharkByte Software">
 //   The MIT License (MIT)
 //   
-//   Copyright (c) 2017 SharkByte Software
+//   Copyright (c) 2018 SharkByte Software
 //   
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of
 //   this software and associated documentation files (the "Software"), to deal in
@@ -25,7 +25,6 @@
 
 namespace NServiceBus.MongoDB.SubscriptionPersister
 {
-    using System;
     using System.Collections.Generic;
     using System.Diagnostics.Contracts;
     using System.Linq;
@@ -43,9 +42,9 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
     /// </summary>
     public sealed class MongoSubscriptionPersister : ISubscriptionStorage
     {
-        private static readonly string SubscriptionName = typeof(Subscription).Name;
+        static readonly string SubscriptionName = typeof(Subscription).Name;
 
-        private readonly IMongoCollection<Subscription> collection;
+        readonly IMongoCollection<Subscription> collection;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MongoSubscriptionPersister"/> class. 
@@ -55,7 +54,7 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
         /// </param>
         public MongoSubscriptionPersister(MongoDatabaseFactory mongoFactory)
         {
-            Contract.Requires<ArgumentNullException>(mongoFactory != null);
+            Contract.Requires(mongoFactory != null);
 
             this.collection = mongoFactory.GetDatabase().GetCollection<Subscription>(SubscriptionName).AssumedNotNull();
         }
@@ -91,7 +90,7 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
             return this.collection.UpdateOneAsync(
                 s => s.Id == subscriptionKey,
                 update,
-                new UpdateOptions() { IsUpsert = true });
+                new UpdateOptions { IsUpsert = true });
         }
 
         /// <summary>
@@ -118,7 +117,7 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
             return this.collection.UpdateOneAsync(
                 s => s.Id == subscriptionKey && s.Subscribers.Contains(subscriber),
                 update,
-                new UpdateOptions() { IsUpsert = false });
+                new UpdateOptions { IsUpsert = false });
         }
 
         /// <summary>
@@ -135,7 +134,7 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
         /// </returns>
         public async Task<IEnumerable<Subscriber>> GetSubscriberAddressesForMessage(IEnumerable<MessageType> messageTypes, ContextBag context)
         {
-            var subscriptions = await this.GetSubscriptions(messageTypes.AssumedNotNull());
+            var subscriptions = await this.GetSubscriptions(messageTypes.AssumedNotNull()).ConfigureAwait(false);
             var subscribers = subscriptions.SelectMany(s => s.Subscribers).Distinct();
             return subscribers;
         }
@@ -162,7 +161,7 @@ namespace NServiceBus.MongoDB.SubscriptionPersister
         }
 
         [ContractInvariantMethod]
-        private void ObjectInvariants()
+        void ObjectInvariants()
         {
             Contract.Invariant(this.collection != null);
         }

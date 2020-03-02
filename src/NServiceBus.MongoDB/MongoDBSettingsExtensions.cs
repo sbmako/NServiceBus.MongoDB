@@ -2,7 +2,7 @@
 // <copyright file="MongoDBSettingsExtensions.cs" company="SharkByte Software">
 //   The MIT License (MIT)
 //   
-//   Copyright (c) 2017 SharkByte Software
+//   Copyright (c) 2018 SharkByte Software
 //   
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of
 //   this software and associated documentation files (the "Software"), to deal in
@@ -25,10 +25,9 @@
 
 namespace NServiceBus.MongoDB
 {
-    using System;
     using System.Diagnostics.Contracts;
 
-    using NServiceBus.Configuration.AdvanceExtensibility;
+    using NServiceBus.Configuration.AdvancedExtensibility;
     using NServiceBus.MongoDB.Internals;
 
     /// <summary>
@@ -52,8 +51,8 @@ namespace NServiceBus.MongoDB
             this PersistenceExtensions<MongoDBPersistence> config, 
             string databaseName)
         {
-            Contract.Requires<ArgumentNullException>(config != null, "config != null");
-            Contract.Requires<ArgumentNullException>(databaseName != null, "databaseName != null");
+            Contract.Requires(config != null, "config != null");
+            Contract.Requires(databaseName != null, "databaseName != null");
             Contract.Ensures(Contract.Result<PersistenceExtensions<MongoDBPersistence>>() != null);
 
             config.GetSettings().Set(MongoPersistenceConstants.DatabaseNameKey, databaseName);
@@ -77,8 +76,8 @@ namespace NServiceBus.MongoDB
             this PersistenceExtensions<MongoDBPersistence> config,
             string connectionString)
         {
-            Contract.Requires<ArgumentNullException>(config != null, "config != null");
-            Contract.Requires<ArgumentNullException>(connectionString != null, "connectionString != null");
+            Contract.Requires(config != null, "config != null");
+            Contract.Requires(connectionString != null, "connectionString != null");
             Contract.Ensures(Contract.Result<PersistenceExtensions<MongoDBPersistence>>() != null);
 
             config.GetSettings().Set(MongoPersistenceConstants.ConnectionStringKey, connectionString);

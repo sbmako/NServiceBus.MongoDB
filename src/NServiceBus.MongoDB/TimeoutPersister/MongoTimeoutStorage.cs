@@ -2,7 +2,7 @@
 // <copyright file="MongoTimeoutStorage.cs" company="SharkByte Software">
 //   The MIT License (MIT)
 //   
-//   Copyright (c) 2017 SharkByte Software
+//   Copyright (c) 2018 SharkByte Software
 //   
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of
 //   this software and associated documentation files (the "Software"), to deal in
@@ -49,14 +49,11 @@ namespace NServiceBus.MongoDB.TimeoutPersister
         {
             TimeoutClassMaps.ConfigureClassMaps();
 
-            ////context.Container.ConfigureComponent<MongoTimeoutPersister>(DependencyLifecycle.SingleInstance);
-            //// TODO: .ConfigureProperty(x => x.EndpointName, context.Settings.EndpointName());
-
             context.Container.ConfigureComponent(
                 builder =>
                 new MongoTimeoutPersister(
                     builder.Build<MongoDatabaseFactory>(),
-                    context.Settings.EndpointName().ToString()),
+                    context.Settings.EndpointName()),
                 DependencyLifecycle.SingleInstance);
         }
     }

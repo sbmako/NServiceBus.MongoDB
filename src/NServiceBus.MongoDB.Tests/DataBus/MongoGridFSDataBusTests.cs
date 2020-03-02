@@ -2,7 +2,7 @@
 // <copyright file="MongoGridFSDataBusTests.cs" company="SharkByte Software">
 //   The MIT License (MIT)
 //   
-//   Copyright (c) 2017 SharkByte Software
+//   Copyright (c) 2018 SharkByte Software
 //   
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of
 //   this software and associated documentation files (the "Software"), to deal in
@@ -28,8 +28,6 @@ namespace NServiceBus.MongoDB.Tests.DataBus
     using System;
     using System.IO;
 
-    using CategoryTraits.Xunit2;
-
     using FluentAssertions;
 
     using global::MongoDB.Bson;
@@ -43,7 +41,7 @@ namespace NServiceBus.MongoDB.Tests.DataBus
 
     public class MongoGridFsDataBusTests
     {
-        [Theory, IntegrationTest]
+        [Theory]
         [AutoDatabase]
         public void PutTest(MongoDatabaseFactory factory, byte[] data)
         {
@@ -60,7 +58,7 @@ namespace NServiceBus.MongoDB.Tests.DataBus
             result.Should().BeEquivalentTo(data);
         }
 
-        [Theory, IntegrationTest]
+        [Theory]
         [AutoDatabase]
         public void GetTest(MongoDatabaseFactory factory, byte[] data)
         {

@@ -2,7 +2,7 @@
 // <copyright file="MongoSubscriptionPersisterTests.cs" company="SharkByte Software">
 //   The MIT License (MIT)
 //   
-//   Copyright (c) 2017 SharkByte Software
+//   Copyright (c) 2018 SharkByte Software
 //   
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of
 //   this software and associated documentation files (the "Software"), to deal in
@@ -27,12 +27,9 @@ namespace NServiceBus.MongoDB.Tests.SubscriptionPersister
     using System.Collections.Generic;
     using System.Linq;
 
-    using CategoryTraits.Xunit2;
-
     using FluentAssertions;
 
     using NServiceBus.Extensibility;
-    using NServiceBus.MongoDB.Internals;
     using NServiceBus.MongoDB.SubscriptionPersister;
     using NServiceBus.MongoDB.Tests.TestingUtilities;
     using NServiceBus.Unicast.Subscriptions;
@@ -47,11 +44,10 @@ namespace NServiceBus.MongoDB.Tests.SubscriptionPersister
             SubscriptionClassMaps.ConfigureClassMaps();
         }
 
-        [Theory, IntegrationTest]
+        [Theory]
         [AutoDatabase]
         public void SingleSubscriptionShouldOnlyCreateOneSubscription(
             MongoSubscriptionPersister storage,
-            MongoDatabaseFactory factory,
             Subscriber subscriber,
             ContextBag context,
             string messageTypeString)
@@ -69,14 +65,13 @@ namespace NServiceBus.MongoDB.Tests.SubscriptionPersister
             subscription.Subscribers.Should().HaveCount(1);
 
             var firstSubscriber = subscription.Subscribers.First();
-            firstSubscriber.ShouldBeEquivalentTo(subscriber);
+            firstSubscriber.Should().BeEquivalentTo(subscriber);
         }
 
-        [Theory, IntegrationTest]
+        [Theory]
         [AutoDatabase]
         public void SameClientSubscribesTwiceShouldOnlyCreateOneSubscribtion(
             MongoSubscriptionPersister storage,
-            MongoDatabaseFactory factory,
             Subscriber subscriber,
             ContextBag context,
             string messageTypeString)
@@ -95,14 +90,13 @@ namespace NServiceBus.MongoDB.Tests.SubscriptionPersister
             subscription.Subscribers.Should().HaveCount(1);
 
             var firstSubscriber = subscription.Subscribers.First();
-            firstSubscriber.ShouldBeEquivalentTo(subscriber);
+            firstSubscriber.Should().BeEquivalentTo(subscriber);
         }
 
-        [Theory, IntegrationTest]
+        [Theory]
         [AutoDatabase]
         public void SubscribeTwoMessageTypesShouldCreateTwoDifferentSubscriptions(
             MongoSubscriptionPersister storage,
-            MongoDatabaseFactory factory,
             Subscriber subscriber,
             ContextBag context,
             string messageTypeString1,
@@ -130,11 +124,10 @@ namespace NServiceBus.MongoDB.Tests.SubscriptionPersister
             subscription.Subscribers.Should().HaveCount(1);
         }
 
-        [Theory, IntegrationTest]
+        [Theory]
         [AutoDatabase]
         public void SubscribeTwoClientsOneMessageTypeShouldCreateOneSubscriptionWithMultipleAddresses(
             MongoSubscriptionPersister storage,
-            MongoDatabaseFactory factory,
             Subscriber subscriber1,
             Subscriber subscriber2,
             ContextBag context,
@@ -154,11 +147,10 @@ namespace NServiceBus.MongoDB.Tests.SubscriptionPersister
             subscribers.Should().ContainSingle(a => subscriber2.TransportAddress == a.TransportAddress);
         }
 
-        [Theory, IntegrationTest]
+        [Theory]
         [AutoDatabase]
         public void UnsubscribeWhenThereIsNoSubscriptionShouldNotCreateSubscription(
             MongoSubscriptionPersister storage,
-            MongoDatabaseFactory factory,
             Subscriber subscriber,
             ContextBag context,
             string messageTypeString)
@@ -173,11 +165,10 @@ namespace NServiceBus.MongoDB.Tests.SubscriptionPersister
             subscriptions.Should().BeEmpty();
         }
 
-        [Theory, IntegrationTest]
+        [Theory]
         [AutoDatabase]
         public void UnsubscribeFromAllMessages(
             MongoSubscriptionPersister storage,
-            MongoDatabaseFactory factory,
             Subscriber subscriber,
             ContextBag context,
             string messageTypeString1,
@@ -185,11 +176,11 @@ namespace NServiceBus.MongoDB.Tests.SubscriptionPersister
             string messageTypeString3)
         {
             var sut = storage as ISubscriptionStorage;
-            var messageTypes = new List<MessageType>()
+            var messageTypes = new List<MessageType>
                                    {
                                        new MessageType(messageTypeString1, "1.0.0.0"),
                                        new MessageType(messageTypeString2, "1.0.0.0"),
-                                       new MessageType(messageTypeString3, "1.0.0.0"),
+                                       new MessageType(messageTypeString3, "1.0.0.0")
                                    };
 
             messageTypes.ForEach(mt => sut.Subscribe(subscriber, mt, context).Wait());
@@ -200,11 +191,10 @@ namespace NServiceBus.MongoDB.Tests.SubscriptionPersister
             storage.GetSubscriptions(messageTypes).Result.ToList().ForEach(s => s.Subscribers.Should().HaveCount(0));
         }
 
-        [Theory, IntegrationTest]
+        [Theory]
         [AutoDatabase]
         public void UnsubscribeWhenClientSubscriptionIsTheOnlyOneShouldRemoveOnlyClient(
             MongoSubscriptionPersister storage,
-            MongoDatabaseFactory factory,
             Subscriber subscriber,
             ContextBag context,
             string messageTypeString)
@@ -214,23 +204,22 @@ namespace NServiceBus.MongoDB.Tests.SubscriptionPersister
 
             sut.Subscribe(subscriber, messageType, context).Wait();
             storage.GetSubscription(messageType).Result.Should().HaveCount(1);
-            sut.GetSubscriberAddressesForMessage(new List<MessageType>() { messageType }, context)
+            sut.GetSubscriberAddressesForMessage(new List<MessageType> { messageType }, context)
                 .Result.Should()
                 .HaveCount(1);
 
             sut.Unsubscribe(subscriber, messageType, context).Wait();
             storage.GetSubscription(messageType).Result.Should().HaveCount(1);
 
-            sut.GetSubscriberAddressesForMessage(new List<MessageType>() { messageType }, context)
+            sut.GetSubscriberAddressesForMessage(new List<MessageType> { messageType }, context)
                 .Result.Should()
                 .HaveCount(0);
         }
 
-        [Theory, IntegrationTest]
+        [Theory]
         [AutoDatabase]
         public void UnsubscribeWhenThereAreSubscriptionsButNotClientsShouldNotChangeAnything(
             MongoSubscriptionPersister storage,
-            MongoDatabaseFactory factory,
             Subscriber subscriber,
             Subscriber otherSubscriber1,
             Subscriber otherSubscriber2,
@@ -242,23 +231,22 @@ namespace NServiceBus.MongoDB.Tests.SubscriptionPersister
 
             sut.Subscribe(otherSubscriber1, messageType, context).Wait();
             sut.Subscribe(otherSubscriber2, messageType, context).Wait();
-            sut.GetSubscriberAddressesForMessage(new List<MessageType>() { messageType }, context)
+            sut.GetSubscriberAddressesForMessage(new List<MessageType> { messageType }, context)
                 .Result.Should()
                 .HaveCount(2);
 
             sut.Unsubscribe(subscriber, messageType, context).Wait();
             var clients =
-                sut.GetSubscriberAddressesForMessage(new List<MessageType>() { messageType }, context).Result.ToList();
+                sut.GetSubscriberAddressesForMessage(new List<MessageType> { messageType }, context).Result.ToList();
             clients.Should().HaveCount(2);
-            clients.First().ShouldBeEquivalentTo(otherSubscriber1);
-            clients.Last().ShouldBeEquivalentTo(otherSubscriber2);
+            clients.First().Should().BeEquivalentTo(otherSubscriber1);
+            clients.Last().Should().BeEquivalentTo(otherSubscriber2);
         }
 
-        [Theory, IntegrationTest]
+        [Theory]
         [AutoDatabase]
         public void UnsubscribeWhenThereAreSubscriptionsShouldRemoveClientsAddress(
             MongoSubscriptionPersister storage,
-            MongoDatabaseFactory factory,
             Subscriber subscriber,
             Subscriber otherSubscriber1,
             Subscriber otherSubscriber2,
@@ -271,16 +259,16 @@ namespace NServiceBus.MongoDB.Tests.SubscriptionPersister
             sut.Subscribe(subscriber, messageType, context).Wait();
             sut.Subscribe(otherSubscriber1, messageType, context).Wait();
             sut.Subscribe(otherSubscriber2, messageType, context).Wait();
-            sut.GetSubscriberAddressesForMessage(new List<MessageType>() { messageType }, context)
+            sut.GetSubscriberAddressesForMessage(new List<MessageType> { messageType }, context)
                 .Result.Should()
                 .HaveCount(3);
 
             sut.Unsubscribe(subscriber, messageType, context).Wait();
             var clients =
-                sut.GetSubscriberAddressesForMessage(new List<MessageType>() { messageType }, context).Result.ToList();
+                sut.GetSubscriberAddressesForMessage(new List<MessageType> { messageType }, context).Result.ToList();
             clients.Should().HaveCount(2);
-            clients.First().ShouldBeEquivalentTo(otherSubscriber1);
-            clients.Last().ShouldBeEquivalentTo(otherSubscriber2);
+            clients.First().Should().BeEquivalentTo(otherSubscriber1);
+            clients.Last().Should().BeEquivalentTo(otherSubscriber2);
         }
     }
 }

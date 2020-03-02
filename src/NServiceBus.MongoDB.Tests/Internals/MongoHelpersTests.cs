@@ -2,7 +2,7 @@
 // <copyright file="MongoHelpersTests.cs" company="SharkByte Software">
 //   The MIT License (MIT)
 //   
-//   Copyright (c) 2017 SharkByte Software
+//   Copyright (c) 2018 SharkByte Software
 //   
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of
 //   this software and associated documentation files (the "Software"), to deal in
@@ -25,12 +25,8 @@
 
 namespace NServiceBus.MongoDB.Tests.Internals
 {
-    using System;
-    using System.Configuration;
-
-    using CategoryTraits.Xunit2;
-
     using FluentAssertions;
+
     using NServiceBus.MongoDB.Internals;
     using NServiceBus.Settings;
 
@@ -38,29 +34,15 @@ namespace NServiceBus.MongoDB.Tests.Internals
 
     public class MongoHelpersTests
     {
-        [Fact, UnitTest]
-        public void GetConnectionStringFromConfigUsingValidConnectionString()
-        {
-            var result = MongoHelpers.GetConnectionStringFromConfig("NServiceBus/Persistence/MongoDB");
-            result.Should().Be("mongodb://localhost:27017");
-        }
-
-        [Fact, UnitTest]
-        public void GetConnectionStringFromConfigUsingInValidConnectionStringName()
-        {
-            Action sut = () => MongoHelpers.GetConnectionStringFromConfig("My.MissingPersistence");
-            sut.ShouldThrow<ConfigurationErrorsException>();
-        }
-
-        [Fact, UnitTest]
+        [Fact]
         public void GetConnectionUsingSettingsFromConnectionString()
         {
             var settings = new SettingsHolder();
-            settings.Set(MongoPersistenceConstants.ConnectionStringKey, "mongodb://ultratinef:27017");
+            settings.Set(MongoPersistenceConstants.ConnectionStringKey, "mongodb://root:mongoR0cks@localhost:27017");
             var readonlySettings = (ReadOnlySettings)settings;
 
             var result = MongoHelpers.GetConnectionString(readonlySettings);
-            result.Should().Be("mongodb://ultratinef:27017");
+            result.Should().Be("mongodb://root:mongoR0cks@localhost:27017");
         }
     }
 }

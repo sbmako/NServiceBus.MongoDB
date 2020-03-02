@@ -2,7 +2,7 @@
 // <copyright file="MongoHelpers.cs" company="SharkByte Software">
 //   The MIT License (MIT)
 //   
-//   Copyright (c) 2017 SharkByte Software
+//   Copyright (c) 2018 SharkByte Software
 //   
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of
 //   this software and associated documentation files (the "Software"), to deal in
@@ -25,63 +25,37 @@
 
 namespace NServiceBus.MongoDB.Internals
 {
+    using System;
     using System.Configuration;
     using System.Diagnostics.Contracts;
-    using NServiceBus.Logging;
     using NServiceBus.Settings;
 
-    internal static class MongoHelpers
+    static class MongoHelpers
     {
-        private static readonly ILog Logger = LogManager.GetLogger(typeof(MongoHelpers));
-
         public static string GetConnectionString(ReadOnlySettings settings)
         {
             Contract.Requires(settings != null);
             Contract.Ensures(Contract.Result<string>() != null);
 
-            if (settings.HasSetting(MongoPersistenceConstants.ConnectionStringKey))
+            if (!settings.HasSetting(MongoPersistenceConstants.ConnectionStringKey))
             {
-                var connectionString =
-                    settings.Get<string>(MongoPersistenceConstants.ConnectionStringKey).AssumedNotNull();
-
-                return connectionString;
+                throw new ConfigurationErrorsException(
+                    "Cannot configure Mongo Persister. No connection string was set");
             }
 
-            if (ConfigurationManager.ConnectionStrings[MongoPersistenceConstants.DefaultConnectionStringName] != null)
-            {
-                Logger.InfoFormat(
-                    "Using connection string from {0}",
-                    MongoPersistenceConstants.DefaultConnectionStringName);
-                return GetConnectionStringFromConfig(MongoPersistenceConstants.DefaultConnectionStringName);    
-            }
+            var connectionString =
+                settings.Get<string>(MongoPersistenceConstants.ConnectionStringKey).AssumedNotNull();
 
-            Logger.InfoFormat("Using connection string from {0}", MongoPersistenceConstants.FallbackConnectionStringName);
-
-            return GetConnectionStringFromConfig(MongoPersistenceConstants.FallbackConnectionStringName);
+            return connectionString;
         }
 
+        [Obsolete("No longer supported.  Set database connection using SetConnectionSring", true)]
         public static string GetConnectionStringFromConfig(string connectionStringName)
         {
             Contract.Requires(connectionStringName != null);
             Contract.Ensures(Contract.Result<string>() != null);
 
-            var connectionStringSettings = ConfigurationManager.ConnectionStrings[connectionStringName];
-
-            if (connectionStringSettings == null)
-            {
-                throw new ConfigurationErrorsException(
-                    string.Format(
-                        "Cannot configure Mongo Persister. No connection string named {0} was found",
-                        connectionStringName));
-            }
-
-            if (connectionStringSettings.ConnectionString == null)
-            {
-                throw new ConfigurationErrorsException(
-                    string.Format("Connection string named {0} has a null or empty value", connectionStringName));
-            }
-
-            return connectionStringSettings.ConnectionString;
+            return MongoPersistenceConstants.DefaultConnectionString;
         }
     }
 }

@@ -1,0 +1,8 @@
+assembly-versioning-scheme: MajorMinorPatchTag
+assembly-informational-format: '{semver}'
+mode: ContinuousDelivery
+branches:
+  master: {}
+ignore:
+  sha: []
+merge-message-formats: {}

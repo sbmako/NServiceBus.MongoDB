@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<RuleSet Name="Rules for United.Infrastructure.HostData" Description="Code analysis rules for Rules for United.Infrastructure.HostData.csproj." ToolsVersion="15.0">
+  <Include Path="basicdesignguidelinerules.ruleset" Action="Default" />
+  <Rules AnalyzerId="Microsoft.Analyzers.ManagedCodeAnalysis" RuleNamespace="Microsoft.Rules.Managed">
+    <Rule Id="CA1062" Action="None" />
+    <Rule Id="CA1303" Action="None" />
+    <Rule Id="CA1305" Action="None" />
+    <Rule Id="CA2210" Action="None" />
+    <Rule Id="CA5351" Action="None" />
+    <Rule Id="CA1822" Action="None" />
+    <Rule Id="CA1200" Action="None" />
+  </Rules>
+  <Rules AnalyzerId="StyleCop.Analyzers" RuleNamespace="StyleCop.Analyzers">
+    <Rule Id="SA1600" Action="None" />
+    <Rule Id="SA1633" Action="Error" />
+    <Rule Id="SA1200" Action="Error" />
+    <Rule Id="SA1305" Action="None" />
+    <Rule Id="SA1028" Action="None" />
+  </Rules>
+</RuleSet>

@@ -2,7 +2,7 @@
 // <copyright file="Issue_16.cs" company="SharkByte Software">
 //   The MIT License (MIT)
 //   
-//   Copyright (c) 2017 SharkByte Software
+//   Copyright (c) 2018 SharkByte Software
 //   
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of
 //   this software and associated documentation files (the "Software"), to deal in
@@ -27,8 +27,6 @@ namespace NServiceBus.MongoDB.Tests.Issues
 {
     using System;
 
-    using CategoryTraits.Xunit2;
-
     using NServiceBus.Extensibility;
     using NServiceBus.MongoDB.SagaPersister;
     using NServiceBus.MongoDB.Tests.TestingUtilities;
@@ -40,7 +38,6 @@ namespace NServiceBus.MongoDB.Tests.Issues
     public class Issue16
     {
         [Theory]
-        [IntegrationTest]
         [AutoDatabase]
         public void SaveSagaData(
             MongoSagaPersister sut,
@@ -53,7 +50,6 @@ namespace NServiceBus.MongoDB.Tests.Issues
         }
 
         [Theory]
-        [IntegrationTest]
         [AutoDatabase]
         public void UpdateSagaData(
             MongoSagaPersister sut,

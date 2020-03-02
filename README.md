@@ -1,9 +1,9 @@
-## NServiceBus.MongoDB [![Build Status](https://ci.appveyor.com/api/projects/status/github/sbmako/NServiceBus.MongoDB?branch=master&svg=true)](https://ci.appveyor.com/project/sbmako/nservicebus-mongodb) [![NuGet Status](http://img.shields.io/nuget/v/NServiceBus.MongoDB.svg)](https://www.nuget.org/packages/NServiceBus.MongoDB/) [![BCH compliance](https://bettercodehub.com/edge/badge/sbmako/NServiceBus.MongoDB?branch=master)](https://bettercodehub.com/) [![CodeFactor](https://www.codefactor.io/repository/github/sbmako/nservicebus.mongodb/badge)](https://www.codefactor.io/repository/github/sbmako/nservicebus.mongodb) ##
+## NServiceBus.MongoDB [![Build Status](https://ci.appveyor.com/api/projects/status/github/sbmako/NServiceBus.MongoDB?branch=master&svg=true)](https://ci.appveyor.com/project/sbmako/nservicebus-mongodb) [![NuGet Status](http://img.shields.io/nuget/v/NServiceBus.MongoDB.svg)](https://www.nuget.org/packages/NServiceBus.MongoDB/) ##
 
-MongoDB persistence for NServicBus 6.x
+MongoDB persistence for NServicBus 7.x
 
 ### Installation
-* Get the source and build locally
+* Get the source and [build](#build-instructions) locally
 
 or
 
@@ -91,3 +91,11 @@ public class MySagaData : ContainMongoSagaData
 ```
 ### Samples
 See [`Simple sample`](https://github.com/sbmako/NServiceBus.MongoDB/tree/master/src/Sample)
+
+### Build Instructions
+
+* Prerequisistes
+  * [.Net Core SDK 2](https://docs.microsoft.com/en-us/dotnet/core/sdk)
+  * [Gnu Make](https://www.gnu.org/software/make/) (or compatible)
+  * A running default local instance of [MongoDB](https://www.mongodb.com) listening on the default port: `mongodb://localhost:27017`
+* Run `make` from the root directory

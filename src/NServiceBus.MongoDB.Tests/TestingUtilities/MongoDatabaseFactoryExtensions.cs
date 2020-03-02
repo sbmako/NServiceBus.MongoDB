@@ -2,7 +2,7 @@
 // <copyright file="MongoDatabaseFactoryExtensions.cs" company="SharkByte Software">
 //   The MIT License (MIT)
 //   
-//   Copyright (c) 2017 SharkByte Software
+//   Copyright (c) 2018 SharkByte Software
 //   
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of
 //   this software and associated documentation files (the "Software"), to deal in
@@ -34,7 +34,7 @@ namespace NServiceBus.MongoDB.Tests.TestingUtilities
     using NServiceBus.MongoDB.Internals;
     using NServiceBus.MongoDB.TimeoutPersister;
 
-    internal static class MongoDatabaseFactoryExtensions
+    static class MongoDatabaseFactoryExtensions
     {
         public static T RetrieveSagaData<T>(this MongoDatabaseFactory factory, T sagaData)
             where T : IContainSagaData
@@ -42,7 +42,7 @@ namespace NServiceBus.MongoDB.Tests.TestingUtilities
             var query = Builders<T>.Filter.Eq(e => e.Id, sagaData.Id);
             var entity = factory.GetDatabase().GetCollection<T>(typeof(T).Name).FindAsync(query).Result.ToList();
 
-            return entity.Any() ? entity.First() : default(T);
+            return entity.FirstOrDefault();
         }
 
         public static List<TimeoutEntity> RetrieveAllTimeouts(this MongoDatabaseFactory factor)

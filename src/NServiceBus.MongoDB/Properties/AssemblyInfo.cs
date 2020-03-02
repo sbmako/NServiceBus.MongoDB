@@ -2,7 +2,7 @@
 // <copyright file="AssemblyInfo.cs" company="SharkByte Software">
 //   The MIT License (MIT)
 //   
-//   Copyright (c) 2017 SharkByte Software
+//   Copyright (c) 2018 SharkByte Software
 //   
 //   Permission is hereby granted, free of charge, to any person obtaining a copy of
 //   this software and associated documentation files (the "Software"), to deal in
@@ -62,9 +62,11 @@ using System.Runtime.InteropServices;
 //
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
-// [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("6.4.4.0")]
-[assembly: AssemblyFileVersion("6.4.4.0")]
+// [assembly: AssemblyVersion("7.0.2.1")]
+[assembly: AssemblyVersion("7.0.2.1")]
+[assembly: AssemblyFileVersion("7.0.2.0")]
 
 [assembly: InternalsVisibleTo("NServiceBus.MongoDB.Tests")]
 [assembly: InternalsVisibleTo("NServiceBus.MongoDB.Acceptance.Tests")]
+
+[assembly: AssemblyInformationalVersion("7.0.2-dotnet-core.1")]
