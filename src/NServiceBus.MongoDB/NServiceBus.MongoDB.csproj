@@ -6,7 +6,6 @@
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <CodeAnalysisRuleSet>NServiceBus.MongoDB.ruleset</CodeAnalysisRuleSet>
     <Authors>SharkByte Software</Authors>
-    <PackageIconUrl>https://raw.githubusercontent.com/sbmako/NServiceBus.MongoDB/master/packaging/NServiceBus_mongo_32.png</PackageIconUrl>
     <NeutralLanguage>en-US</NeutralLanguage>
     <Owners>SharkByte Software</Owners>
     <PackageProjectUrl>https://github.com/sbmako/NServiceBus.MongoDB</PackageProjectUrl>
@@ -19,9 +18,10 @@
     <ReleaseVersion>7.1</ReleaseVersion>
     <PackOnBuild>true</PackOnBuild>
     <PackageVersion>7.2</PackageVersion>
-    <Copyright>Copyright 2019 SharkByte Software. All rights reserved.</Copyright>
+    <Copyright>Copyright 2020 SharkByte Software. All rights reserved.</Copyright>
     <Summary>MongoDB persistence for NServiceBus 7.x</Summary>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageIconUrl>https://raw.githubusercontent.com/sbmako/NServiceBus.MongoDB/master/packaging/NServiceBus_mongo_32.png</PackageIconUrl>
    </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
