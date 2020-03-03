@@ -6,7 +6,6 @@ CONFIGURATION ?= Debug
 BUILD_OPTS = --no-restore -c $(CONFIGURATION)
 TEST_OPTS = --no-restore -c $(CONFIGURATION)
 RESTORE_OPTS =
-PUBLISH_OPTS = -c $(CONFIGURATION)
 PACK_OPTS = --no-restore -c $(CONFIGURATION) /p:Version=$(GitVersion_SemVer)
 
 CLEAN_DIRS = \
@@ -15,7 +14,7 @@ CLEAN_DIRS = \
 
 default: restore build test
 
-all: restore build test publish pack
+all: restore build test pack
 
 build: restore
 	$(printTarget)
@@ -24,10 +23,6 @@ build: restore
 test: build
 	$(printTarget)
 	@dotnet test $(TEST_OPTS) $(TESTS)
-
-publish:
-	$(printTarget)
-	@dotnet publish $(PUBLISH_OPTS)
 
 pack: build
 	$(printTarget)
