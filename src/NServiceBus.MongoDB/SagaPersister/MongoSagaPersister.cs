@@ -74,7 +74,6 @@ namespace NServiceBus.MongoDB.SagaPersister
             }
 
             sagaDataWithVersion.DocumentVersion = 0;
-            sagaDataWithVersion.ETag = sagaData.ComputeETag();
 
             if (correlationProperty != null)
             {
@@ -87,16 +86,10 @@ namespace NServiceBus.MongoDB.SagaPersister
 
         public async Task Update(IContainSagaData sagaData, SynchronizedStorageSession session, ContextBag context)
         {
-            var newETag = sagaData.AssumedNotNull().ComputeETag();
-
             var versionedDocument = (IHaveDocumentVersion)sagaData;
-            if (versionedDocument.ETag == newETag)
-            {
-                return;
-            }
 
             var query = sagaData.MongoUpdateQuery(versionedDocument.DocumentVersion);
-            var update = sagaData.MongoUpdate(newETag);
+            var update = sagaData.MongoUpdate();
 
             var collection = this.mongoDatabase.GetCollection<BsonDocument>(sagaData.GetType().Name);
             var result = await collection.UpdateOneAsync(query, update).ConfigureAwait(false);
@@ -113,15 +106,7 @@ namespace NServiceBus.MongoDB.SagaPersister
             ContextBag context) where TSagaData : class, IContainSagaData
         {
             var collection = this.mongoDatabase.GetCollection<TSagaData>(typeof(TSagaData).Name);
-            var result = collection.Find(_ => _.Id == sagaId).FirstOrDefaultAsync().Result;
-
-            if (result != null)
-            {
-                var versioned = result as IHaveDocumentVersion;
-                versioned.DocumentVersion += 1;
-            }
-
-            return await Task.FromResult(result).ConfigureAwait(false);
+            return await collection.Find(_ => _.Id == sagaId).FirstOrDefaultAsync().ConfigureAwait(false);
         }
 
         public async Task<TSagaData> Get<TSagaData>(
@@ -133,15 +118,7 @@ namespace NServiceBus.MongoDB.SagaPersister
             var query = Builders<TSagaData>.Filter.Eq(propertyName, BsonValue.Create(propertyValue));
 
             var collection = this.mongoDatabase.GetCollection<TSagaData>(typeof(TSagaData).Name);
-            var result = collection.Find(query).FirstOrDefaultAsync().Result;
-
-            if (result != null)
-            {
-                var versioned = result as IHaveDocumentVersion;
-                versioned.DocumentVersion += 1;
-            }
-
-            return await Task.FromResult(result).ConfigureAwait(false);
+            return await collection.Find(query).FirstOrDefaultAsync().ConfigureAwait(false);
         }
 
         public async Task Complete(IContainSagaData sagaData, SynchronizedStorageSession session, ContextBag context)

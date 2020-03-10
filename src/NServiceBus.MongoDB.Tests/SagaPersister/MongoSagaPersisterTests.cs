@@ -190,7 +190,7 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
 
         [Theory]
         [AutoDatabase]
-        public void UpdatingSagaWithNoChangesShouldNotUpdateVersion(
+        public void UpdatingSagaWithNoChangesShouldUpdateVersion(
             MongoSagaPersister sut,
             MongoDatabaseFactory factory,
             SagaWithUniqueProperty sagaData,
@@ -204,7 +204,7 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
             sut.Update(saga1, session, context).Wait();
 
             var saga2 = factory.RetrieveSagaData(sagaData);
-            saga2.DocumentVersion.Should().Be(saga1.DocumentVersion);
+            saga2.DocumentVersion.Should().Be(saga1.DocumentVersion+1);
         }
 
         [Theory]
@@ -224,7 +224,7 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
             sut.Update(saga1, session, context).Wait();
 
             var saga2 = factory.RetrieveSagaData(sagaData);
-            saga2.DocumentVersion.Should().Be(saga1.DocumentVersion + 1);
+            saga2.DocumentVersion.Should().Be(saga1.DocumentVersion+1);
             saga2.UniqueProperty.Should().Be(saga1.UniqueProperty);
             saga2.SomeValue.Should().Be(saga1.SomeValue);
         }
@@ -255,7 +255,6 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
             ContextBag context)
         {
             sut.Save(sagaData, correlationProperty, session, context).Wait();
-            sagaData.DocumentVersion += 1;
 
             var result = sut.Get<SagaWithUniqueProperty>(sagaData.Id, session, context).Result;
 
@@ -284,7 +283,6 @@ namespace NServiceBus.MongoDB.Tests.SagaPersister
         {
             sagaData.UniqueProperty = correlationProperty.Value.ToString();
             sut.Save(sagaData, correlationProperty, session, context).Wait();
-            sagaData.DocumentVersion += 1;
 
             var result =
                 sut.Get<SagaWithUniqueProperty>(

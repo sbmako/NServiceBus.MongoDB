@@ -47,7 +47,7 @@ namespace NServiceBus.MongoDB.Extensions
             return filter.AssumedNotNull();
         }
 
-        public static UpdateDefinition<BsonDocument> MongoUpdate<T>(this T sagaData, int newETag)
+        public static UpdateDefinition<BsonDocument> MongoUpdate<T>(this T sagaData)
             where T : IContainSagaData
         {
             Contract.Requires(sagaData != null);
@@ -61,23 +61,10 @@ namespace NServiceBus.MongoDB.Extensions
 
             var builder = Builders<BsonDocument>.Update;
             var update = builder.Inc(MongoPersistenceConstants.VersionPropertyName, 1);
-            update = update.Set(MongoPersistenceConstants.ETagPropertyName, newETag);
 
             classMap.ToList().ForEach(f => update = update.Set(f.Name, f.Value));
 
             return update.AssumedNotNull();
-        }
-
-        public static int ComputeETag<T>(this T sagaData) where T : IContainSagaData
-        {
-            Contract.Requires(sagaData != null);
-
-            var bsonDocument = sagaData.ToBsonDocument();
-
-            bsonDocument.Remove(MongoPersistenceConstants.VersionPropertyName);
-            bsonDocument.Remove(MongoPersistenceConstants.ETagPropertyName);
-
-            return bsonDocument.GetHashCode();
         }
     }
 }
