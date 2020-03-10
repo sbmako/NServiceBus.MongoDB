@@ -17,7 +17,7 @@
     <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb;.xml</AllowedOutputExtensionsInPackageBuildOutputFolder>
     <ReleaseVersion>7.1</ReleaseVersion>
     <PackOnBuild>true</PackOnBuild>
-    <PackageVersion>7.2</PackageVersion>
+    <PackageVersion>7.2.1</PackageVersion>
     <Copyright>Copyright 2020 SharkByte Software. All rights reserved.</Copyright>
     <Summary>MongoDB persistence for NServiceBus 7.x</Summary>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
