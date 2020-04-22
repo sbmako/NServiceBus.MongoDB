@@ -1,8 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks Condition="Exists('C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5.2')">netstandard2.0;net452</TargetFrameworks>
-    <TargetFrameworks Condition="!Exists('C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5.2')">netstandard2.0</TargetFrameworks>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <CodeAnalysisRuleSet>NServiceBus.MongoDB.ruleset</CodeAnalysisRuleSet>
     <Authors>SharkByte Software</Authors>
@@ -15,9 +14,9 @@
     <PackageId>NServiceBus.MongoDB</PackageId>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb;.xml</AllowedOutputExtensionsInPackageBuildOutputFolder>
-    <ReleaseVersion>7.1</ReleaseVersion>
+    <ReleaseVersion>7.2.2</ReleaseVersion>
     <PackOnBuild>true</PackOnBuild>
-    <PackageVersion>7.2.1</PackageVersion>
+    <PackageVersion>7.2.2</PackageVersion>
     <Copyright>Copyright 2020 SharkByte Software. All rights reserved.</Copyright>
     <Summary>MongoDB persistence for NServiceBus 7.x</Summary>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
@@ -33,26 +32,8 @@
     <DocumentationFile>bin\Release\netstandard2.0\NServiceBus.MongoDB.xml</DocumentationFile>
     <NoWarn>1701;1702;5159;1591</NoWarn>
   </PropertyGroup>
-  <ItemGroup>
-    <Compile Remove="ConfigureMongoPersistence.cs" />
-    <Compile Remove="GlobalSuppressions.cs" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)' == 'net452'">
-    <Reference Include="System.Configuration" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.7.0" />
-    <PackageReference Include="NServiceBus" Version="7.2.3" />
-  </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="MongoDB.Driver" Version="2.10.2" />
-    <PackageReference Include="MongoDB.Bson" Version="2.10.2" />
-    <PackageReference Include="MongoDB.Driver.Core" Version="2.10.2" />
-    <PackageReference Include="MongoDB.Driver.GridFS" Version="2.10.2" />
-
     <PackageReference Include="System.Diagnostics.Contracts" Version="4.3.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.8">
       <PrivateAssets>all</PrivateAssets>
@@ -66,6 +47,9 @@
     <PackageReference Include="Text.Analyzers" Version="2.6.4">
           <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="NServiceBus" Version="7.2.3" />
+    <PackageReference Include="MongoDB.Driver" Version="2.10.3" />
+    <PackageReference Include="MongoDB.Driver.GridFS" Version="2.10.3" />
   </ItemGroup>
   <ItemGroup>
     <None Remove=".NServiceBus.MongoDB.csproj.swp" />

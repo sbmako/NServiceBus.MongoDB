@@ -26,7 +26,6 @@
 namespace NServiceBus.MongoDB.Internals
 {
     using System;
-    using System.Configuration;
     using System.Diagnostics.Contracts;
     using NServiceBus.Settings;
 
@@ -39,7 +38,7 @@ namespace NServiceBus.MongoDB.Internals
 
             if (!settings.HasSetting(MongoPersistenceConstants.ConnectionStringKey))
             {
-                throw new ConfigurationErrorsException(
+                throw new ArgumentException(
                     "Cannot configure Mongo Persister. No connection string was set");
             }
 
